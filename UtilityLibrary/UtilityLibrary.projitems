@@ -9,7 +9,18 @@
     <Import_RootNamespace>UtilityLibrary</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Balloon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CsConversions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CsExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CsUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CsUtilitiesMedia.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageUtilities.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScreenParametersWpf.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Balloon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

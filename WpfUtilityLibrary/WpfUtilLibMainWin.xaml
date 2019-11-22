@@ -1,0 +1,62 @@
+﻿<Window
+	x:Class="WpfUtilityLibrary.WpfUtilLibMainWin"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:local="clr-namespace:WpfUtilityLibrary"
+	mc:Ignorable="d"
+	Title="WpfUtilLibMainWin"
+	Height="314.532"
+	Width="563.407"
+	Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">
+	<Grid>
+		<Button
+			x:Name="btnBalloonBL"
+			Content="Balloon BL"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Bottom"
+			Height="52"
+			Margin="12,0,0,12"
+			Width="138"
+			Click="btnBalloonBL_Click" />
+		<TextBlock
+			x:Name="textBlock"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Top"
+			Margin="5,12,5,12"
+			TextWrapping="Wrap"
+			Text="TextBlock"
+			Width="247"
+			Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+			Height="261" />
+		<Button
+			x:Name="btnBalloonTL"
+			Content="Balloon TL"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Height="52"
+			Margin="12,12,0,0"
+			Width="138"
+			Click="btnBalloonTL_Click" />
+		<Button
+			x:Name="btnBalloonTR"
+			Content="Balloon TR"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Top"
+			Height="52"
+			Margin="0,12,12,0"
+			Width="138"
+			Click="btnBalloonTR_Click" />
+		<Button
+			x:Name="btnBalloonBR"
+			Content="Balloon BR"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Bottom"
+			Height="52"
+			Margin="0, 0, 12, 12"
+			Width="138"
+			Click="btnBalloonBR_Click" />
+
+	</Grid>
+</Window>

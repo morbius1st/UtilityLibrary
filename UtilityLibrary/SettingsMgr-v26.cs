@@ -1,10 +1,9 @@
 ﻿#region Using directives
+
 using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
-using static UtilityLibrary.MessageUtilities;
-
 
 #endregion
 
@@ -29,6 +28,10 @@ using static UtilityLibrary.MessageUtilities;
 //	ver 2.6		incorporate [OnDeserializing] and proper default values
 
 // standard settings manager
+
+
+TODO: Upgrade to version 3.0?
+
 
 namespace UtilityLibrary
 {
@@ -60,14 +63,11 @@ namespace UtilityLibrary
 
 		public SettingsMgr(RstData rst)
 		{
-//			SettingsPathAndFile = (new T()).SettingsPathAndFile;
 			SettingsPathAndFile = Settings.SettingsPathAndFile;
 
 			Read();
 
 			ResetData = rst;
-
-//			SyncData();
 		}
 
 		#region read
@@ -98,10 +98,10 @@ namespace UtilityLibrary
 				// catch any other errors
 				catch (Exception e)
 				{
-					throw new MessageException(nl 
+					throw new MessageException(MessageUtilities.nl 
 						+ "Cannot read setting data for file: "
-						+ SettingsPathAndFile + nl
-						+ "(" + e.Message +")" + nl
+						+ SettingsPathAndFile + MessageUtilities.nl
+						+ "(" + e.Message +")" + MessageUtilities.nl
 						, e.InnerException);
 				}
 			}
