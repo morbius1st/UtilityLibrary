@@ -1,0 +1,181 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		>
+	<!--  x:Class="AndySharedResources.SVG.File_Open_00"  -->
+	<Canvas x:Key="Ic.FileOpen00"
+			Width="32"
+			Height="32"
+			>
+		<Canvas.RenderTransform>
+			<TranslateTransform X="0" Y="0" />
+		</Canvas.RenderTransform>
+		<Canvas.Resources>
+
+
+			<LinearGradientBrush x:Key="linearGradient3104-5" StartPoint="18,31" EndPoint="16,6">
+				<LinearGradientBrush.GradientStops>
+					<GradientStopCollection>
+						<GradientStop Offset="0" Color="#FF424242" />
+						<GradientStop Offset="1.0000000" Color="#FF777777" />
+					</GradientStopCollection>
+				</LinearGradientBrush.GradientStops>
+				<LinearGradientBrush.Transform>
+					<MatrixTransform Matrix="0.55422216 0 0 0.51089425 11.929172 24.368741" />
+				</LinearGradientBrush.Transform>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="linearGradient9772" StartPoint="22,37" EndPoint="22,32">
+				<LinearGradientBrush.GradientStops>
+					<GradientStopCollection>
+						<GradientStop Offset="0" Color="#FF6194CB" />
+						<GradientStop Offset="1" Color="#FF729FCF" />
+					</GradientStopCollection>
+				</LinearGradientBrush.GradientStops>
+				<LinearGradientBrush.Transform>
+					<MatrixTransform Matrix="0.54021218 0 0 0.50925007 11.988744 24.444141" />
+				</LinearGradientBrush.Transform>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="linearGradient322-1" StartPoint="13,33" EndPoint="13,47">
+				<LinearGradientBrush.GradientStops>
+					<GradientStopCollection>
+						<GradientStop Color="#CBFFFFFF" />
+						<GradientStop Offset="1" Color="#37FFFFFF" />
+					</GradientStopCollection>
+				</LinearGradientBrush.GradientStops>
+				<LinearGradientBrush.Transform>
+					<MatrixTransform Matrix="0.71173662 0 0 0.4267015 11.452672 23.587214" />
+				</LinearGradientBrush.Transform>
+			</LinearGradientBrush>
+		</Canvas.Resources>
+		<Canvas Name="layer1">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="-7.9550734" Y="-38.178173" />
+			</Canvas.RenderTransform>
+		</Canvas>
+		<Canvas Name="g4305">
+			<Canvas.RenderTransform>
+				<MatrixTransform Matrix="1.1445784 0 0 0.95503779 -11.345368 -12.312983" />
+			</Canvas.RenderTransform>
+			<Path Name="path2165"
+					Fill="#FFFFFFFF"
+					Stroke="{DynamicResource linearGradient3104-5}"
+					StrokeEndLineCap="Round"
+					StrokeLineJoin="Round"
+					StrokeMiterLimit="4"
+					StrokeStartLineCap="Round"
+					StrokeThickness="0.532118"
+					>
+				<Path.Data>
+					<PathGeometry Figures="m 14.435244 44.133918 c 0.01207 0.212685 0.254888 0.425368 0.485613 0.425368 h 17.362127 c 0.230726 0 0.449371 -0.212683 0.437293 -0.425368 l -0.518999 -13.90998 c -0.01207 -0.212695 -0.254883 -0.42538 -0.485609 -0.42538 h -7.355011 c -0.26883 0 -0.684173 -0.161234 -0.776824 -0.565378 l -0.338846 -1.478046 c -0.08616 -0.375858 -0.488943 -0.530256 -0.719667 -0.530256 H 14.33455 c -0.23073 0 -0.449374 0.212686 -0.437295 0.425381 z"
+							FillRule="NonZero"
+							/>
+				</Path.Data>
+			</Path>
+			<Rectangle Name="rect39655"
+					Canvas.Left="-2.9125156"
+					Width="37.90226"
+					Height="41.94725"
+					Canvas.Top="-7.2491074"
+					Fill="#FFBEBEBE"
+					Opacity="0"
+					StrokeEndLineCap="Round"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="4"
+					StrokeStartLineCap="Round"
+					StrokeThickness="1.2286"
+					/>
+			<Rectangle Name="rect42"
+					Canvas.Left="18.146769"
+					Width="15.36751"
+					Height="10.106257"
+					Canvas.Top="24.267458"
+					Fill="#FFFAFDFE"
+					RadiusX="1.1120622"
+					RadiusY="0.94715905"
+					Stroke="#FF525252"
+					StrokeMiterLimit="4"
+					StrokeThickness="0.710799"
+					/>
+			<Path Name="path2335"
+					Stroke="#FF3465A4"
+					Fill="{DynamicResource linearGradient9772}"
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Round"
+					StrokeMiterLimit="4"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="0.524509"
+					>
+				<Path.Data>
+					<PathGeometry Figures="m 33.480289 44.564928 c 0.617947 -0.02244 1.060477 -0.558299 1.105836 -1.181977 0.42773 -5.88117 0.896406 -10.812371 0.896406 -10.812371 0.03897 -0.126033 -0.09071 -0.25206 -0.25938 -0.25206 H 16.655437 c 0 0 -0.999564 11.135709 -0.999564 11.135709 -0.06188 0.500118 -0.251744 0.919056 -0.837241 1.112064 l 18.661657 -0.0013 z"
+							FillRule="NonZero"
+							/>
+				</Path.Data>
+			</Path>
+			<Path Name="path3043"
+					Opacity="0.465909"
+					Stroke="{DynamicResource linearGradient322-1}"
+					StrokeEndLineCap="Round"
+					StrokeLineJoin="Miter"
+					StrokeStartLineCap="Round"
+					StrokeThickness="0.531417"
+					>
+				<Path.Data>
+					<PathGeometry Figures="m 17.124905 32.882884 17.714476 0.03385 -0.850337 10.456134 c -0.04555 0.560132 -0.243464 0.746601 -1.011649 0.746601 -1.011025 0 -15.49247 -0.01693 -16.960131 -0.01693 0.126195 -0.16771 0.180302 -0.516813 0.181027 -0.525172 z"
+							FillRule="EvenOdd"
+							/>
+				</Path.Data>
+			</Path>
+			<Rectangle Name="rect878"
+					Canvas.Left="20.023415"
+					Width="12.133826"
+					Height="0.5904327"
+					Canvas.Top="26.129839"
+					Fill="#FF4A4A4A"
+					RadiusX="0.61781186"
+					RadiusY="0.26115292"
+					Stroke="#FF525252"
+					StrokeMiterLimit="4"
+					StrokeThickness="0"
+					/>
+			<Rectangle Name="rect8784"
+					Canvas.Left="20.005829"
+					Width="12.133826"
+					Height="0.5904327"
+					Canvas.Top="28.150032"
+					Fill="#FF4A4A4A"
+					RadiusX="0.61781186"
+					RadiusY="0.26115292"
+					Stroke="#FF525252"
+					StrokeMiterLimit="4"
+					StrokeThickness="0"
+					/>
+			<Rectangle Name="rect87841"
+					Canvas.Left="19.988962"
+					Width="12.133826"
+					Height="0.5904327"
+					Canvas.Top="30.283844"
+					Fill="#FF4A4A4A"
+					RadiusX="0.61781186"
+					RadiusY="0.26115292"
+					Stroke="#FF525252"
+					StrokeMiterLimit="4"
+					StrokeThickness="0"
+					/>
+		</Canvas>
+		<Path Name="path938"
+				Fill="#FFFFFFFF"
+				Stroke="#FF3F3F3F"
+				StrokeEndLineCap="Square"
+				StrokeLineJoin="Round"
+				StrokeMiterLimit="4"
+				StrokeStartLineCap="Square"
+				StrokeThickness="0.849321"
+				>
+			<Path.Data>
+				<PathGeometry Figures="M 15.561468 15.466687 V 8.4543442 h -3.059677 l 6.088131 -6.4613691 5.932023 6.4613691 h -2.841126 v 7.0123428 z"
+						FillRule="NonZero"
+						/>
+			</Path.Data>
+		</Path>
+	</Canvas>
+
+</ResourceDictionary>

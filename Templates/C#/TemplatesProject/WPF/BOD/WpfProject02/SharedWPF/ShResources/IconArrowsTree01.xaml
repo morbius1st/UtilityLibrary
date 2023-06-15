@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		>
+
+	<PathGeometry x:Key="Ic.ArrowTree"
+			Figures="M0,0 L0,8 L8,0 z"
+			/>
+
+	<PathGeometry x:Key="Ic.ArrowTree2"
+			Figures="M3.5,3.5 L3.5,8 L8,3.5 z"
+			/>
+
+</ResourceDictionary>

@@ -1,15 +1,34 @@
 ﻿using System;
-using System.Drawing;
+using System.Diagnostics;
 using System.Text;
-
 
 namespace UtilityLibrary
 {
-	internal static class CsExtensions
-	{
-	#region > string
 
-		internal static string IfNullOrWhiteSpace(this string s, string alternate)
+	public static class CsExtensions
+	{
+		public static bool IsUpperAlpha(this char c)
+		{
+			return (c >= 'A' && c <= 'Z');
+		}
+		
+		public static bool IsLowerAlpha(this char c)
+		{
+			return (c >= 'a' && c <= 'z');
+		}
+				
+		public static bool IsAlpha(this char c)
+		{
+			return IsUpperAlpha(c) || IsLowerAlpha(c);
+		}
+
+		public static bool IsNumber(this char c)
+		{
+			return (c >= '0' && c <= '9');
+		}
+
+
+		public static string IfNullOrWhiteSpace(this string s, string alternate)
 		{
 			if (string.IsNullOrWhiteSpace(s))
 			{
@@ -18,8 +37,18 @@ namespace UtilityLibrary
 
 			return s;
 		}
+		
+		/// <summary>
+		/// true if string is null or whitespace false otherwise
+		/// </summary>
+		[DebuggerStepThrough]
+		public static bool IsVoid(this string s)
+		{
+			return string.IsNullOrWhiteSpace(s);
+		}
 
-		internal static string Repeat(this string s, int quantity)
+		[DebuggerStepThrough]
+		public static string Repeat(this string s, int quantity)
 		{
 			if (quantity <= 0) return "";
 
@@ -33,7 +62,7 @@ namespace UtilityLibrary
 			return sb.ToString();
 		}
 
-		internal static int CountSubstring(this string s, string substring)
+		public static int CountSubstring(this string s, string substring)
 		{
 			int count = 0;
 			int i = 0;
@@ -46,7 +75,7 @@ namespace UtilityLibrary
 			return count;
 		}
 
-		internal static int IndexOfToOccurance(this string s, string substring,
+		public static int IndexOfToOccurance(this string s, string substring,
 			int occurance, int start = 0
 			)
 		{
@@ -68,7 +97,7 @@ namespace UtilityLibrary
 			return pos - substring.Length;
 		}
 
-		internal static string GetSubDirectory(this string path, int requestedDepth)
+		public static string GetSubDirectory(this string path, int requestedDepth)
 		{
 			requestedDepth++;
 			if (requestedDepth == 0) { return "\\"; }
@@ -109,6 +138,8 @@ namespace UtilityLibrary
 
 		public static string PadCenter(this string str, int totalLength, char padChar = '\u00A0')
 		{
+			if (str == null) str = "";
+
 			int padAmount = totalLength - str.Length;
 
 			if (padAmount <= 1)
@@ -126,76 +157,19 @@ namespace UtilityLibrary
 			return str.PadLeft(padLeft).PadRight(totalLength);
 		}
 
-	#endregion
-
-	#region > rectangle
-
-		public static Rectangle Scale(this Rectangle rc, double scaleFactor)
+		public static string ToList(this string[] str, string divider = " ")
 		{
-			return new Rectangle(
-				(int) (rc.Left * scaleFactor),
-				(int) (rc.Top * scaleFactor),
-				(int) (rc.Width * scaleFactor),
-				(int) (rc.Height * scaleFactor));
-		}
+			if (str == null) return "";
 
-		public static string ToString(this Rectangle rc)
-		{
-			return string.Format("top|{0,5:D} left|{1,5:D} height|{2,5:D} width|{3,5:D}",
-				rc.Top, rc.Left, rc.Height, rc.Width);
-		}
+			string s = "";
 
-	#endregion
-
-	#region > emum extension
-
-		public static dynamic Value(this Enum e)
-		{
-			switch (e.GetTypeCode())
+			foreach (string s1 in str)
 			{
-			case TypeCode.Byte:
-				{
-					return (byte) (IConvertible) e;
-				}
-			case TypeCode.Int16:
-				{
-					return (short) (IConvertible) e;
-				}
-			case TypeCode.Int32:
-				{
-					return (int) (IConvertible) e;
-				}
-			case TypeCode.Int64:
-				{
-					return (long) (IConvertible) e;
-				}
-			case TypeCode.UInt16:
-				{
-					return (ushort) (IConvertible) e;
-				}
-			case TypeCode.UInt32:
-				{
-					return (uint) (IConvertible) e;
-				}
-			case TypeCode.UInt64:
-				{
-					return (ulong) (IConvertible) e;
-				}
-			case TypeCode.SByte:
-				{
-					return (sbyte) (IConvertible) e;
-				}
+				s += s1 + divider;
 			}
 
-			return 0;
+			return s;
+
 		}
-
-		public static string Name(this Enum e)
-		{
-			return e.ToString();
-		}
-
-	#endregion
-
 	}
 }

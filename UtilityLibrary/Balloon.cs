@@ -10,15 +10,17 @@ using System.Windows.Media;
 using Color = System.Windows.Media.Color;
 
 
-
 namespace UtilityLibrary
 {
 	/// <summary>
-	/// Interaction logic for Toast.xaml
+	/// Interaction logic for Balloon.xaml
 	/// </summary>
 	public partial class Balloon : Window, INotifyPropertyChanged
 	{
 		#region + Preface
+
+		public static double BALLOON_MARGIN_B_L = 16.0;
+		public static double ARROW_HEIGHT = 20.0;
 
 		public enum BalloonOrientation
 		{
@@ -27,6 +29,11 @@ namespace UtilityLibrary
 			TOP_RIGHT = 2,
 			TOP_LEFT = 1
 		}
+
+		private const int MAX_TIME = 10000;
+		private const double CORNER_RADIUS_MINIMUM = 8.0;
+		private const double LEFT_OR_RIGHT_MARGIN = 5.0;
+		private const double ARROW_MARGIN_BASE = 1.0;
 
 		private Window             win;
 		private FrameworkElement   fe;
@@ -39,10 +46,9 @@ namespace UtilityLibrary
 		private readonly Color COLOR_BOTTOM = Color.FromRgb(0x2A, 0x82, 0xE1);
 		private readonly Color COLOR_TEXT = Colors.Black;
 
-		private const int MAX_TIME = 10000;
-
-		private const double CORNER_RADIUS_MINIMUM = 8.0;
 		private readonly double[] _cornerRadii = new [] { 10.0, 14.0, 20.0 , 24.0};
+
+		private Thickness arrowMargin;
 
 		private CornerRadius _crx = new CornerRadius(10);
 
@@ -62,8 +68,10 @@ namespace UtilityLibrary
 		private int _fadeInDuration  = 500;
 		private int _pauseTime       = 1000;
 
+		private bool showArrow = true;
+
 		// keep at least 5 pixles between the screen edge and the balloon
-		private const double LEFT_OR_RIGHT_MARGIN = 5.0;
+
 		private Vector _internalAdjustment;
 
 		#endregion
@@ -86,7 +94,6 @@ namespace UtilityLibrary
 
 			DefaultColors();
 			GetScreenScaleFactors();
-
 		}
 
 		#endregion
@@ -166,6 +173,30 @@ namespace UtilityLibrary
 			set
 			{
 				_crx = value;
+				OnPropertyChange();
+
+				AdjustArrowMargin();
+			}
+		}
+
+
+		public bool ShowArrow
+		{
+			get => showArrow;
+			set
+			{
+				showArrow = value;
+
+				AdjustPointerForOrientation();
+			}
+		}
+
+		public Thickness ArrowMargin
+		{
+			get => arrowMargin;
+			set
+			{
+				arrowMargin = value;
 				OnPropertyChange();
 			}
 		}
@@ -322,7 +353,6 @@ namespace UtilityLibrary
 			TextColor = new SolidColorBrush(COLOR_TEXT);
 		}
 
-
 		// calculate the number of milli seconds
 		// using only the seconds and milliseconds
 		// values from the timespan
@@ -361,6 +391,8 @@ namespace UtilityLibrary
 			pointerForTopRight.Visibility = Visibility.Collapsed;
 			pointerForTopLeft.Visibility = Visibility.Collapsed;
 
+			if (!ShowArrow) return;
+
 			// the default is all pointers off
 			// turn on the correct pointer
 			switch (_orientation)
@@ -392,6 +424,39 @@ namespace UtilityLibrary
 			}
 		}
 
+		private void AdjustArrowMargin()
+		{
+			// if (!ShowArrow) return;
+
+			switch (_orientation)
+			{
+			case BalloonOrientation.BOTTOM_RIGHT:
+				{
+					// bottom right uses the TL pointer
+					ArrowMargin = new Thickness(ARROW_MARGIN_BASE + _crx.TopLeft, 0, 0, 0);
+					break;
+				}
+			case BalloonOrientation.BOTTOM_LEFT:
+				{
+					// bottom left uses the TR pointer
+					ArrowMargin = new Thickness(0, 0, ARROW_MARGIN_BASE + _crx.TopRight, 0);
+					break;
+				}
+			case BalloonOrientation.TOP_RIGHT:
+				{
+					// top right uses the BL pointer
+					ArrowMargin = new Thickness(ARROW_MARGIN_BASE + _crx.BottomLeft, 0, 0, 0);
+					break;
+				}
+			case BalloonOrientation.TOP_LEFT:
+				{
+					// top left uses the BR pointer
+					ArrowMargin = new Thickness(0, 0, (ARROW_MARGIN_BASE + _crx.BottomRight), 0);
+					break;
+				}
+			}
+		}
+
 		private Rectangle GetScaledScreenSize()
 		{
 			Rectangle result = new Rectangle();
@@ -411,7 +476,7 @@ namespace UtilityLibrary
 
 		private Point CalcWinPosition()
 		{
-			// get infor for the screen that the main window
+			// get info for the screen that the main window
 			// is currently positioned
 			Rectangle screen = GetScaledScreenSize();
 
@@ -468,8 +533,6 @@ namespace UtilityLibrary
 			// this method only works after the loaded event is called
 			// as the actual height width are not valid otherwise
 
-			// in all cases, there is no x adjustment
-
 			if (_orientation == BalloonOrientation.BOTTOM_RIGHT ||
 				_orientation == BalloonOrientation.BOTTOM_LEFT)
 			{
@@ -477,7 +540,15 @@ namespace UtilityLibrary
 			}
 			else
 			{
-				vector.Y = -1.0 * this.ActualHeight;
+				// vector.Y = -1.0 * (this.ActualHeight - BALLOON_MARGIN_B_L + 
+				// 	(ShowArrow ? ARROW_HEIGHT : 0));
+				vector.Y = -1.0 * (this.ActualHeight);
+			}
+
+			if (_orientation == BalloonOrientation.BOTTOM_LEFT ||
+				_orientation == BalloonOrientation.TOP_LEFT)
+			{
+				vector.X = fe.ActualWidth - this.ActualWidth + BALLOON_MARGIN_B_L;
 			}
 
 			return vector;

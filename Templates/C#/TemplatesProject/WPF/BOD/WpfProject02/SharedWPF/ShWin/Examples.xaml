@@ -1,0 +1,758 @@
+﻿
+<Window x:Name="ExWin"
+		x:Class="SharedWPF.ShWin.Examples"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:cs="clr-namespace:SharedWPF.ShSupport"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:local="clr-namespace:SharedWPF.ShWin"
+		Title="Examples"
+		Width="900"
+		Height="900"
+		DataContext="{Binding ElementName=ExWin}"
+		mc:Ignorable="d"
+		Background="#333333"
+		>
+
+	<Window.Resources>
+
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/ShResources/IconFileOpen00.xaml" />
+				<ResourceDictionary Source="/ShResources/IconFolderPair00.xaml" />
+				<ResourceDictionary Source="/ShResources/IconArrowsScrollBar01.xaml" />
+				<ResourceDictionary Source="/ShResources/IconArrowsScrollBar02.xaml" />
+				<ResourceDictionary Source="/ShResources/IconArrowsTree01.xaml" />
+				<ResourceDictionary Source="/ShResources/IconCheckmark.xaml" />
+				<ResourceDictionary Source="/ShResources/IconDash.xaml" />
+				<ResourceDictionary Source="/ShResources/IconHistory.xaml" />
+				<ResourceDictionary Source="/ShResources/IconPlus.xaml" />
+				<ResourceDictionary Source="/ShResources/IconRect.xaml" />
+				<ResourceDictionary Source="/ShResources/IconStar.xaml" />
+				<ResourceDictionary Source="/ShResources/IconTriangle.xaml" />
+				<ResourceDictionary Source="/ShResources/IconTriangleOblique.xaml" />
+
+				<ResourceDictionary Source="/ShSupport/CsButtons.xaml" />
+				<ResourceDictionary Source="/ShSupport/CsCheckBox.xaml" />
+				<ResourceDictionary Source="/ShSupport/CsComboBox.xaml" />
+				<ResourceDictionary Source="/ShSupport/CsExpander.xaml" />
+				<ResourceDictionary Source="/ShSupport/CsScrollBar.xaml" />
+				<ResourceDictionary Source="/ShSupport/CsScrollViewer.xaml" />
+				<ResourceDictionary Source="/ShSupport/CsTreeView.xaml" />
+
+			</ResourceDictionary.MergedDictionaries>
+
+
+			<!--#region > icon info-->
+
+			<Style x:Key="IconStyle"
+					TargetType="Path"
+					>
+				<Setter Property="Fill" Value="White" />
+				<Setter Property="Margin" Value="0" />
+				<Setter Property="VerticalAlignment" Value="Center" />
+				<Setter Property="HorizontalAlignment" Value="Center" />
+				<Setter Property="Stretch" Value="UniformToFill" />
+
+			</Style>
+			<!-- <Setter Property="Height" Value="16"/> -->
+
+			<Style x:Key="IconBorder"
+					TargetType="Border"
+					>
+				<Setter Property="Padding" Value="0" />
+				<Setter Property="CornerRadius" Value="6" />
+				<Setter Property="BorderBrush" Value="White" />
+				<Setter Property="BorderThickness" Value="0.5" />
+				<Setter Property="VerticalAlignment" Value="Center" />
+				<Setter Property="HorizontalAlignment" Value="Center" />
+				<Setter Property="Height" Value="28" />
+				<Setter Property="Width" Value="28" />
+			</Style>
+
+			<Style x:Key="IconTitle"
+					TargetType="TextBlock"
+					>
+				<Setter Property="Margin" Value="0,3,0,0" />
+				<Setter Property="VerticalAlignment" Value="Center" />
+				<Setter Property="HorizontalAlignment" Value="Center" />
+				<Setter Property="FontSize" Value="5" />
+				<Setter Property="Foreground" Value="White" />
+			</Style>
+
+			<Style x:Key="IconPanel"
+					TargetType="StackPanel"
+					>
+				<Setter Property="Margin" Value="0,0,5,5" />
+
+			</Style>
+
+			<Style x:Key="IconViewBox"
+					TargetType="Viewbox"
+					>
+				<Setter Property="Margin" Value="2" />
+
+			</Style>
+
+
+
+			<StackPanel x:Key="IconCc"
+					x:Shared="False"
+					Orientation="Vertical"
+					Style="{StaticResource IconPanel}"
+					>
+				<Border Style="{StaticResource IconBorder}">
+					<Viewbox Style="{StaticResource IconViewBox}">
+						<Viewbox.Child>
+							<ContentControl Content="{Binding Path=(cs:CustomProperties.GenericObjectOne), RelativeSource={RelativeSource Self}}" />
+						</Viewbox.Child>
+					</Viewbox>
+				</Border>
+				<TextBlock Text="{Binding Path=(cs:CustomProperties.GenericStringOne),
+													 RelativeSource={RelativeSource Self},
+													 FallbackValue='none'}"
+						Style="{StaticResource IconTitle}"
+						/>
+			</StackPanel>
+
+			<Path x:Key="Icon.Delete"
+					Data="{StaticResource Ic.Delete}"
+					Style="{StaticResource IconStyle}"
+					/>
+
+			<Path x:Key="Rs.Ic.PadLock"
+					Data="{StaticResource Ic.PadLock}"
+					Style="{StaticResource IconStyle}"
+					/>
+
+			<!--#endregion-->
+
+
+			<Style x:Key="TextBoxStyle"
+					TargetType="TextBox"
+					>
+				<Setter Property="Foreground" Value="White" />
+				<Setter Property="Background" Value="#2a2a2a" />
+				<Setter Property="VerticalAlignment" Value="Stretch" />
+				<Setter Property="HorizontalScrollBarVisibility" Value="Visible" />
+				<Setter Property="VerticalScrollBarVisibility" Value="Visible" />
+				<Setter Property="FontFamily" Value="Consolas" />
+				<Setter Property="FontSize" Value="14" />
+			</Style>
+
+			<Style x:Key="ScrollViewerStyle"
+					TargetType="ScrollViewer"
+					>
+				<Setter Property="Template" Value="{StaticResource CsScrollViewerCt}" />
+				<Setter Property="cs:CsScrollBarAp.ScrollBarWidth" Value="15" />
+				<Setter Property="cs:CsScrollBarAp.RepeatButtonLength" Value="15" />
+				<Setter Property="cs:CsScrollBarAp.RepeatButtonIconLength" Value="12" />
+				<Setter Property="cs:CsScrollBarAp.RepeatButtonIconGirth" Value="8" />
+
+			</Style>
+
+
+
+		</ResourceDictionary>
+
+	</Window.Resources>
+
+	<Grid>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="120" />
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="36" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="190" />
+			<RowDefinition Height="36" />
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Column="0"
+				Grid.Row="0"
+				Foreground="White"
+				Text="{Binding Path=Title}"
+				/>
+
+
+		<!--  bottom buttons  -->
+		<StackPanel Grid.Column="0"
+				Grid.Row="5"
+				Grid.ColumnSpan="3"
+				Margin="5"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Bottom"
+				Orientation="Horizontal"
+				>
+
+			<Button x:Name="BtnDebug"
+					Content="Debug"
+					Margin="0,0,15,0"
+					Width="{StaticResource Btn.Width.Std}"
+					Height="{StaticResource Btn.Height.Std}"
+					Click="BtnDebug_OnClick"
+					/>
+
+			<Button x:Name="BtnExit"
+					Content="Exit"
+					Width="{StaticResource Btn.Width.Std}"
+					Height="{StaticResource Btn.Height.Std}"
+					Click="BtnExit_OnClick"
+					/>
+		</StackPanel>
+
+		<!--  side buttons  -->
+		<DockPanel Grid.Column="2"
+				Grid.Row="0"
+				Grid.RowSpan="5"
+				Margin="0,0,5,10"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Stretch"
+				>
+			<!--  top buttons  -->
+			<StackPanel VerticalAlignment="Top"
+					DockPanel.Dock="Top"
+					Orientation="Vertical"
+					>
+			</StackPanel>
+
+			<!--  bottom buttons  -->
+			<StackPanel VerticalAlignment="Bottom"
+					DockPanel.Dock="Bottom"
+					Orientation="Vertical"
+					>
+				<Button x:Name="BtnTestA"
+						Margin="0,0,0,5"
+						Content="Test A"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnTestA_OnClick"
+						/>
+
+				<Button x:Name="BtnShowA"
+						Content="Show A"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnShowA_OnClick"
+						/>
+
+			</StackPanel>
+		</DockPanel>
+
+		<TextBox Grid.Column="0"
+				Grid.Row="3"
+				Text="{Binding Path=MessageBoxText,
+											 FallbackValue='messagebox'}"
+				Style="{StaticResource TextBoxStyle}"
+				>
+			<TextBox.Resources>
+				<Style TargetType="{x:Type ScrollViewer}"
+						BasedOn="{StaticResource ScrollViewerStyle}"
+						/>
+			</TextBox.Resources>
+		</TextBox>
+
+		<Grid Grid.Column="1"
+				Grid.Row="3"
+				>
+
+			<Grid.Resources>
+
+			</Grid.Resources>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+
+
+			<TextBox Grid.Column="0"
+					Grid.Row="0"
+					Text="{Binding Path=StatusBoxText,
+												 FallbackValue='StatusBoxText'}"
+					Style="{StaticResource TextBoxStyle}"
+					>
+				<TextBox.Resources>
+					<Style TargetType="{x:Type ScrollViewer}"
+							BasedOn="{StaticResource ScrollViewerStyle}"
+							/>
+				</TextBox.Resources>
+			</TextBox>
+
+			<TextBox Grid.Column="0"
+					Grid.Row="1"
+					Text="{Binding Path=CodeMapText,
+												 FallbackValue='CodeMapText'}"
+					Style="{StaticResource TextBoxStyle}"
+					>
+				<TextBox.Resources>
+
+					<Style TargetType="{x:Type ScrollViewer}"
+							BasedOn="{StaticResource ScrollViewerStyle}"
+							/>
+				</TextBox.Resources>
+			</TextBox>
+
+
+
+		</Grid>
+
+
+		<!--#region > icons-->
+
+		<StackPanel Grid.Column="0"
+				Grid.Row="4"
+				Grid.ColumnSpan="2"
+				VerticalAlignment="Top"
+				Orientation="Vertical"
+				>
+
+			<StackPanel Margin="5,0,0,0"
+					Orientation="Horizontal"
+					>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.PadLock"
+						cs:CustomProperties.GenericObjectOne="{StaticResource Rs.Ic.PadLock}"
+						/>
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.PadLock2"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.PadLock2}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ReadOnly"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.ReadOnly}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Close"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Close}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Cancel"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Cancel}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Apply"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Apply}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.CheckMark"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.CheckMark}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="ChkBx.OptionMark"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource ChkBx.OptionMark}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Reset"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Reset}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Help"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Help}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Help2"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Help2}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="IconHelp3"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Help3}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Help4"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Help4}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Info"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Info}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+			</StackPanel>
+
+			<StackPanel Margin="5,0,0,0"
+					Orientation="Horizontal"
+					>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Delete"
+						cs:CustomProperties.GenericObjectOne="{StaticResource Icon.Delete}"
+						/>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Edit"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Edit}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ClearText"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.ClearText}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.HeavyX"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.HeavyX}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Dash"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.Dash}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ico.History"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.History}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Plus"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="2"
+								Data="{StaticResource Ic.Plus}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Rect"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="2"
+								Data="{StaticResource Ic.Rect}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Star"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="0"
+								Data="{StaticResource Ic.Star}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Circle1"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Data="{StaticResource Ic.Circle1}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+
+			</StackPanel>
+
+			<StackPanel Margin="5,0,0,0"
+					Orientation="Horizontal"
+					>
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Triangle"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="2"
+								Data="{StaticResource Ic.Triangle}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.TriangleOblique"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="2"
+								Data="{StaticResource Ic.TriangleOblique}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ChevronRt"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="2"
+								Data="{StaticResource Ic.ChevronRt}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowLt"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="1.5"
+								Data="{StaticResource Ic.ArrowLt}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowUp"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowUp}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowRt"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowRt}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowDn"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowDn}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowLt2"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowLt2}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowUp2"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowUp2}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowRt2"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowRt2}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowDn2"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowDn2}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowTree"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowTree}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.ArrowTree2"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource Ic.ArrowTree2}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="CboBx.Arrow"
+						>
+					<cs:CustomProperties.GenericObjectOne>
+						<Path Margin="3"
+								Data="{StaticResource CboBx.Arrow}"
+								Style="{StaticResource IconStyle}"
+								/>
+					</cs:CustomProperties.GenericObjectOne>
+				</ContentControl>
+
+			</StackPanel>
+
+
+			<StackPanel Margin="5,0,0,0"
+					Orientation="Horizontal"
+					>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="Ic.Folder-Pair-00"
+						cs:CustomProperties.GenericObjectOne="{StaticResource Ic.FolderPair00}"
+						/>
+
+				<ContentControl Content="{StaticResource IconCc}"
+						cs:CustomProperties.GenericStringOne="File-Open-00"
+						cs:CustomProperties.GenericObjectOne="{StaticResource Ic.FileOpen00}"
+						/>
+
+			</StackPanel>
+
+		</StackPanel>
+
+		<!--#endregion-->
+
+	</Grid>
+</Window>

@@ -1,0 +1,36 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <Name>CyberStudio Class Simple</Name>
+    <Description>Simple Class Template</Description>
+    <Icon>_TemplateIcon.png</Icon>
+    <ProjectType>CSharp</ProjectType>
+		<TemplateID>77f54e92-32ef-49c3-958f-241b531fd0f1</TemplateID>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+		<AppliesTo>CSharp + SharedAssetsProject</AppliesTo>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+    <DefaultName>Class.cs</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <References>
+      <Reference>
+        <Assembly>System</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>System.Core</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>System.Drawing</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>Microsoft.CSharp</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>System.Xml</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>mscorlib</Assembly>
+      </Reference>
+    </References>
+    <ProjectItem ReplaceParameters="true">Class Template Jeff.cs</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

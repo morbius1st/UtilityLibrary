@@ -1,0 +1,25 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		>
+
+	<PathGeometry x:Key="Ic.ArrowLt"
+			Figures="M 2,4 6,6 6,2 z"
+			FillRule="Nonzero"
+			/>
+
+	<PathGeometry x:Key="Ic.ArrowDn"
+			Figures="M 0,0 4,8 8,0 z"
+			FillRule="Nonzero"
+			/>
+
+	<PathGeometry x:Key="Ic.ArrowUp"
+			Figures="M 0,8 4,0 8,8 z"
+			FillRule="Nonzero"
+			/>
+
+	<PathGeometry x:Key="Ic.ArrowRt"
+			Figures="M 0,0 0,8 8,4 z"
+			FillRule="Nonzero"
+			/>
+
+</ResourceDictionary>

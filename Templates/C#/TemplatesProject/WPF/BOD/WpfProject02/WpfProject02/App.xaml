@@ -1,0 +1,19 @@
+﻿<Application
+	x:Class="WpfProject02.App"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:WpfProject02"
+	StartupUri="Windows/MainWindow.xaml">
+	<Application.Resources>
+
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/ShApp/MasterColorList.xaml" />
+				<ResourceDictionary Source="/ShApp/VisualStates.xaml" />
+				<ResourceDictionary Source="/ShSkin/CyberStudioIconSkin.xaml" />
+				<ResourceDictionary Source="/ShSkin/CyberStudioSkin.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+
+	</Application.Resources>
+</Application>

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>8dbd3451-279a-48d1-8649-71177b33f1f6</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SharedCode</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSample.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSampleGenericTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSamples.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSampleTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SampleData\DictionaryDataSample.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ShDebugAssist\ShDebugMessages.cs" />
+		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsObservableDictionary.cs">
+			<Link>.Linked\CsObservableDictionary.cs</Link>
+		</Compile>
+
+		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsExtensions.cs">
+			<Link>.Linked\CsExtensions.cs</Link>
+		</Compile>
+
+		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsXmlUtilities.cs">
+			<Link>.Linked\CsXmlUtilities.cs</Link>
+		</Compile>
+
+		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsUtilities.cs">
+			<Link>.Linked\CsUtilities.cs</Link>
+		</Compile>
+
+		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\FilePath\V3.0\CsFilePath.cs">
+			<Link>.Linked\CsFilePath.cs</Link>
+		</Compile>
+
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)ShDebugAssist\" />
+		<Folder Include="$(MSBuildThisFileDirectory).Linked\" />
+  </ItemGroup>
+</Project>

@@ -1,17 +1,19 @@
-﻿using System;
-using System.Diagnostics;
-using System.Drawing;
-using static UtilityLibrary.CsExtensions;
-
-#if	CONSOLE
+﻿#if	CONSOLE
 using EnvDTE;
 using EnvDTE80;
 #endif
-
+using System;
+using System.Diagnostics;
+using System.Drawing;
 #if FORMS
 using System.Windows.Forms;
+
 #endif
 
+
+//
+// add a reference to System.Drawing
+//
 
 
 namespace UtilityLibrary
@@ -125,7 +127,7 @@ namespace UtilityLibrary
 				return fmtInt(Convert.ToInt32(var));
 			}
 
-			return var.ToString();
+			return var?.ToString() ?? "";
 		}
 
 		public static void logMsgFmtln(string msg1)
@@ -144,7 +146,7 @@ namespace UtilityLibrary
 			string msg2 = ""
 			)
 		{
-			return logMsgFmtS(msg1 + "| ", msg2);
+			return logMsgFmtS(msg1 + "| ", msg2 ?? "");
 		}
 
 		public static void logMsgDb2(string msg1,
@@ -202,7 +204,8 @@ namespace UtilityLibrary
 				chk = (1 + msgs.Length) / 2 - 1;
 			}
 
-			if (width == null || chk != width.Length)
+			// if (width == null || chk != width.Length)
+			if (width == null || msgs.Length != width.Length * 2)
 			{
 				logMsgFmtln(msg1 + "| ", "malformed parameters");
 				return;
@@ -241,6 +244,41 @@ namespace UtilityLibrary
 			logMsg(nl);
 		}
 
+		public static string logMsgParams(string msg1,
+			int[] width, params string[] msgs)
+		{
+			return fmtMsg(msg1 + "| ", fmtMsgParams(width, msgs), 0);
+		}
+
+
+		public static string logMsgParams(string msg1,
+			int[] width, int col, params string[] msgs)
+		{
+			return fmtMsg(msg1 + "| ", fmtMsgParams(width, msgs), col);
+		}
+
+
+		private static string fmtMsgParams(int[] widths, params string[] msgs)
+		{
+			string msg2 = "";
+
+			if (widths == null || msgs.Length != widths.Length)
+			{
+				return "fmtMsgParams| malformed parameters";
+			}
+
+#pragma warning disable CS0219 // The variable 'c' is assigned but its value is never used
+			int c = 0;
+#pragma warning restore CS0219 // The variable 'c' is assigned but its value is never used
+
+			for (var i = 0; i < msgs.Length; i++)
+			{
+				msg2 += msgs[i]?.PadRight(widths[i]) ?? " ** null **";
+			}
+
+			return msg2;
+		}
+
 		private static void logMsgFmtln<T>(string msg1,
 			T var1,
 			int column = 0,
@@ -251,7 +289,7 @@ namespace UtilityLibrary
 			logMsg(nl);
 		}
 
-		private static void logMsgFmt(string msg1)
+		public static void logMsgFmt(string msg1)
 		{
 			logMsgFmt(msg1, "");
 		}
@@ -265,7 +303,7 @@ namespace UtilityLibrary
 			return fmtMsg(msg1, fmt(var1), column, shift);
 		}
 
-		private static void logMsgFmt<T>(string msg1,
+		public static void logMsgFmt<T>(string msg1,
 			T var1,
 			int column = 0,
 			int shift = 0
@@ -298,7 +336,7 @@ namespace UtilityLibrary
 			return string.Format(CsExtensions.Repeat(" ", shift) + "{0," + column + "}{1}", msg1, fmt(var1));
 		}
 
-		private static void logMsgln<T1, T2>(T1 var1,
+		public static void logMsgln<T1, T2>(T1 var1,
 			T2 var2
 			)
 		{
@@ -306,7 +344,7 @@ namespace UtilityLibrary
 			logMsgln(fmt(var2));
 		}
 
-		private static void logMsgln<T>(T var)
+		public static void logMsgln<T>(T var)
 		{
 			sendMsg(fmt(var));
 			sendMsg(nl);
@@ -340,8 +378,8 @@ namespace UtilityLibrary
 		{
 		#if FORMS
 			if (OutLocation == OutputLocation.TEXT_BOX && RichTxtBox == null)
+				{ OutLocation = OutputLocation.DEBUG; }
 		#endif
-//			{ OutLocation = OutputLocation.DEBUG; }
 //			OutputLocation a = OutLocation;
 
 			switch (OutLocation)

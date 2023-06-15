@@ -1,4 +1,5 @@
 ﻿#region + Using Directives
+
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -11,23 +12,33 @@ namespace UtilityLibrary
 {
 	public class ScreenParameters
 	{
-		#region + consts
+	#region + consts
 
 		private const double NativeScreenDpi = 96.0;
 		private const int    CCHDEVICENAME   = 32;
 
-		#endregion
+	#endregion
 
-		#region + properties
+	#region + properties
 
 		public int GetNativeScreenDpi
 		{
-			get => (int)NativeScreenDpi;
+			get => (int) NativeScreenDpi;
 		}
 
-		#endregion
+	#endregion
 
-		#region + public
+	#region + public
+
+		// private method to get the handle of the window
+		// this keeps this class contained / not dependant
+		public static IntPtr GetWindowHandle(Window win)
+		{
+			WindowInteropHelper winHelper = new WindowInteropHelper(win);
+			winHelper.EnsureHandle();
+
+			return new WindowInteropHelper(win).Handle;
+		}
 
 		// the actual screen DPI adjusted for the scaling factor
 		public static int GetScreenDpi(Window win)
@@ -81,7 +92,7 @@ namespace UtilityLibrary
 
 			return rc.Scale(ScalingFactor);
 		}
-		
+
 		// get the screen dimensions taking the screen scaling into account
 		public static Rectangle GetScaledWorkArea(Window win)
 		{
@@ -111,16 +122,9 @@ namespace UtilityLibrary
 				rc.Right - rc.Left, rc.Bottom - rc.Top);
 		}
 
-		// private method to get the handle of the window
-		// this keeps this class contained / not dependant
-		public static IntPtr GetWindowHandle(Window win)
-		{
-			return new WindowInteropHelper(win).Handle;
-		}
+	#endregion
 
-		#endregion
-
-		#region + Dll Imports
+	#region + Dll Imports
 
 		[DllImport("user32.dll")]
 		internal static extern UInt16 GetDpiForWindow(IntPtr hwnd);
@@ -133,19 +137,18 @@ namespace UtilityLibrary
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		internal static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
 
-		#endregion
+	#endregion
 
-
-		#region + Dll Enums
+	#region + Dll Enums
 
 		internal enum dwFlags : uint
 		{
 			MONITORINFO_PRIMARY = 1
 		}
 
-		#endregion
+	#endregion
 
-		#region + Dll Structs
+	#region + Dll Structs
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 		internal struct MONITORINFOEX
@@ -173,7 +176,24 @@ namespace UtilityLibrary
 			public int Bottom;
 		}
 
-		#endregion
+	#endregion
+	}
 
+	public static class RectangleEx
+	{
+		internal static Rectangle Scale(this Rectangle rc, double scaleFactor)
+		{
+			return new Rectangle(
+				(int) (rc.Left   * scaleFactor),
+				(int) (rc.Top    * scaleFactor),
+				(int) (rc.Width  * scaleFactor),
+				(int) (rc.Height * scaleFactor));
+		}
+
+		public static string ToString(this Rectangle rc)
+		{
+			return string.Format("top|{0,5:D} left|{1,5:D} height|{2,5:D} width|{3,5:D}",
+				rc.Top, rc.Left, rc.Height, rc.Width);
+		}
 	}
 }
