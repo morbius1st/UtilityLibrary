@@ -171,7 +171,7 @@
 			<RowDefinition Height="36" />
 			<RowDefinition Height="*" />
 			<RowDefinition Height="*" />
-			<RowDefinition Height="*" />
+			<RowDefinition Height="260" />
 			<RowDefinition Height="190" />
 			<RowDefinition Height="36" />
 		</Grid.RowDefinitions>
@@ -229,80 +229,132 @@
 					DockPanel.Dock="Bottom"
 					Orientation="Vertical"
 					>
+
 				<Button x:Name="BtnTestA"
-						Margin="0,0,0,5"
 						Content="Test A"
+						Margin="0,0,0,5"
 						Width="{StaticResource Btn.Width.Std}"
 						Height="{StaticResource Btn.Height.Std}"
 						Click="BtnTestA_OnClick"
 						/>
 
-				<Button x:Name="BtnShowA"
-						Content="Show A"
+				<Button x:Name="BtnShowTreeAndLeaves"
+						Content="Show Tree+Leafs"
+						Margin="0,0,0,5"
 						Width="{StaticResource Btn.Width.Std}"
 						Height="{StaticResource Btn.Height.Std}"
-						Click="BtnShowA_OnClick"
+						Click="BtnShowTreeAndLeaves_OnClick"
+						/>
+
+				<Button x:Name="BtnCountTreeAndLeaves"
+						Content="Count Tree+Leafs"
+						Margin="0,0,0,5"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnCountTreeAndLeaves_OnClick"
+						/>
+
+				<Button x:Name="BtnAddTreeAndLeaves"
+						Content="Add Tree+Leafs"
+						Margin="0,0,0,5"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnAddTreeAndLeaves_OnClick"
+						/>
+
+				<Button x:Name="BtnShowItem"
+						Content="Show Item"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnShowItem_OnClick"
 						/>
 
 			</StackPanel>
 		</DockPanel>
 
-		<TextBox Grid.Column="0"
-				Grid.Row="3"
-				Text="{Binding Path=MessageBoxText,
-											 FallbackValue='messagebox'}"
-				Style="{StaticResource TextBoxStyle}"
+		<DockPanel Grid.Column="1"
+				Grid.Row="1"
+				Grid.RowSpan="2"
 				>
-			<TextBox.Resources>
-				<Style TargetType="{x:Type ScrollViewer}"
-						BasedOn="{StaticResource ScrollViewerStyle}"
-						/>
-			</TextBox.Resources>
-		</TextBox>
+			<TextBlock FontSize="16"
+					Foreground="White"
+					DockPanel.Dock="Top"
+					Text="Messages"
+					/>
 
-		<Grid Grid.Column="1"
+			<TextBox DockPanel.Dock="Top"
+					Text="{Binding Path=MessageBoxText,
+												 FallbackValue='messagebox'}"
+					Style="{StaticResource TextBoxStyle}"
+					>
+				<TextBox.Resources>
+					<Style TargetType="{x:Type ScrollViewer}"
+							BasedOn="{StaticResource ScrollViewerStyle}"
+							/>
+				</TextBox.Resources>
+			</TextBox>
+		</DockPanel>
+
+
+			<Grid
+				Grid.Column="1"
 				Grid.Row="3"
+			>
+
+				<!-- <Grid.ColumnDefinitions> -->
+				<!-- 	<ColumnDefinition Width="*" /> -->
+				<!-- 	<ColumnDefinition Width="*" /> -->
+				<!-- </Grid.ColumnDefinitions> -->
+
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+
+
+				<DockPanel
+						Grid.Column="0"
+						Grid.Row="0"
 				>
-
-			<Grid.Resources>
-
-			</Grid.Resources>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
-
-
-			<TextBox Grid.Column="0"
-					Grid.Row="0"
-					Text="{Binding Path=StatusBoxText,
+					<TextBlock
+							DockPanel.Dock="Top"
+							Text="Status"
+							FontSize="16"
+							Foreground="White" />
+					<TextBox
+							Text="{Binding Path=StatusBoxText,
 												 FallbackValue='StatusBoxText'}"
-					Style="{StaticResource TextBoxStyle}"
-					>
-				<TextBox.Resources>
-					<Style TargetType="{x:Type ScrollViewer}"
-							BasedOn="{StaticResource ScrollViewerStyle}"
-							/>
-				</TextBox.Resources>
-			</TextBox>
+							Style="{StaticResource TextBoxStyle}">
+						<TextBox.Resources>
+							<Style TargetType="{x:Type ScrollViewer}"
+									BasedOn="{StaticResource ScrollViewerStyle}" />
+						</TextBox.Resources>
+					</TextBox>
+				</DockPanel>
 
-			<TextBox Grid.Column="0"
-					Grid.Row="1"
-					Text="{Binding Path=CodeMapText,
+
+				<DockPanel
+						Grid.Column="0"
+						Grid.Row="1"
+						>
+					<TextBlock
+							DockPanel.Dock="Top"
+							Text="Code Map"
+							FontSize="16"
+							Foreground="White" />
+					<TextBox
+							Text="{Binding Path=CodeMapText,
 												 FallbackValue='CodeMapText'}"
-					Style="{StaticResource TextBoxStyle}"
-					>
-				<TextBox.Resources>
+							Style="{StaticResource TextBoxStyle}">
+						<TextBox.Resources>
 
-					<Style TargetType="{x:Type ScrollViewer}"
-							BasedOn="{StaticResource ScrollViewerStyle}"
-							/>
-				</TextBox.Resources>
-			</TextBox>
+							<Style TargetType="{x:Type ScrollViewer}"
+									BasedOn="{StaticResource ScrollViewerStyle}" />
+						</TextBox.Resources>
+					</TextBox>
+				</DockPanel>
+				</Grid>
 
-
-
-		</Grid>
 
 
 		<!--#region > icons-->

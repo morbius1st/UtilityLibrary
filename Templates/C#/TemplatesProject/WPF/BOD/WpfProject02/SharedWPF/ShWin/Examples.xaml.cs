@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -52,6 +53,10 @@ namespace SharedWPF.ShWin
 		private string statusBoxText;
 
 		private string messageBoxText;
+
+		public static  ShDebugMessages M;
+
+
 		// data structure types
 		// A. simple item   ("Item")
 		// B. simple flat list   ("ListOfItems")
@@ -224,6 +229,7 @@ namespace SharedWPF.ShWin
 		private void init()
 		{
 			shDbgMsg  = new ShDebugMessages(this);
+			M = new ShDebugMessages(this);
 			show = new SampleDataShow(shDbgMsg);
 
 			tcsd = new TreeClassSampleData();
@@ -266,9 +272,42 @@ namespace SharedWPF.ShWin
 			int a = 1 + 1;
 		}
 
-		private void BtnShowA_OnClick(object sender, RoutedEventArgs e)
+		private void BtnShowItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			show.ShowA(Aitem);
+		}
+
+		private void BtnShowTreeAndLeaves_OnClick(object sender, RoutedEventArgs e)
+		{
+			M.WriteLineCodeMap("Enter Method");
+
+			int a = dst.TestShowTreeNodesAndLeaves();
+
+			M.WriteLine($"count| {a}");
+		}
+
+		private void BtnCountTreeAndLeaves_OnClick(object sender, RoutedEventArgs e)
+		{
+			M.WriteLineCodeMap("Enter Method");
+
+			dst.TestCountNodesAndLeaves();
+
+			M.WriteLineStatus("done");
+		}
+
+		private void BtnAddTreeAndLeaves_OnClick(object sender, RoutedEventArgs e)
+		{
+			M.WriteLineCodeMap("Enter Method");
+
+			dst.AddNodesAndLeaves();
+
+			M.WriteLineStatus("nodes and leaves added");
+
+			// dst.TestAddNodes2();
+			// a = dst.TestShowTreeNodes();
+			// or
+			// a = dst.TestShowTreeNodesAndLeaves();
+			// Debug.WriteLine($"count from show tree| {a}");
 		}
 
 
@@ -276,26 +315,23 @@ namespace SharedWPF.ShWin
 		{
 			// TreeOfListOfTreeItems x = GtreeListOfTreeItems;
 
-			dst.Tree.Clear();
+			Tree t = new Tree("Test tree 2", new TreeNodeData("Test node data 2"));
 
-			dst.TestAddNodes2();
+			dst.Tree.Clear();
 
 			int a = 1 + 1;
 
-			// a = dst.TestShowTreeNodes();
-			a = dst.TestShowTreeNodesAndLeaves();
 
-			Debug.WriteLine($"count from show tree| {a}");
+			a = dst.TestEnumerator();
+			Debug.WriteLine($"count from enumerator| {a}");
+
 
 			// dst.TestAddNode();
-			//
-			// a = dst.TestEnumerator();
-			//
-			// Debug.WriteLine($"count from enumerator| {a}");
-			//
+			// or
+			// dst.TestAddNodesAndLeaves();
 			// a = dst.Tree.NodeCountTree();
-			//
 			// Debug.WriteLine($"count from counter| {a}");
+
 		}
 	}
 }

@@ -1,1163 +1,566 @@
-﻿#region using
+﻿// Solution:     WpfProject02
+// Project:       WpfProject02
+// File:             DataSampleTree.cs
+// Created:      2023-06-14 (8:14 PM)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using SharedCode.SampleData;
-using UtilityLibrary;
-using WpfProject02.Annotations;
+using SharedCode.ShDebugAssist;
 
-#endregion
+using SharedWPF.ShWin;
 
-// username: jeffs
-// created:  6/10/2023 8:53:05 AM
+namespace SharedCode.SampleData;
 
-
-/*
- * this is a (can) be a tri state tree (set IsTriState to True)
- *
- * (added = property / method provided but not integrated throughout)
- * (done = Added & integrated / complete)
- * (none = nothing)
- *
- * methods / properties needed
- * * for tree
- * added	MaxDepth [Max node depth]
- * added	isTriState
- * added	isSelected
- * added	isExpanded
- * done		Clear (new)
- * added	Count (nodes - whole tree)
- * added	Count (leaves - whole tree)
- * none		select
- * done		enumerate tree
- * MAYBE:
- * Keys
- * Values
- * all nodes must be unique
- * 
- * 
- * * for nodes
- * done		AddNode (in current node / via node key path)
- * none		DeleteNode (in current node / via node key path)
- * none		ContainsNode (via key)
- * none		MoveNode
- * done		Count (branch)
- * none		indexer
- * none		isSelected
- * none		isExpanded
- * none		isTriState
- * none		selection communication
- * 
- * * for leafs
- * done		AddLeaf (in current node / via node key path)
- * none		DeleteLeaf (in current node / via node key path)
- * none		ContainsLeaf (via Leaf)
- * none		MoveLeaf (from node to node)
- * none		Count (node)
- * none		enumerate (node / whole tree)
- * none		?? indexer ?? (I think not - does not make sense)
- * none		isSelected
- * none		isExpanded
- * selection communication
- * MAYBE
- * Keys
- * Values
- * 
- */
-
-
-namespace SharedCode.SampleData
+public class DataSampleTree
 {
-#region user side
+#region private fields
 
-	public class Tree : TreeClass<TreeNodeData, TreeLeafData>
+	private Tree tree;
+
+	private TreeNode treeNode;
+
+	private int nodeIdx = -1;
+
+	private List<string> data;
+
+	private  ShDebugMessages M;
+
+#endregion
+
+#region ctor
+
+	public DataSampleTree()
 	{
-		public Tree(string treeName, TreeNodeData nodeData = null) : base(treeName, nodeData) { }
-	}
-
-	public class TreeNode : TreeClassNode<TreeNodeData, TreeLeafData>
-	{
-		public TreeNode(string nodeName, TreeNodeData nodeData, TreeClassNode<TreeNodeData, TreeLeafData> parentNode = null) : base(nodeName, nodeData, parentNode) { }
-	}
-
-	public class TreeLeaf : TreeClassLeaf<TreeLeafData>
-	{
-		public TreeLeaf(string leafName, TreeLeafData leafData, ITreeNodeBase parentNodeBase = null) : base(leafName, leafData, parentNodeBase) { }
-	}
-
-	public class TreeEnum : TreeClassEnumerator<TreeNodeData, TreeLeafData>
-	{
-		public TreeEnum(TreeClass<TreeNodeData, TreeLeafData> tree) : base(tree) { }
-	}
-
-	public class TreeNodeData : INotifyPropertyChanged
-	{
-		// represents EXTRA information saved with each node
-		// private string name - this is a part of node and is not Extra information
-		private string value;
-
-		public TreeNodeData(string value)
-		{
-			this.value = value;
-		}
-
-
-		public string Value
-		{
-			get => value;
-			set
-			{
-				if (value == this.value) return;
-				this.value = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		public override string ToString()
-		{
-			return $"{nameof(TreeNodeData)}| ({value})";
-		}
-	}
-
-	public class TreeLeafData : INotifyPropertyChanged
-	{
-		private string value1;
-		private string value2;
-
-		public string Value1
-		{
-			get => value1;
-			set
-			{
-				if (value == value1) return;
-				value1 = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public string Value2
-		{
-			get => value2;
-			set
-			{
-				if (value == value2) return;
-				value2 = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-	#region system overrides
-
-		public override string ToString()
-		{
-			return $"{nameof(TreeLeafData)} | v1| {value1} | v2| {value2}";
-		}
-
-	#endregion
+		init();
 	}
 
 #endregion
 
-#region treeclass system
+#region public properties
 
-	public class TreeClass<TNd, TLd> : INotifyPropertyChanged, IEnumerable<TreeClassNode<TNd, TLd>>
-		//, IEnumerable<KeyValuePair<String, TreeClassNode<TNd, TLd>>>
-		where TNd : class
-		where TLd : class
+	public Tree Tree => tree;
+
+#endregion
+
+#region private properties
+
+#endregion
+
+#region public methods
+
+	public void TestAddNode()
 	{
-	#region private fields
-
-		private TreeClassNode<TNd, TLd> rootNode;
-
-		// represents the primary selected node - since
-		// multiple nodes / leaves can be selected
-		private TreeClassNode<TNd, TLd> selectedNode;
-
-		// represents the node currently being used for node operations
-		// there must always be a current node
-		private TreeClassNode<TNd, TLd> currentNode;
-		private bool isTriState;
-		private bool isSelected;
-
-	#endregion
-
-	#region ctor
-
-		public TreeClass() { }
-
-		public TreeClass(string treeName, TNd nodeData = null)
-		{
-			TreeName = treeName;
-			NodeData = nodeData;
-
-			initRootNode();
-
-			currentNode = rootNode;
-		}
-
-	#endregion
-
-	#region public properties
-
-		public string TreeName { get; set; }
-
-		public TNd NodeData { get; set; }
-
-		public TreeClassNode<TNd, TLd> RootNode => rootNode;
-
-		public TreeClassNode<TNd, TLd> SelectedNode
-		{
-			get => selectedNode;
-			set
-			{
-				if (Equals(value, selectedNode)) return;
-				selectedNode = value;
-				currentNode = value;
-
-				selectedNode.IsSelected = true;
-
-				OnPropertyChanged();
-			}
-		}
-
-		public TreeClassNode<TNd, TLd> CurrentNode
-		{
-			get => currentNode;
-			set
-			{
-				if (Equals(value, currentNode)) return;
-				currentNode = value;
-				OnPropertyChanged();
-			}
-		}
-
-
-		public int MaxDepth { get; private set; }
-
-		public bool HasLimitedDepth => MaxDepth > 0;
-
-		public bool IsSelected
-		{
-			get => isSelected;
-			set
-			{
-				if (value == isSelected) return;
-				isSelected = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public bool IsTriState
-		{
-			get => isTriState;
-			private set
-			{
-				if (value == isTriState) return;
-				isTriState = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public int CountRootNodes => rootNode?.NodeCount ?? 0;
-		public int CountCurrentNodes => currentNode?.NodeCount ?? 0;
-		public int CountSelectedNodes => selectedNode?.NodeCount ?? 0;
-
-	#endregion
-
-	#region private properties
-
-	#endregion
-
-	#region public methods
-
-	#region tree methods
-
-		public bool ContainsNode(string searchNode)
-		{
-			currentNode = null;
-			 
-			foreach (
-				KeyValuePair<string, TreeClassNode<TNd, TLd>> kvp in 
-					rootNode.Nodes)
-			{
-				if (kvp.Key.Equals(searchNode))
-				{
-					currentNode = kvp.Value;
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		public void Clear()
-		{
-			TreeName = String.Empty;
-			NodeData = null;
-
-			rootNode.Nodes.Clear();
-
-			initRootNode();
-
-			GC.Collect();
-		}
-
-		public int NodeCountTree()
-		{
-			return rootNode.NodeCountBranch();
-		}
-
-		public int LeafCountTree ()
-		{
-			return 0;
-		}
-
-	#endregion
-
-
-	#region node methods
-
-		/// <summary>
-		/// Add a node (if possible) to the current node<br/>
-		/// Returns: true->worked / false->failed (exists)
-		/// </summary>
-		/// <param name="node">A TreeNode</param>
-		/// <returns>true->worked / false-failed (exists)</returns>
-		public bool AddNode(TreeClassNode<TNd, TLd> node)
-		{
-			if (currentNode == null) return false;
-
-			currentNode.InitNodes();
-
-			bool result = currentNode.Nodes.TryAdd(node.NodeName, node);
-
-			if (result) node.ParentNode = currentNode;
-
-			return result;
-		}
-
-		/// <summary>
-		/// Add a node (if possible) based on the node path<br/>
-		/// node path starts from a selected node down
-		/// Returns: true->worked / false->failed (exists)
-		/// </summary>
-		/// <param name="nodePath"></param>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		public void AddNode(TreeClassNode<TNd, TLd> newNode, string[] nodePath, int idx = 0)
-		{
-			if (idx == nodePath.Length || nodePath[idx] == null)
-			{
-				// got to the bottom of the list
-				AddNode(newNode);
-				return;
-			}
-
-			if (idx == 0)
-			{
-				currentNode = rootNode;
-			}
-
-			// node to be used for the next loop
-			TreeClassNode<TNd, TLd> node;
-
-			// if the node is found - use it
-			bool result = currentNode.Nodes.TryGetValue(nodePath[idx], out node);
-
-			if (!result)
-			{
-				// does not exist - add a basic node
-				// then use this node
-				node = new TreeClassNode<TNd, TLd>(nodePath[idx], null);
-				node.InitNodes();
-				AddNode(node);
-			}
-
-			currentNode = node;
-
-			AddNode(newNode, nodePath, idx + 1);
-		}
-
-	#endregion
-
-	#region leaf methods
-
-		/// <summary>
-		/// Add a leaf to the current node
-		/// </summary>
-		/// <param name="leaf"></param>
-		/// <returns></returns>
-		public bool AddLeaf(TreeClassLeaf<TLd> leaf)
-		{
-			if (currentNode == null) return false;
-
-			currentNode.InitLeaves();
-
-			return currentNode.Leaves.TryAdd(leaf.LeafName, leaf);
-		}
-
-
-	#endregion
-
-	#endregion
-
-	#region private methods
-
-		private void initRootNode()
-		{
-			rootNode = new TreeClassNode<TNd, TLd>("ROOT", null);
-			rootNode.ParentNode = null;
-			rootNode.InitNodes();
-		}
-
-	#endregion
-
-	#region event consuming
-
-	#endregion
-
-	#region event publishing
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-	#endregion
-
-	#region system overrides
-
-		// public IEnumerator<KeyValuePair<string, TreeClassNode<TNd, TLd>>> GetEnumerator()
-		// {
-		// 	return rootNode.Nodes.GetEnumerator();
-		// }
-		//
-		// IEnumerator IEnumerable.GetEnumerator()
-		// {
-		// 	return GetEnumerator();
-		// }
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return new TreeClassEnumerator<TNd, TLd>(this);
-		}
-
-		public IEnumerator<TreeClassNode<TNd, TLd>> GetEnumerator()
-		{
-			return new TreeClassEnumerator<TNd, TLd>(this);
-		}
-
-		public override string ToString()
-		{
-			return $"{nameof(TreeClass<TNd, TLd>)} | name| {TreeName}";
-		}
-
-	#endregion
+		TestAddNode(new List<string>() { "Alpha", "Beta", "Delta" });
 	}
 
-	public class TreeClassEnumerator<TNd, TLd> : IEnumerator<TreeClassNode<TNd, TLd>>
-		where TNd : class
-		where TLd : class
+	public void TestAddNode(List<string> nodePath)
 	{
-		private readonly TreeClass<TNd, TLd> tree;
-		private List<TreeClassNode<TNd, TLd>>? currNodes;
+		treeNode = makeTempTreeNode();
 
-		private List<IEnumerator<KeyValuePair<string, TreeClassNode<TNd, TLd>>>> ies;
+		tree.AddNode(treeNode, nodePath);
+	}
 
-		public TreeClassEnumerator() { }
+	public int TestEnumerator()
+	{
+		AddNodesAndLeaves();
 
-		public TreeClassEnumerator(TreeClass<TNd, TLd> tree)
+		return TestShowTreeNodes();
+	}
+
+	public int TestShowTreeNodesAndLeaves()
+	{
+		int result = 0;
+
+
+		Examples.M.WriteLine("\nShow Nodes and Leaves\n");
+
+		foreach (TreeNode tcn in tree)
+			// foreach (TreeClassNode<TreeNodeData, TreeLeafData> tcn in tree)
 		{
-			this.tree = tree;
+			result++;
 
-			Reset();
+			Examples.M.WriteLine(ShowNodeParents(tcn));
+
+			// Debug.WriteLine();
+
+			ShowNodeLeaves(tcn);
 		}
 
+		Examples.M.WriteLine("\n** done **\n\n");
 
-		public TreeClassNode<TNd, TLd> Current
+		return result;
+	}
+
+	public int TestShowTreeNodes()
+	{
+		int result = 0;
+
+		foreach (TreeNode tcn in tree)
 		{
-			get
-			{
-				if (currNodes == null) return null;
+			result++;
 
-				return currNodes[^1];
-			}
+			Debug.WriteLine(ShowNodeParents(tcn));
 		}
 
+		return result;
+	}
+	//
+	// public void AddTestNodes()
+	// {
+	// 	TestAddNode(new List<string>() { "Alpha", "Beta", "Delta" });	// 1-1-1			// 0
+	// 	TestAddNode(new List<string>() { "Alpha", "Beta", "Gamma" });	// 1-1-2			// 1
+	//
+	// 	TestAddNode(new List<string>(){ "Alpha", "Zeta", "Eta" });			// 1-2-1		// 2
+	// 	TestAddNode(new List<string>() { "Alpha", "Zeta", "Theta", "Iota" });	// 1-2-2-1	// 3
+	// 	TestAddNode(new List<string>() { "Alpha", "Zeta", "Theta", "Kappa" });	// 1-2-2-2	// 4
+	// 	TestAddNode(new List<string>() { "Sigma", "Lambda", "Nu" });		// 2-1-1		// 5
+	// 	TestAddNode(new List<string>() { "Sigma", "Lambda", "Nu", "Xi" });	// 2-1-1-1		// 6
+	// 	TestAddNode(new List<string>() { "Sigma", "Lambda", "Nu", "Pi" });	// 2-1-1-2		// 7
+	// 	TestAddNode(new List<string>() { "Sigma", "Omega", "Mu" });	// 2-2-1				// 8
+	// 	TestAddNode(new List<string>() { "Tau", "Phi", "Rho" });	// 3-1-1				// 9
+	// 	TestAddNode(new List<string>() { "Tau", "Phi", "Chi" });	// 3-1-2				// 10
+	// }
 
-		public List<TreeClassNode<TNd, TLd>> CurrentPath
+	public void AddNodesAndLeaves()
+	{
+		TreeNode node;
+		TreeLeaf leaf;
+
+		List<string> nodePath;
+
+		KeyValuePair<string, string[]>[][] nodesAndLeaves = AddTestNodes2();
+
+		foreach (KeyValuePair<string, string[]>[] kvps in nodesAndLeaves)
 		{
-			get
+			// showNodePath(kvps);
+
+			if (kvps == null) break;
+
+			nodePath = new List<string>(5);
+
+			for (int i = 0; i < kvps.Length; i++)
 			{
-				if (currNodes == null) return null;
+				// key = node (add if needed)
+				// value = leaves (add if exists)
 
-				return currNodes;
-			}
-		}
+				KeyValuePair<string, string[]> kvp = kvps[i];
 
+				bool result = tree.ContainsNode(kvp.Key);
 
-		public bool MoveNext()
-		{
-			bool result = ies[^1].MoveNext();
-
-			if (result)
-			{
-				TreeClassNode<TNd, TLd> node = ies[^1].Current.Value;
-
-				currNodes.Add(node);
-
-				if (node.HasNodes)
+				if (!result)
 				{
-					ies.Add(node.Nodes.GetEnumerator());
+					node = new TreeNode(kvp.Key, null);
+
+					// showNodePath(node.NodeName, nodePath);
+
+					tree.AddNode(node, nodePath);
 				}
 
-				return true;
-			}
-			else
-			{
-				ies.RemoveAt(ies.Count - 1);
+				nodePath.Add(kvp.Key);
 
-				if (ies.Count == 0) return false;
-			}
-
-			return MoveNext();
-		}
-
-		public void Reset()
-		{
-			if (tree.CountRootNodes == 0)
-			{
-				currNodes = null;
-			}
-			else
-			{
-				currNodes = new List<TreeClassNode<TNd, TLd>>();
-				currNodes.Add(tree.RootNode.Nodes[0].Value);
-
-				ies = new List<IEnumerator<KeyValuePair<string, TreeClassNode<TNd, TLd>>>>();
-				ies.Add(tree.RootNode.Nodes?.GetEnumerator() ?? null);
+				if (kvp.Value != null)
+				{
+					foreach (string leafName in kvp.Value)
+					{
+						leaf = new TreeLeaf(leafName, null);
+						Tree.AddLeaf(leaf);
+					}
+				}
 			}
 		}
-
-		object IEnumerator.Current => Current;
-
-		public void Dispose() { }
 	}
 
-	public interface ITreeNodeBase
+	public void TestCountNodesAndLeaves()
 	{
-		public string NodeName { get; }
-		public ITreeNodeBase ParentNodeBase { get; }
-		public bool? IsSelected { get; }
-		public bool HasNodes { get; }
-		public int NodeCount { get; }
-		public bool HasLeaves { get; }
-		public int LeafCount { get; }
+		AddNodesAndLeaves();
+
+
+		if (tree.ContainsNode(data[9]))
+		{
+			tree.SelectedNode = tree.CurrentNode;
+		}
+
+		tree.ContainsNode(data[16]);
+
+
+		M.Write("\nNode Counts\n");
+
+		M.WriteLine("Count Nodes   | Root", tree.CountNodesRoot.ToString());
+		M.WriteLine("Count Nodes   | Tree", tree.CountNodesTree.ToString());
+
+		M.WriteLine("Current Node  | Name", tree.CurrentNode?.NodeName ?? "null");
+		M.WriteLine("Count Nodes   | Current", tree.CountNodesRoot.ToString());
+		M.WriteLine("Count Nodes ex| Current", tree.CountNodesCurrentEx.ToString());
+
+
+
+		M.WriteLine("Selected Node | Name", tree.SelectedNode?.NodeName ?? "null");
+		M.WriteLine("Count Nodes   | Current", tree.CountNodesSelected.ToString());
+		M.WriteLine("Count Nodes ex| Current", tree.CountNodesSelectedEx.ToString());
+
 	}
 
-	public class TreeClassNode<TNd, TLd> : ITreeNodeBase, INotifyPropertyChanged, IComparer<TreeClassNode<TNd, TLd>>, ICloneable
-		where TNd : class
-		where TLd : class
+	public KeyValuePair<string, string[]>[][] AddTestNodes2()
 	{
-		private string nodeName;
+		int nodeCount = 19;
+		int leafCount = -1;
 
-		private TreeClassNode<TNd, TLd> parentNode;
-		private bool? isSelected;
 
-		private TNd nodeData = null;
+		// List<string> data = new List<string>()
+		// {
+		// 	"Alpha",	// 0  (top level)
+		// 	"Beta",		// 1
+		// 	"Delta",	// 2
+		// 	"Gamma",	// 3
+		// 	"Zeta",		// 4
+		// 	"Eta",		// 5
+		// 	"Theta",	// 6
+		// 	"Iota",		// 7
+		// 	"Kappa",	// 8
+		// 	"Sigma",	// 9  (top level)
+		// 	"Lambda",	// 10
+		// 	"Nu",		// 11
+		// 	"Xi",		// 12
+		// 	"Pi",		// 13
+		// 	"Omega",	// 14
+		// 	"Mu",		// 15
+		// 	"Tau",		// 16 (top level)
+		// 	"Phi",		// 17
+		// 	"Rho",		// 18
+		// 	"Chi",		// 19
+		// };
 
-	#region private fields
+		KeyValuePair<string, string[]>[][] nodesAndLeaves;
 
-	#endregion
 
-	#region ctor
+		KeyValuePair<string, string[]>[] kvp = 
+			new KeyValuePair<string, string[]>[nodeCount];
 
-		// ReSharper disable once UnusedMember.Global
-		public TreeClassNode() { }
-
-		public TreeClassNode(string nodeName,
-			TNd nodeData,
-			TreeClassNode<TNd, TLd> parentNode = null,
-			bool isSelected = false)
+		for (int i = 0; i < nodeCount; i++)
 		{
-			this.nodeName = nodeName;
-			this.nodeData = nodeData;
-			this.parentNode = parentNode;
-			this.isSelected = isSelected;
+			kvp[i] = new KeyValuePair<string, string[]>(data[i], null);
 		}
 
-	#endregion
+		nodesAndLeaves = new KeyValuePair<string, string[]>[11][];
 
-	#region public properties
-
-		// serializable properties
-		[AllowNull]
-		public ObservableDictionary<string, TreeClassNode<TNd, TLd>> Nodes { get; private set; }
-
-		[AllowNull]
-		public ObservableDictionary<string, TreeClassLeaf<TLd>> Leaves { get; private set; }
-
-		public string NodeName
+		nodesAndLeaves[0] = new []
 		{
-			get => nodeName;
-			private set
-			{
-				if (value == nodeName) return;
-				nodeName = value;
-				OnPropertyChanged();
-			}
-		}
+			new KeyValuePair<string, string[]>(
+				data[0],
+				new []
+				{
+					$"{data[0]} | Leaf 1-{++leafCount:D3}"
+				}
+				),
+			new KeyValuePair<string, string[]>(
+				data[1],
+				new []
+				{
+					$"{data[1]} | Leaf 1-1-{++leafCount:D3}",
+					$"{data[1]} | Leaf 1-1-{++leafCount:D3}",
+					$"{data[1]} | Leaf 1-1-{++leafCount:D3}"
+				}),
+			new KeyValuePair<string, string[]>(
+				data[2],
+				new []
+				{
+					$"{data[2]} | Leaf 1-1-1-{++leafCount:D3}"
+				}
+				)
+		};
 
-		public TreeClassNode<TNd, TLd> ParentNode
+
+		nodesAndLeaves[1] = new []
 		{
-			get => parentNode;
-			set
-			{
-				if (Equals(value, parentNode)) return;
-				parentNode = value;
-				OnPropertyChanged();
-				OnPropertyChanged(nameof(ParentNodeBase));
-			}
-		}
+			kvp[0],
+			kvp[1],
+			new KeyValuePair<string, string[]>(
+				data[3],
+				new []
+				{
+					$"{data[3]} | Leaf 1-1-2-{++leafCount:D3}",
+					$"{data[3]} | Leaf 1-1-2-{++leafCount:D3}"
+				}
+				)
+		};
 
-		public bool? IsSelected
+		nodesAndLeaves[2] = new []
 		{
-			get => isSelected;
-			set
-			{
-				if (value == isSelected) return;
-				isSelected = value;
-				OnPropertyChanged();
-			}
-		}
+			kvp[0],
+			kvp[4],
+			new KeyValuePair<string, string[]>(
+				data[5],
+				new []
+				{
+					$"{data[5]} | Leaf 1-2-1-{++leafCount:D3}",
+					$"{data[5]} | Leaf 1-2-1-{++leafCount:D3}",
+					$"{data[5]} | Leaf 1-2-1-{++leafCount:D3}",
+					$"{data[5]} | Leaf 1-2-1-{++leafCount:D3}"
+				}
+				)
+		};
 
-
-		// not serializable properties
-		public ITreeNodeBase ParentNodeBase
+		nodesAndLeaves[3] = new []
 		{
-			get => parentNode;
-			private set
-			{
-				if (Equals(value, parentNode)) return;
-				parentNode = (TreeClassNode<TNd, TLd>) value;
-				OnPropertyChanged();
-				OnPropertyChanged(nameof(ParentNode));
-			}
-		}
+			kvp[0],
+			kvp[4],
+			new KeyValuePair<string, string[]>(
+				data[6],
+				new []
+				{
+					$"{data[6]} | Leaf 1-2-2-{++leafCount:D3}"
+				}
+				),
+			new KeyValuePair<string, string[]>(
+				data[7], 
+				new []
+				{
+					$"{data[7]} | Leaf 1-2-2-1-{++leafCount:D3}",
+					$"{data[7]} | Leaf 1-2-2-1-{++leafCount:D3}"
+				}
+				),
+		};
 
-		public bool HasNodes => NodeCount > 0;
-		public int NodeCount => Nodes?.Count ?? 0;
-
-		public bool HasLeaves => LeafCount > 0;
-		public int LeafCount => Leaves?.Count ?? 0;
-
-		public TNd NodeData
+		nodesAndLeaves[4] = new []
 		{
-			get => nodeData;
-			set
-			{
-				if (EqualityComparer<TNd>.Default.Equals(value, nodeData)) return;
-				nodeData = value;
-				OnPropertyChanged();
-			}
-		}
+			kvp[0],
+			kvp[4],
+			kvp[6],
+			new KeyValuePair<string, string[]>(
+				data[8], new []
+				{
+					$"{data[8]} | Leaf 1-2-2-2-{++leafCount:D3}",
+					$"{data[8]} | Leaf 1-2-2-2-{++leafCount:D3}"
+				}
+				),
+		};
 
-	#endregion
-
-	#region public methods
-
-		public void InitNodes()
+		nodesAndLeaves[5] = new []
 		{
-			if (Nodes == null) Nodes = new ObservableDictionary<string, TreeClassNode<TNd, TLd>>();
-		}
+			new KeyValuePair<string, string[]>(
+				data[9], new []
+				{
+					$"{data[9]} | Leaf 2-{++leafCount:D3}",
+				}
+				),
+			new KeyValuePair<string, string[]>(
+				data[10], new []
+				{
+					$"{data[10]} | Leaf 2-1-{++leafCount:D3}",
+					$"{data[10]} | Leaf 2-1-{++leafCount:D3}",
+					$"{data[10]} | Leaf 2-1-{++leafCount:D3}",
+					$"{data[10]} | Leaf 2-1-{++leafCount:D3}",
+				}
+				),
+			new KeyValuePair<string, string[]>(
+				data[11], new []
+				{
+					$"{data[11]} | Leaf 2-1-1-{++leafCount:D3}"
+				}
+				),
+		};
 
-		public void InitLeaves()
+
+		nodesAndLeaves[6] = new []
 		{
-			if (Leaves == null) Leaves = new ObservableDictionary<string, TreeClassLeaf<TLd>>();
-		}
+			kvp[9],
+			kvp[10],
+			kvp[11],
+			new KeyValuePair<string, string[]>(
+				data[12], new []
+				{
+					$"{data[12]} | Leaf 2-1-1-1-{++leafCount:D3}"
+				}
+				),
+		};
 
-		public int NodeCountBranch()
+		nodesAndLeaves[7] = new []
 		{
-			if ((Nodes?.Count ?? 0) == 0) return 0;
+			kvp[9],
+			kvp[10],
+			kvp[11],
+			new KeyValuePair<string, string[]>(
+				data[13], new []
+				{
+					$"{data[13]} | Leaf 2-1-1-2-{++leafCount:D3}",
+					$"{data[13]} | Leaf 2-1-1-2-{++leafCount:D3}"
+				}
+				),
+		};
 
-			int result = Nodes.Count;
-
-			foreach (KeyValuePair<string, TreeClassNode<TNd, TLd>> kvp in Nodes)
-			{
-				result += kvp.Value.NodeCountBranch();
-			}
-
-			return result;
-		}
-
-	#endregion
-
-
-	#region system overrides
-
-		public int Compare(TreeClassNode<TNd, TLd>? x, TreeClassNode<TNd, TLd>? y)
+		nodesAndLeaves[8] = new []
 		{
-			return 0;
-		}
+			kvp[9],
+			kvp[14],
+			new KeyValuePair<string, string[]>(
+				data[15], new []
+				{
+					$"{data[15]} | Leaf 2-2-1-{++leafCount:D3}",
+					$"{data[15]} | Leaf 2-2-1-{++leafCount:D3}"
+				}
+				),
+		};
 
-		public object Clone()
+		nodesAndLeaves[9] = new []
 		{
-			return null;
-		}
+			kvp[16],
+			new KeyValuePair<string, string[]>(
+				data[17], new []
+				{
+					$"{data[17]} | Leaf 3-1-{++leafCount:D3}"
+				}
+				),
+			new KeyValuePair<string, string[]>(
+				data[18], new []
+				{
+					$"{data[18]} | Leaf 3-1-1-{++leafCount:D3}",
+					$"{data[18]} | Leaf 3-1-1-{++leafCount:D3}",
+					$"{data[18]} | Leaf 3-1-1-{++leafCount:D3}",
+					$"{data[18]} | Leaf 3-1-1-{++leafCount:D3}",
+					$"{data[18]} | Leaf 3-1-1-{++leafCount:D3}"
+				}
+				),
+		};
 
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+		nodesAndLeaves[10] = new []
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
+			kvp[16],
+			kvp[17],
+			new KeyValuePair<string, string[]>(
+				data[19], new []
+				{
+					$"{data[19]} | Leaf 3-1-2-{++leafCount:D3}"
+				}
+				),
+		};
 
-		public override string ToString()
-		{
-			return $"{nameof(TreeClassNode<TNd, TLd>)} | name| {nodeName} | parent| {parentNode.NodeName}";
-		}
-
-	#endregion
-	}
-
-	public class TreeClassLeaf<TLd> : INotifyPropertyChanged, IComparer<TreeClassLeaf<TLd>>, ICloneable
-		where TLd : class
-	{
-		private string leafName;
-		private ITreeNodeBase parentNodeBase;
-		private TLd leafData;
-
-	#region private fields
-
-	#endregion
-
-	#region ctor
-
-		public TreeClassLeaf() { }
-
-		public TreeClassLeaf(string leafName, TLd leafData,
-			ITreeNodeBase parentNodeBase = null)
-		{
-			LeafName = leafName;
-			LeafData = leafData;
-			ParentNodeBase = parentNodeBase;
-		}
-
-	#endregion
-
-	#region public properties
-
-		public string LeafName
-		{
-			get => leafName;
-			private set
-			{
-				if (value == leafName) return;
-				leafName = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public ITreeNodeBase ParentNodeBase
-		{
-			get => parentNodeBase;
-			private set
-			{
-				if (Equals(value, parentNodeBase)) return;
-				parentNodeBase = value;
-				OnPropertyChanged();
-			}
-		}
-
-
-		public TLd LeafData
-		{
-			get => leafData;
-			set
-			{
-				if (EqualityComparer<TLd>.Default.Equals(value, leafData)) return;
-				leafData = value;
-				OnPropertyChanged();
-			}
-		}
-
-	#endregion
-
-	#region system overrides
-
-		public int Compare(TreeClassLeaf<TLd>? x, TreeClassLeaf<TLd>? y)
-		{
-			return 0;
-		}
-
-		public object Clone()
-		{
-			return null!;
-		}
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		public override string ToString()
-		{
-			return $"{nameof(TreeClassLeaf<TLd>)} | name| {LeafName} | parent| {parentNodeBase.NodeName}";
-		}
-
-	#endregion
+		return nodesAndLeaves;
 	}
 
 #endregion
 
-	public class DataSampleTree
+#region private methods
+
+	private void init()
 	{
-	#region private fields
+		tree = new Tree("Test Tree", new TreeNodeData("Test Node Data"));
 
-		private Tree tree;
+		M = Examples.M;
 
-		private TreeNode treeNode;
-
-		private int nodeIdx = -1;
-
-	#endregion
-
-	#region ctor
-
-		public DataSampleTree()
+		data = new List<string>()
 		{
-			tree = new Tree("This is a Tri-State Tree");
-		}
-
-	#endregion
-
-	#region public properties
-
-		public Tree Tree => tree;
-
-	#endregion
-
-	#region private properties
-
-	#endregion
-
-	#region public methods
-
-		public void TestAddNode()
-		{
-			TestAddNode(new [] { "Alpha", "Beta", "Delta" });
-		}
-
-		public void TestAddNode(string[] nodePath)
-		{
-			treeNode = makeTempTreeNode();
-
-			tree.AddNode(treeNode, nodePath);
-		}
-
-		public void TestAddNode(KeyValuePair<string, string[]>[] nodesAndLeaves) { }
-
-		public int TestEnumerator()
-		{
-			AddTestNodes();
-
-			// TreeEnum te = new TreeEnum(tree);
-			//
-			// while (te.MoveNext())
-			// {
-			// 	Debug.WriteLine($"Current| {te.Current.NodeName}");
-			// }
-
-			// int result = 0;
-			//
-			// foreach (TreeClassNode<TreeNodeData, TreeLeafData> tcn in tree)
-			// {
-			// 	result++;
-			//
-			// 	Debug.WriteLine($"Current| {tcn.NodeName}");
-			// }
-
-			return TestShowTreeNodes();
-		}
-
-		
-		public int TestShowTreeNodesAndLeaves()
-		{
-			int result = 0;
-
-			foreach (TreeClassNode<TreeNodeData, TreeLeafData> tcn in tree)
-			// foreach (TreeClassNode<TreeNodeData, TreeLeafData> tcn in tree)
-			{
-				result++;
-
-				Debug.WriteLine(ShowNodeParents(tcn));
-
-				ShowNodeLeaves(tcn);
-			}
-
-			return result;
-		}
-
-		private void ShowNodeLeaves(TreeClassNode<TreeNodeData, TreeLeafData> node)
-		{
-			if (node == null || !node.HasLeaves) return;
-
-			foreach (KeyValuePair<string, TreeClassLeaf<TreeLeafData>> kvp 
-					in node.Leaves)
-			{
-				Debug.WriteLine($"\t{kvp.Value.LeafName}");
-			}
-		}
-
-
-
-		public int TestShowTreeNodes()
-		{
-			int result = 0;
-
-			foreach (TreeNode tcn in tree)
-			{
-				result++;
-
-				Debug.WriteLine(ShowNodeParents(tcn));
-			}
-
-			return result;
-		}
-
-		private string ShowNodeParents(TreeClassNode<TreeNodeData, TreeLeafData> tcn)
-		{
-			List<string> parents = new List<string>();
-
-			TreeClassNode<TreeNodeData, TreeLeafData> node = tcn;
-			while (node.ParentNode  != null)
-			{
-				parents.Add(node.NodeName);
-
-				node = node.ParentNode;
-			}
-
-			if (parents.Count == 0) return String.Empty;
-
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = parents.Count - 1; i >= 0; i--)
-			{
-				sb.Append(parents[i]);
-				if (i != 0) sb.Append(" > ");
-			}
-
-			return sb.ToString();
-		}
-
-
-		public void AddTestNodes()
-		{
-			TestAddNode(new [] { "Alpha", "Beta", "Delta" });			// 1-1-1
-			TestAddNode(new [] { "Alpha", "Beta", "Gamma" });			// 1-1-2
-
-			TestAddNode(new [] { "Alpha", "Zeta", "Eta" });				// 1-2-1
-			TestAddNode(new [] { "Alpha", "Zeta", "Theta", "iota" });	// 1-2-2-1
-			TestAddNode(new [] { "Alpha", "Zeta", "Theta", "kappa" });
-
-			TestAddNode(new [] { "Sigma", "Lambda", "Nu" });
-			TestAddNode(new [] { "Sigma", "Lambda", "Nu", "Xi" });
-			TestAddNode(new [] { "Sigma", "Lambda", "Nu", "P1" });
-
-			TestAddNode(new [] { "Sigma", "Omega", "Mu" });
-
-			TestAddNode(new [] { "Tau", "Phi", "Rho" });
-			TestAddNode(new [] { "Tau", "Phi", "Chi" });
-		}
-
-		public void TestAddNodes2()
-		{
-			TreeNode node;
-			TreeLeaf leaf;
-
-			string[] nodePath;
-
-			KeyValuePair<string, string[]>[][] nodesAndLeaves = AddTestNodes2();
-
-			foreach (KeyValuePair<string, string[]>[] kvps in nodesAndLeaves)
-			{
-				if (kvps == null) break;
-
-				nodePath = new string[5];
-
-				for (int i = 0; i < kvps.Length; i++)
-				{
-					// key = node (add if needed)
-					// value = leaves (add if exists)
-
-					KeyValuePair<string, string[]> kvp = kvps[i];
-
-					bool result = tree.ContainsNode(kvp.Key);
-
-					if (!result)
-					{
-						node = new TreeNode(kvp.Key, null);
-
-						tree.AddNode(node, nodePath);
-					}
-
-					nodePath[i] = kvp.Key;
-
-					if (kvp.Value != null)
-					{
-						foreach (string leafName in kvp.Value)
-						{
-							leaf = new TreeLeaf(leafName, null);
-							Tree.AddLeaf(leaf);
-						}
-					}
-
-				}
-			}
-		}
-
-		public KeyValuePair<string, string[]>[][] AddTestNodes2()
-		{
-			int leafCount = -1;
-
-
-			KeyValuePair<string, string[]>[][] nodesAndLeaves;
-
-			nodesAndLeaves = new KeyValuePair<string, string[]>[10][];
-			
-			nodesAndLeaves[0] = new []
-			{
-				new KeyValuePair<string, string[]>(
-					"Alpha", null),
-				new KeyValuePair<string, string[]>(
-					"Beta",
-					new []
-					{
-						$"Leaf 1-1-{++leafCount:D3}",
-						$"Leaf 1-1-{++leafCount:D3}",
-						$"Leaf 1-1-{++leafCount:D3}"
-					}),
-				new KeyValuePair<string, string[]>(
-					"Delta",
-					new []
-					{
-						$"Leaf 1-1-1-{++leafCount:D3}"
-					}
-					)
-			};
-
-			
-			nodesAndLeaves[1] = new []
-			{
-				new KeyValuePair<string, string[]>(
-					"Alpha", null),
-				new KeyValuePair<string, string[]>(
-					"Beta", null),
-				new KeyValuePair<string, string[]>(
-					"Gamma",
-					new []
-					{
-						$"Leaf 1-1-2-{++leafCount:D3}",
-						$"Leaf 1-1-2-{++leafCount:D3}"
-					}
-					)
-			};
-			
-			nodesAndLeaves[2] = new []
-			{
-				new KeyValuePair<string, string[]>(
-					"Alpha", null),
-				new KeyValuePair<string, string[]>(
-					"Zeta", null),
-				new KeyValuePair<string, string[]>(
-					"Eta",
-					new []
-					{
-						$"Leaf 1-2-1-{++leafCount:D3}",
-						$"Leaf 1-2-1-{++leafCount:D3}",
-						$"Leaf 1-2-1-{++leafCount:D3}",
-						$"Leaf 1-2-1-{++leafCount:D3}"
-					}
-					)
-			};
-			
-			nodesAndLeaves[3] = new []
-			{
-				new KeyValuePair<string, string[]>(
-					"Alpha", null),
-				new KeyValuePair<string, string[]>(
-					"Zeta", null),
-				new KeyValuePair<string, string[]>(
-					"Theta",
-					new []
-					{
-						$"Leaf 1-2-2-{++leafCount:D3}"
-					}
-					),
-				new KeyValuePair<string, string[]>(
-					"Iota", null)
-			};
-
-			return nodesAndLeaves;
-		}
-
-	#endregion
-
-	#region private methods
-
-		private TreeNode makeTempTreeNode()
-		{
-			return new TreeNode($"Tree Node {++nodeIdx:D5}", new TreeNodeData($"Node Data {nodeIdx:D5}"));
-		}
-
-	#endregion
-
-	#region event consuming
-
-	#endregion
-
-	#region event publishing
-
-	#endregion
-
-	#region system overrides
-
-		public override string ToString()
-		{
-			return $"this is {nameof(DataSampleTree)}";
-		}
-
-	#endregion
+			"Alpha",  // 0
+			"Beta",   // 1
+			"Delta",  // 2
+			"Gamma",  // 3
+			"Zeta",   // 4
+			"Eta",    // 5
+			"Theta",  // 6
+			"Iota",   // 7
+			"Kappa",  // 8
+			"Sigma",  // 9
+			"Lambda", // 10
+			"Nu",     // 11
+			"Xi",     // 12
+			"Pi",     // 13
+			"Omega",  // 14
+			"Mu",     // 15
+			"Tau",    // 16
+			"Phi",    // 17
+			"Rho",    // 18
+			"Chi",    // 19
+		};
 	}
+
+	private TreeNode makeTempTreeNode()
+	{
+		return new TreeNode($"Tree Node {++nodeIdx:D5}", new TreeNodeData($"Node Data {nodeIdx:D5}"));
+	}
+
+	private void ShowNodeLeaves(TreeNode node)
+	{
+		if (node == null || !node.HasLeaves)
+		{
+			// Debug.WriteLine($"\t** no leaves **");
+			return;
+		}
+
+		foreach (KeyValuePair<string, TreeLeaf> kvp
+				in node.Leaves)
+		{
+			Examples.M.WriteLine($"\t{kvp.Value.LeafName}");
+			// Debug.WriteLine();
+		}
+	}
+
+	private string ShowNodeParents(TreeNode tcn)
+	{
+		List<string> parents = new List<string>();
+
+		TreeNode node = tcn;
+		while (node.ParentNode  != null)
+		{
+			parents.Add(node.NodeName);
+
+			node = node.ParentNode;
+		}
+
+		if (parents.Count == 0) return String.Empty;
+
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = parents.Count - 1; i >= 0; i--)
+		{
+			sb.Append(parents[i]);
+			if (i != 0) sb.Append(" > ");
+		}
+
+		return sb.ToString();
+	}
+
+	private void showNodePath(KeyValuePair<string, string[]>[] kvps)
+	{
+		Debug.Write("\n\nnode path original| ");
+
+		foreach (KeyValuePair<string, string[]> kvp in kvps)
+		{
+			Debug.Write($" > {kvp.Key}");
+		}
+
+		Debug.Write("\n");
+	}
+
+	private void showNodePath(string nodeName, List<string> nodePath)
+	{
+		Debug.Write("\nnode path @A1| ");
+		foreach (string s in nodePath)
+		{
+			Debug.Write($"> {s} ");
+		}
+
+		Debug.Write($" | ({nodeName})");
+
+		Debug.Write("\n");
+	}
+
+#endregion
+
+#region event consuming
+
+#endregion
+
+#region event publishing
+
+#endregion
+
+#region system overrides
+
+	public override string ToString()
+	{
+		return $"this is {nameof(DataSampleTree)}";
+	}
+
+#endregion
 }

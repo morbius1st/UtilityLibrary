@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using SharedWPF.ShWin;
+
 using UtilityLibrary;
 #endregion
 
@@ -146,7 +147,7 @@ namespace SharedCode.ShDebugAssist
 			writeMsg(msg + "\n", 1);
 		}
 
-		
+
 		[DebuggerStepThrough]
 		public void WriteLineCodeMap(string msg1 = "", [CallerMemberName] string membName = "")
 		{
@@ -212,6 +213,10 @@ namespace SharedCode.ShDebugAssist
 			writeMsg(msgA, msgB + "\n", msgC, msgBox, colWidth);
 			Debug.WriteLine(fmtMsg(msgA, msgD ?? msgB));
 		}
+
+
+
+
 
 	#endregion
 
@@ -313,7 +318,6 @@ namespace SharedCode.ShDebugAssist
 
 
 	#endregion
-
 
 	#region system overrides
 

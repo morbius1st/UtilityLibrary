@@ -13,31 +13,27 @@
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSampleGenericTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSamples.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSampleTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SampleData\TreeClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DictionaryDataSample.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShDebugAssist\ShDebugMessages.cs" />
-		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsObservableDictionary.cs">
-			<Link>.Linked\CsObservableDictionary.cs</Link>
-		</Compile>
-
-		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsExtensions.cs">
-			<Link>.Linked\CsExtensions.cs</Link>
-		</Compile>
-
-		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsXmlUtilities.cs">
-			<Link>.Linked\CsXmlUtilities.cs</Link>
-		</Compile>
-
-		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsUtilities.cs">
-			<Link>.Linked\CsUtilities.cs</Link>
-		</Compile>
-
-		<Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\FilePath\V3.0\CsFilePath.cs">
-			<Link>.Linked\CsFilePath.cs</Link>
-		</Compile>
-
+    <Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsObservableDictionary.cs">
+      <Link>.Linked\CsObservableDictionary.cs</Link>
+    </Compile>
+    <Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsExtensions.cs">
+      <Link>.Linked\CsExtensions.cs</Link>
+    </Compile>
+    <Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsXmlUtilities.cs">
+      <Link>.Linked\CsXmlUtilities.cs</Link>
+    </Compile>
+    <Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsUtilities.cs">
+      <Link>.Linked\CsUtilities.cs</Link>
+    </Compile>
+    <Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\FilePath\V3.0\CsFilePath.cs">
+      <Link>.Linked\CsFilePath.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)ShDebugAssist\" />
-		<Folder Include="$(MSBuildThisFileDirectory).Linked\" />
+    <Folder Include="$(MSBuildThisFileDirectory).Linked\" />
   </ItemGroup>
 </Project>
