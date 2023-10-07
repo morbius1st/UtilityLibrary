@@ -1,0 +1,484 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:cs="clr-namespace:SharedWPF.ShSupport"
+		>
+
+	<!-- <ResourceDictionary.MergedDictionaries> -->
+	<!-- <ResourceDictionary Source="/Windows/ResourceFiles/XamlResources/MasterColorList.xaml" /> -->
+	<!-- <ResourceDictionary Source="/Windows/Skin/CyberStudioSkin.xaml" /> -->
+	<!-- </ResourceDictionary.MergedDictionaries> -->
+
+
+	<!-- <cs:AddThicknessConverter x:Key="AddThicknessConverter" /> -->
+	<!-- <cs:AddParameterConverter x:Key="AddParameterConverter" /> -->
+
+	<Style x:Key="OptionMarkFocusVisual">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Rectangle Margin="14,0,0,0"
+							SnapsToDevicePixels="true"
+							Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+							StrokeDashArray="1 2"
+							StrokeThickness="1"
+							/>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="CkbxFocusVisual">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Rectangle Margin="2"
+							SnapsToDevicePixels="true"
+							Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+							StrokeDashArray="1 2"
+							StrokeThickness="1"
+							/>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="Lv1.CheckboxStyle"
+			TargetType="{x:Type CheckBox}"
+			>
+		<!-- <Setter Property="IsEnabled" Value="True" /> -->
+		<!-- <Setter Property="Padding" Value="2,0,0,0" /> -->
+		<!-- <Setter Property="Margin" Value="8,-2,8,2" /> -->
+		<Setter Property="FocusVisualStyle"
+				Value="{StaticResource CkbxFocusVisual}"
+				/>
+		<Setter Property="Background"
+				Value="{StaticResource Ckbx.Bg.Static}"
+				/>
+		<Setter Property="BorderBrush"
+				Value="{StaticResource Ckbx.Bdr.Static}"
+				/>
+		<Setter Property="Foreground"
+				Value="{StaticResource Fg.IsSel}"
+				/>
+		<Setter Property="BorderThickness"
+				Value="1"
+				/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type CheckBox}">
+					<Border x:Name="checkBoxControlBorder"
+							Margin="0"
+							Padding="0"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							CornerRadius="6"
+							>
+						<!--  Margin="{TemplateBinding Margin}"  -->
+						<!--  BorderBrush="Transparent"  -->
+
+						<Grid x:Name="templateRoot"
+								Margin="0"
+								HorizontalAlignment="Left"
+								Background="Transparent"
+								SnapsToDevicePixels="True"
+								>
+
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<Border x:Name="checkBoxBorder"
+									Grid.Column="0"
+									Margin="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.CheckBoxBoxMargin)}"
+									Width="{Binding RelativeSource={RelativeSource Self},
+																	Path=ActualHeight}"
+									VerticalAlignment="Stretch"
+									Background="{TemplateBinding Background}"
+									BorderThickness="1"
+									BorderBrush="{TemplateBinding BorderBrush}"
+									>
+								<!--  BorderBrush="{TemplateBinding BorderBrush}"  -->
+								<!--  Margin="{Binding RelativeSource={RelativeSource Self},Path=(cs:CsCheckBoxAp.CheckBoxBoxMargin)}"  -->
+
+							</Border>
+
+							<Grid x:Name="markGrid"
+									Grid.Column="0"
+									Margin="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.CheckBoxBoxMargin)}"
+									VerticalAlignment="Center"
+									>
+								<!--  Height="{Binding ElementName=checkBoxBorder, Path=ActualHeight}"  -->
+								<!--  Width="{Binding ElementName=checkBoxBorder, Path=ActualWidth}"  -->
+								<!--  Fill="{StaticResource Ckbx.Glyph.Static}"  -->
+								<Path x:Name="optionMark"
+										Grid.Column="0"
+										Margin="{Binding RelativeSource={RelativeSource Self},
+																		 Path=(cs:CsCheckBoxAp.CheckBoxCheckMargin)}"
+										VerticalAlignment="Center"
+										Data="F0 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z "
+										Fill="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.OptionMarkFillBrush)}"
+										Opacity="0"
+										Stretch="Uniform"
+										Stroke="White"
+										StrokeThickness="0.3"
+										/>
+								<!--  Margin="{Binding RelativeSource={RelativeSource Self}, Path=(cs:CsCheckBoxAp.CheckBoxCheckMargin)}"  -->
+								<Rectangle x:Name="indeterminateMark"
+										Grid.Column="0"
+										Margin="2"
+										VerticalAlignment="Stretch"
+										Fill="{StaticResource Ckbx.Indeterminant.Fill}"
+										SnapsToDevicePixels="True"
+										Opacity="0"
+										/>
+
+								<!--  Height="{Binding ElementName=checkBoxBorder, Path=ActualHeight,  -->
+								<!--  Converter={StaticResource AddParameterConverter}, ConverterParameter='-1.5'}"  -->
+								<!--  Width="{Binding ElementName=checkBoxBorder, Path=ActualWidth,  -->
+								<!--  Converter={StaticResource AddParameterConverter}, ConverterParameter='-1.5'}"  -->
+
+
+								<!--  Margin="{Binding RelativeSource={RelativeSource Self}, Path=(cs:CsCheckBoxAp.CheckBoxCheckMargin),  -->
+								<!--  Converter={StaticResource AddThicknessConverter}, ConverterParameter='-0.5'}"  -->
+
+							</Grid>
+
+
+
+							<ContentPresenter x:Name="contentPresenter"
+									Grid.Column="1"
+									Margin="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.CheckBoxContentMargin)}"
+									HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+									Focusable="False"
+									RecognizesAccessKey="True"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+									/>
+
+						</Grid>
+
+					</Border>
+
+					<ControlTemplate.Triggers>
+
+						<Trigger Property="HasContent" Value="true">
+							<Setter Property="FocusVisualStyle"
+									Value="{StaticResource OptionMarkFocusVisual}"
+									/>
+						</Trigger>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="checkBoxControlBorder"
+									Property="BorderBrush"
+									Value="{StaticResource Ckbx.Bdr.MouseOver}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.MouseOver}"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.MouseOver}"
+									/>
+							<Setter Property="Background"
+									Value="{StaticResource Ckbx.Bg.MouseOver}"
+									/>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="false">
+							<Setter Property="Foreground"
+									Value="{StaticResource Fg.IsEnabled}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.Disabled}"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.Disabled}"
+									/>
+							<Setter Property="Background"
+									Value="{StaticResource Ckbx.Bg.Disabled}"
+									/>
+							<Setter Property="BorderBrush"
+									Value="{StaticResource Ckbx.Bdr.Disabled}"
+									/>
+						</Trigger>
+						<Trigger Property="IsPressed" Value="true">
+							<Setter TargetName="checkBoxBorder"
+									Property="Background"
+									Value="{StaticResource Ckbx.Bg.Pressed}"
+									/>
+							<Setter TargetName="checkBoxBorder"
+									Property="BorderBrush"
+									Value="{StaticResource Ckbx.Bdr.Pressed}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.Pressed}"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.Pressed}"
+									/>
+						</Trigger>
+						<!-- <Trigger Property="IsChecked" Value="false"> -->
+						<Trigger Property="IsChecked" Value="true">
+							<Setter TargetName="optionMark"
+									Property="Opacity"
+									Value="1"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Opacity"
+									Value="0"
+									/>
+						</Trigger>
+						<!-- <Trigger Property="IsChecked" Value="true"> -->
+						<Trigger Property="IsChecked" Value="{x:Null}">
+							<Setter TargetName="optionMark"
+									Property="Opacity"
+									Value="0"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Opacity"
+									Value="1"
+									/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+
+
+
+	<Style x:Key="Lv1.CheckboxStyle2"
+			TargetType="{x:Type CheckBox}"
+			>
+		<!-- <Setter Property="IsEnabled" Value="True" /> -->
+		<!-- <Setter Property="Padding" Value="2,0,0,0" /> -->
+		<!-- <Setter Property="Margin" Value="8,-2,8,2" /> -->
+		<Setter Property="FocusVisualStyle"
+				Value="{StaticResource CkbxFocusVisual}"
+				/>
+		<Setter Property="Background"
+				Value="{StaticResource Ckbx.Bg.Static}"
+				/>
+		<Setter Property="BorderBrush"
+				Value="{StaticResource Ckbx.Bdr.Static}"
+				/>
+		<Setter Property="Foreground"
+				Value="{StaticResource Fg.IsSel}"
+				/>
+		<Setter Property="BorderThickness"
+				Value="1"
+				/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type CheckBox}">
+					<Border x:Name="checkBoxControlBorder"
+							Margin="0"
+							Padding="0"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							CornerRadius="{StaticResource Ckbx.CornerRadius}"
+							>
+
+						<Grid x:Name="templateRoot"
+								Margin="0"
+								HorizontalAlignment="Left"
+								Background="Transparent"
+								SnapsToDevicePixels="True"
+								>
+
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+
+							<Grid x:Name="checkBoxGrid"
+									Grid.Column="0"
+									Margin="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.CheckBoxBoxMargin)}"
+									Width="{Binding RelativeSource={RelativeSource Self},
+																	Path=(cs:CsCheckBoxAp.CheckBoxBoxSize)}"
+									Height="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.CheckBoxBoxSize)}"
+									VerticalAlignment="Stretch"
+									>
+
+								<Border x:Name="checkBoxBorder"
+										Grid.Column="0"
+										Width="{Binding RelativeSource={RelativeSource Self},
+																		Path=ActualHeight}"
+										VerticalAlignment="Stretch"
+										Background="{TemplateBinding Background}"
+										BorderThickness="1.5"
+										BorderBrush="{TemplateBinding BorderBrush}"
+										>
+								</Border>
+
+								<Path x:Name="optionMark"
+										Grid.Column="0"
+										Margin="{Binding RelativeSource={RelativeSource Self},
+																		 Path=(cs:CsCheckBoxAp.CheckBoxCheckMargin)}"
+										VerticalAlignment="Stretch"
+										Data="F0 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z "
+										Fill="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.OptionMarkFillBrush)}"
+										Opacity="0"
+										Stretch="Uniform"
+										Stroke="{StaticResource Ckbx.GlyphStroke.Static}"
+										StrokeThickness="1.0"
+										/>
+
+								<Rectangle x:Name="indeterminateMark"
+										Grid.Column="0"
+										Margin="3"
+										VerticalAlignment="Stretch"
+										Fill="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.IndeterminantMarkFillBrush)}"
+										SnapsToDevicePixels="True"
+										Opacity="0"
+										/>
+							</Grid>
+
+							<ContentPresenter x:Name="contentPresenter"
+									Grid.Column="1"
+									Margin="{Binding RelativeSource={RelativeSource Self},
+																	 Path=(cs:CsCheckBoxAp.CheckBoxContentMargin)}"
+									HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+									Focusable="False"
+									RecognizesAccessKey="True"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+									/>
+
+						</Grid>
+
+					</Border>
+
+					<ControlTemplate.Triggers>
+
+						<Trigger Property="HasContent" Value="true">
+							<Setter Property="FocusVisualStyle"
+									Value="{StaticResource OptionMarkFocusVisual}"
+									/>
+						</Trigger>
+
+						<!-- <Trigger Property="IsMouseOver" Value="False"> -->
+						<Trigger Property="IsMouseOver" Value="True">  
+							<!--  default  -->
+							<Setter TargetName="checkBoxControlBorder"
+									Property="BorderBrush"
+									Value="{StaticResource Ckbx.Bdr.MouseOver}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.MouseOver}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Stroke"
+									Value="{StaticResource Ckbx.GlyphStroke.MouseOver}"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.MouseOver}"
+									/>
+							<Setter Property="Background"
+									Value="{StaticResource Ckbx.Bg.MouseOver}"
+									/>
+
+						</Trigger>
+
+						<!--  isenabled == false is the default  -->
+						<Trigger Property="IsEnabled" Value="False">  
+							<!--  default  -->
+							<Setter Property="Foreground"
+									Value="{StaticResource Fg.Disabled.DkBg}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.Disabled}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Stroke"
+									Value="{StaticResource Ckbx.GlyphStroke.Disabled}"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.Disabled}"
+									/>
+							<Setter Property="Background"
+									Value="{StaticResource Ckbx.Bg.Disabled}"
+									/>
+							<Setter Property="BorderBrush"
+									Value="{StaticResource Ckbx.Bdr.Disabled}"
+									/>
+						</Trigger>
+
+						<!-- <Trigger Property="IsPressed" Value="false"> -->
+						<Trigger Property="IsPressed" Value="true">   
+							<!--  default  -->
+							<Setter TargetName="checkBoxBorder"
+									Property="Background"
+									Value="{StaticResource Ckbx.Bg.Pressed}"
+									/>
+							<Setter TargetName="checkBoxBorder"
+									Property="BorderBrush"
+									Value="{StaticResource Ckbx.Bdr.Pressed}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.Pressed}"
+									/>
+							<Setter TargetName="optionMark"
+									Property="Stroke"
+									Value="{StaticResource Ckbx.GlyphStroke.Pressed}"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Fill"
+									Value="{StaticResource Ckbx.Glyph.Pressed}"
+									/>
+						</Trigger>
+
+						<!-- <Trigger Property="IsChecked" Value="false"> -->
+						<Trigger Property="IsChecked" Value="true"> 
+							<!--  default  -->
+							<Setter TargetName="optionMark"
+									Property="Opacity"
+									Value="1"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Opacity"
+									Value="0"
+									/>
+						</Trigger>
+
+						<!-- <Trigger Property="IsChecked" Value="null"> -->
+						<Trigger Property="IsChecked" Value="{x:Null}"> 
+							<!--  default  -->
+							<Setter TargetName="optionMark"
+									Property="Opacity"
+									Value="0"
+									/>
+							<Setter TargetName="indeterminateMark"
+									Property="Opacity"
+									Value="1"
+									/>
+						</Trigger>
+
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+
+</ResourceDictionary>
+

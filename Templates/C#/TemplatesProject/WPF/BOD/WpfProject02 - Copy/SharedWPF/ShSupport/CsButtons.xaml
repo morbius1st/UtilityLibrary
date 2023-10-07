@@ -1,0 +1,273 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:cs="clr-namespace:SharedWPF.ShSupport"
+		>
+
+	<!-- <ResourceDictionary.MergedDictionaries> -->
+	<!-- <ResourceDictionary Source="/Windows/ResourceFiles/XamlResources/MasterColorList.xaml" /> -->
+	<!-- <ResourceDictionary Source="/Windows/Skin/CyberStudioSkin.xaml"/> -->
+	<!-- </ResourceDictionary.MergedDictionaries> -->
+
+
+	<ControlTemplate x:Key="Btn.Ct.Std"
+			TargetType="Button"
+			>
+		<Border x:Name="border"
+				Padding="{TemplateBinding Padding}"
+				Background="{TemplateBinding Background}"
+				BorderThickness="{TemplateBinding BorderThickness}"
+				BorderBrush="{TemplateBinding BorderBrush}"
+				SnapsToDevicePixels="True"
+				CornerRadius="{StaticResource CornerRadius.Sm}"
+				>
+			<Border x:Name="bdr1"
+					Margin="0"
+					BorderThickness="0,0,0,0"
+					BorderBrush="Transparent"
+					>
+
+				<ContentPresenter x:Name="contentPresenter"
+						Content="{TemplateBinding Content}"
+						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+						ContentStringFormat="{TemplateBinding ContentStringFormat}"
+						Focusable="False"
+						RecognizesAccessKey="True"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						ContentTemplate="{TemplateBinding ContentTemplate}"
+						/>
+
+			</Border>
+		</Border>
+		<ControlTemplate.Triggers>
+
+			<!--  is default: true  -->
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsDefault" Value="true" />
+					<Condition Property="IsEnabled" Value="true" />
+				</MultiTrigger.Conditions>
+				<Setter TargetName="bdr1"
+						Property="BorderBrush"
+						Value="{StaticResource Btn.Bdr.Inner.Disabled}"
+						/>
+				<Setter TargetName="border"
+						Property="Background"
+						Value="{StaticResource Btn.Bg.Disabled}"
+						/>
+				<Setter TargetName="bdr1"
+						Property="BorderThickness"
+						Value="0,0,0,3"
+						/>
+			</MultiTrigger>
+
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter Property="Foreground"
+						Value="{DynamicResource Btn.Fg.Disabled}"
+						/>
+				<Setter TargetName="bdr1"
+						Property="BorderBrush"
+						Value="{DynamicResource Btn.Bdr.Inner.Disabled}"
+						/>
+				<Setter TargetName="border"
+						Property="Background"
+						Value="{DynamicResource Btn.Bg.Disabled}"
+						/>
+				<Setter TargetName="border"
+						Property="BorderBrush"
+						Value="{DynamicResource Btn.Bdr.Disabled}"
+						/>
+			</Trigger>
+
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsDefault" Value="true" />
+					<Condition Property="IsEnabled" Value="false" />
+				</MultiTrigger.Conditions>
+				<Setter TargetName="bdr1"
+						Property="BorderBrush"
+						Value="{StaticResource Btn.Bdr.Inner.IsEnabled}"
+						/>
+				<Setter TargetName="border"
+						Property="Background"
+						Value="{StaticResource Btn.Bg.Disabled}"
+						/>
+				<Setter TargetName="bdr1"
+						Property="BorderThickness"
+						Value="0,0,0,3"
+						/>
+			</MultiTrigger>
+
+
+
+
+			<!-- <Trigger Property="IsDefault" Value="true"> -->
+			<!-- 	<Setter Property="BorderBrush" TargetName="bdr1" Value="{StaticResource Btn.Bdr.Inner.Disabled}" /> -->
+			<!-- 	<Setter Property="Background" TargetName="border" Value="{StaticResource Btn.Bg.Disabled}" /> -->
+			<!-- 	<Setter Property="BorderThickness" TargetName="bdr1" Value="0,0,0,3" /> -->
+			<!-- </Trigger> -->
+
+			<!--  is default: false  -->
+			<Trigger Property="IsDefault" Value="false">
+				<Setter TargetName="bdr1"
+						Property="BorderBrush"
+						Value="Transparent"
+						/>
+				<!-- <Setter Property="BorderThickness" TargetName="bdr1" Value="0" /> -->
+			</Trigger>
+
+			<Trigger Property="IsMouseOver" Value="true">
+				<Setter Property="Foreground"
+						Value="{StaticResource Btn.Fg.MouseOver}"
+						/>
+				<Setter TargetName="border"
+						Property="Background"
+						Value="{StaticResource Btn.Bg.MouseOver}"
+						/>
+				<Setter TargetName="border"
+						Property="BorderBrush"
+						Value="{StaticResource Btn.Bdr.MouseOver}"
+						/>
+			</Trigger>
+
+			<Trigger Property="IsPressed" Value="True">
+				<Setter Property="Foreground"
+						Value="{StaticResource Btn.Fg.Pressed}"
+						/>
+				<Setter TargetName="bdr1"
+						Property="BorderBrush"
+						Value="{StaticResource Btn.Bdr.Inner.Pressed}"
+						/>
+				<Setter TargetName="border"
+						Property="Background"
+						Value="{StaticResource Btn.Bg.Pressed}"
+						/>
+				<Setter TargetName="border"
+						Property="BorderBrush"
+						Value="{StaticResource Btn.Bdr.Pressed}"
+						/>
+			</Trigger>
+
+
+
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
+
+	<ControlTemplate x:Key="Btn.Ct.Stealth"
+			TargetType="Button"
+			>
+		<Border x:Name="border"
+				Padding="{TemplateBinding Padding}"
+				VerticalAlignment="Center"
+				Background="{TemplateBinding Background}"
+				BorderThickness="{TemplateBinding BorderThickness}"
+				BorderBrush="{TemplateBinding BorderBrush}"
+				SnapsToDevicePixels="True"
+				CornerRadius="{TemplateBinding cs:CsButtons.ButtonCornerRadius}"
+				>
+			<!--  CornerRadius="4"  -->
+			<Border x:Name="bdr1"
+					Margin="{TemplateBinding Padding}"
+					VerticalAlignment="Center"
+					BorderThickness="0,0,0,0"
+					BorderBrush="Transparent"
+					>
+				<!--  >  -->
+
+				<ContentPresenter x:Name="contentPresenter"
+						Content="{TemplateBinding Content}"
+						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+						ContentStringFormat="{TemplateBinding ContentStringFormat}"
+						Focusable="False"
+						RecognizesAccessKey="True"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						ContentTemplate="{TemplateBinding ContentTemplate}"
+						/>
+			</Border>
+		</Border>
+
+	</ControlTemplate>
+
+
+
+	<Style x:Key="Btn.Base"
+			TargetType="Button"
+			>
+		<Setter Property="FontSize"
+				Value="{StaticResource FontSize.Normal}"
+				/>
+		<Setter Property="Foreground"
+				Value="white"
+				/>
+	</Style>
+
+
+	<Style x:Key="Btn.Std"
+			TargetType="Button"
+			BasedOn="{StaticResource Btn.Base}"
+			>
+		<Setter Property="Margin"
+				Value="0"
+				/>
+		<Setter Property="HorizontalAlignment"
+				Value="Center"
+				/>
+		<Setter Property="VerticalAlignment"
+				Value="Center"
+				/>
+		<Setter Property="Padding"
+				Value="3,0,3,2"
+				/>
+		<!--  border, background  -->
+		<Setter Property="Background"
+				Value="{DynamicResource Btn.Bg.IsSel}"
+				/>
+		<!--  border, borderbrush  -->
+		<Setter Property="BorderBrush"
+				Value="{DynamicResource Btn.Bdr.IsSel}"
+				/>
+		<!--  foreground  -->
+		<Setter Property="Foreground"
+				Value="{DynamicResource Btn.Fg.IsSel}"
+				/>
+		<!-- <Setter Property="Height" Value="{StaticResource Btn.Height.Std}" /> -->
+		<!-- <Setter Property="Width" Value="{StaticResource Btn.Width.Std}" /> -->
+		<Setter Property="Template"
+				Value="{StaticResource Btn.Ct.Std}"
+				/>
+		<Setter Property="HorizontalContentAlignment"
+				Value="Center"
+				/>
+		<Setter Property="VerticalContentAlignment"
+				Value="Center"
+				/>
+	</Style>
+
+	<Style x:Key="Btn.Stealth"
+			TargetType="Button"
+			BasedOn="{StaticResource Btn.Base}"
+			>
+		<Setter Property="Background"
+				Value="Transparent"
+				/>
+		<Setter Property="BorderThickness"
+				Value="0"
+				/>
+		<Setter Property="Padding"
+				Value="0,-1,0,-4"
+				/>
+		<Setter Property="Visibility"
+				Value="Visible"
+				/>
+
+		<Setter Property="FontFamily"
+				Value="Segoe UI Symbol"
+				/>
+		<Setter Property="Template"
+				Value="{DynamicResource Btn.Ct.Stealth}"
+				/>
+	</Style>
+
+</ResourceDictionary>

@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SharedCode.SampleData.Item" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAABAAAAAAEIAAAAAAAgAAAACAAAAAgAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSample.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeItem" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAEEoAAAAIAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSample.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.ItemAndListOfItems" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABQAAAAUAAAAEIAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSample.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.ClassOfItemAndfListOfItems" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAAIAAAgCAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSample.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeOfListOfTreeItems" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAACAEIAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSample.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.SampleData" Collapsed="true">
+    <Position X="17" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAANBAAAAAgiAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSample.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.SampleDataForTreeItems" Collapsed="true">
+    <Position X="18.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAQgAAAAAAAAAAAAgAQAAAACAgMAAwAIkAAAAIAE=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSample.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.SampleDataShow" Collapsed="true">
+    <Position X="11.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAgAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSample.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeClassG" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeNodeG" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeLeafCollectionG" Collapsed="true">
+    <Position X="8.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeClassG&lt;TNd, TLc, TN, TL&gt;" Collapsed="true">
+    <Position X="18.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAEoAAAAAAAgAAAAAAEAAAAAAAAIAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeNodeDataG" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAAAAAAgAAAACAAAAAgAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeNodeG&lt;TNd, TLc, TL&gt;" Collapsed="true">
+    <Position X="15.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQIQAAAgEBAEKAAAAAAQgAEEAAIFAAgACAQQIAE=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeLeafG" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAQAAAAEAAEKAAAAAAAgAAAACAAAAAgAAAAAAI=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeLeafDictG&lt;TL&gt;">
+    <Position X="5" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAABAEIAAAAAQAgAAAAAIFAAgAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeClassSampleData" Collapsed="true">
+    <Position X="11.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAEABIAAAAAAAAADAAAAQAUACAAIAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeNodeData" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAAAAAAgAAAACAAAAAgAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\TreeClass.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeLeafData" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAAAAAAgAAAACAAAAAgAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\TreeClass.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SharedCode.SampleData.Tree" Collapsed="true">
+    <Position X="26.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\TreeClass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeNode">
+    <Position X="27" Y="8" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAAAAAAAAAAAAAAAEAAAAAAAQAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\TreeClass.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeLeaf">
+    <Position X="22.25" Y="6.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\TreeClass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SharedCode.SampleData.TreeClass&lt;TNd, TLd&gt;" Collapsed="true">
+    <Position X="22.5" Y="2.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQhZYwFAIiMDQELAFICCSMwQkiCRBXyAUQAOhIAAM=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\TreeClass.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="SharedCode.SampleData.ITreeNode&lt;TNd, TLc, TL&gt;">
+    <Position X="28.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAEAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SharedCode.SampleData.ITreeNodeRoot">
+    <Position X="26.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAACAAAAAAAAAAEAAAAAAgACAQAAAE=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SharedCode.SampleData.ITreeLeaf">
+    <Position X="22.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAEAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SharedCode.SampleData.ITreeLeafCollection&lt;TL&gt;">
+    <Position X="24" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\Templates\C#\TemplatesProject\WPF\BOD\WpfProject02\SharedCode\SampleData\DataSampleGenericTree.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="10" />
+</ClassDiagram>

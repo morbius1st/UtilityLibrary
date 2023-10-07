@@ -383,7 +383,7 @@ namespace SharedCode.SampleData
 
 		public string TreeName { get; set; }
 
-		public TNd NodeData { get; set; }
+		// public TNd NodeData { get; set; }
 
 		public TreeNode RootNode => rootNode;
 
@@ -1586,9 +1586,9 @@ namespace SharedCode.SampleData
 			return maxLoops == -1 ? tempKey : null;
 		}
 
-		private void makeRootNode()
+		private void makeRootNode(TNd nodeData)
 		{
-			rootNode = new TreeNode("ROOT", null, this as Tree, null);
+			rootNode = new TreeNode("ROOT", null, this as Tree, (TreeNodeData) nodeData);
 			rootNode.InitNodes();
 
 			currentNode = rootNode;

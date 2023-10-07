@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\..\..\..\..\UtilityLibrary\CsUtilitiesMedia.cs" Link=".Linked\CsUtilitiesMedia.cs" />
+    <Compile Include="..\..\..\..\..\..\..\UtilityLibrary\SettingManager\v7.4\SettingsMgr.cs" Link=".Linked\SettingsMgr.cs" />
+    <Compile Include=".Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include=".Linked\" />
+  </ItemGroup>
+
+  <Import Project="..\SharedCode\SharedCode.projitems" Label="Shared" />
+
+  <Import Project="..\SharedWPF\SharedWPF.projitems" Label="Shared" />
+
+</Project>

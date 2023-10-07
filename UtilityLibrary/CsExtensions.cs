@@ -7,6 +7,11 @@ namespace UtilityLibrary
 
 	public static class CsExtensions
 	{
+		public static int AsInt<T>(this T e) where T : Enum, IConvertible //enum
+		{
+			return (int) (IConvertible) e;
+		}
+
 		public static bool IsUpperAlpha(this char c)
 		{
 			return (c >= 'A' && c <= 'Z');
@@ -26,7 +31,6 @@ namespace UtilityLibrary
 		{
 			return (c >= '0' && c <= '9');
 		}
-
 
 		public static string IfNullOrWhiteSpace(this string s, string alternate)
 		{

@@ -1,0 +1,461 @@
+﻿// selection process
+
+// tristate
+
+* tri-state
+
+*** use utility example project to do thos ***
+
+
+> checked, selected & all sub-nodes selected
+> indetermanent, some sub-nodes selected
+> not-checked, not selected & all sub-nodes not selected
+
+examples
+ 1         | 2         | 3         | 4         | 4.5       | 5         | 6         | 7         | 7         |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+ [ ]       | [o]       | [o]       | [o]       | [x]       | [o]       | [ ]       | [x]       | [o]       |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+   [ ]     |   [ ]     |   [ ]     |   [x]     |   [x]     |   [x]     |   [ ]     |   [x]     |   [x]     |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+   [ ]     |   [o]     |   [x]     |   [x]     |   [x]     |   [ ]     |   [ ]     |   [x]     |   [ ]     |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+       [ ] |       [x] |       [x] |       [x] |       [x] |       [ ] |       [ ] |       [x] |       [ ] |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+       [ ] |       [ ] |       [x] |       [x] |       [x] |       [ ] |       [ ] |       [x] |       [ ] |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+   [ ]     |   [ ]     |   [ ]     |   [ ]     |   [x]     |   [ ]     |   [ ]     |   [x]     |   [x]     |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+
+ 0         | 1           | 1.2         | 1.2.1       | 1.2.1.1     | 1.2.1.1.1   | 1.2.1.1.1.1 | 1.2.1x5     | 1.2.1x6     | 1.2.1x7     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+ [ ]       | [o/ ]       |* [x/x]      |*[ / ]       |* [o/o]      | [o/o]       | [o/o]       | [o/o]       | [x/o]       | [o/o]       |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+   [ ]     |*  [x/x]     |   [x/x]     |   [ /x]     |    [x/x]    |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+   [ ]     |   [o/ ]     |   [x/o]     |   [ /o]     |    [o/o]    |*  [x/o]     |*  [ /o]     |*  [o/o]     |*  [x/o]     |*  [ /o]     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+      [ ]  |*     [x/x]  |      [x/x]  |      [ /x]  |      [x/x]  |      [x/x]  |      [ /x]  |      [x/x]  |      [x/x]  |      [ /x]  |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+      [ ]  |      [ / ]  |      [x/ ]  |      [ / ]  |      [ / ]  |      [x/ ]  |      [ / ]  |      [ / ]  |      [x/ ]  |      [ / ]  |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+   [ ]     |   [ / ]     |   [x/ ]     |   [ / ]     |   [ / ]     |   [ / ]     |   [ / ]     |*  [x/ ]     |   [x/ ]     |   [x/ ]     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+   [ ]     |*  [x/x]     |   [x/x]     |   [ /x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+
+
+processes
+
+not selected -> indeterminant -> selected -> not selected
+
+
+1. select a node for the first time
+	> isselected = true
+	> priorselected = true;
+	> all sub-nodes:
+		> isselected = true
+		> priorselected = true
+	> all parent nodes
+		> isselected = ind
+		> priorselected = ind
+
+
+1.1 child node deselected
+	> isselected = false
+	> prior selected = false
+	> all sub-nodes:
+		> isselected = false
+		> priorselected = false
+	> all parent nodes
+		> is-selected = ind or true - depends on child nodes
+		> priorselected = is-selected
+
+1.1.1 child to 1.1 selected
+	> isselected = true
+	> priorselected = true;
+	> all sub-nodes:
+		> is-selected = true
+		> priorselected = true
+	> all parent nodes
+		> is-selected = ind or true - depends on child nodes
+		> priorselected = is-selected
+
+1.2 parent to node 1 selected (was ind) (to checked)
+	> is-selected = true
+	> priorselected = is-selected;
+	> all sub-nodes:
+		> is-selected = true
+		> priorselected = no change
+	> all parent nodes
+		> is-selected = ind or true - depends on child nodes
+		> priorselected = is-selected
+
+1.2.1 node 1.2 deselected (was checked) (to not checked)
+	> is-selected = false
+	> prior selected = is-selected
+	> all sub-nodes:
+		> is-selected = false
+		> priorselected = no change
+	> all parent nodes
+		> is-selected = ind or false - determined by child nodes
+		> priorselected = is-selected
+
+1.2.1.1 node 1.2.1 selected (not checked) (to ind or checked)
+	> is-selected = ind or true depends on child nodes
+	> prior selected = is-selected
+	> all sub-nodes:
+		> is-selected = priorselected
+		> priorselected = no change
+	> all parent nodes
+		> is-selected = ind
+		> priorselected = is-selected
+
+
+
+
+
+case 1:
+	* via updateselected
+	> repeat
+		> select node = true;
+		> priorIsSelected = true;
+		> add node to current list
+		# select event (on only the one node selected)
+
+
+
+proc 1: (all parent nodes) (select)
+	* current node set
+		> for ea owned node: loop: if node is not selected: break: current node set = ind else selected
+	* current node: priorselect = is-select
+	> parent node (all parent nodes) (select)
+		
+proc 2: (all parent nodes) (deselect)
+	* current node = false
+	* current node: priorselect = no change
+	> parent node (all parent nodes) (select)
+
+
+
+
+// multi
+
+case 1:
+	* via updateselected
+	* nothing else selected
+	* that is, current list count <=0
+	> repeat
+		> select node
+		> add node to current list
+		# select event (on only the one node selected)
+
+case 2:
+	* via updateDeselected
+	* deselect a selected node
+	> repeat
+		> deselect node
+		> remove node from current list
+		> add node to prior list as only node
+		# deselect event (on only the one node selected)
+
+
+// extended
+
+case 1:
+	* via updateselected
+	* nothing else selected
+	* that is, current list count <=0
+	# select event (on only the one node selected)
+	> prior list make empty
+	>> repeat (select branch)
+		> current list make new
+		> select the node selected
+		> add selected to the list
+		> loop: select each child nodes / add each to the selected list
+
+case 2: 
+	* via updateDeselected
+	* deselect a selected child node
+	* that is, selectednodes.count > 0
+	* that is, selected node is in the current list
+	* deselect branch
+	# deselect event (on only the one node selected)
+	>> repeat (deselect branch)
+		> prior list = current list
+		> loop: for each node in current list == deselect()
+			> set isselected = false;
+		> current list make new
+
+
+case 3:
+	* via updateselected
+	* select a node from a different branch
+	* deselect branch
+	# deselect event (on only the one node selected)
+	* select branch
+	# select event (on only the one node selected)
+	* that is, selectednodes.count > 0
+	* that is, selected node is NOT in the current list
+	>> repeat (deselect branch)
+	>> repeat (select branch)
+
+case 4:
+	* via updateselected
+	* select a parent node in the same branch
+	* treat as if case 3.
+
+
+// individual
+
+case 1:
+	* via updateselected
+	* nothing else selected
+	* that is, current list count <=0
+	# Select Event
+	> add to list
+	> prior list stays empty
+
+case 2:
+	* via updateselected
+	* select a node != current list node[0]
+	# Select Event
+	# DeSelect Event
+	> current list node[0] is deselected
+	> current list becomes prior list
+	> current list = new
+	> add node to list
+
+case 3:
+	* via updateDeSelect
+	# DeSelect Event
+	> remove from selection list
+	> prior list stays as is
+
+
+
+// Selection Modes
+
+
+selection modes (does not combine - each mode denies the other modes)
+0 individual (selecting a node does not select anything else - nodes or leaves)
+1 individual + leaves (selecting a node does not select other nodes but does select the nodes leaves)
+2 extended (selected a nodes selects all child nodes, etc but does not select leaves)
+3 extended + leaves  (selected a nodes selects all child nodes and all nodes leaves)
+4 tristate - (a node can have (3) different states of selection - selecting a node does not select leaves)
+			state A: not selected / leaves do not get selected or deselected
+			state B: individual node selected  / leaves do not get selected or deselected
+			state C: node + all child nodes are selected / leaves do not get selected or deselected
+5 tristate - (a node can have (3) different states of selection - selecting a node does select leaves)
+			state A: not selected / leaves do not get selected or deselected
+			state B: individual node and leaves selected 
+			state C: node + all child nodes and leaves are selected
+6 MultiSelectNode (can select multiple individual nodes - does not select leaves)
+7 MultiSelectNode + leaves (can select multiple individual nodes and does select leaves)
+7 MultiSelectLeaf (can select multiple individual leaves)
+
+
+mode names: INDIVIDUAL, INDIVIDUALPLUS, EXTENDED, EXTENDEDPLUS
+TRISTATE, TRISTATEPLUS, MUTLISELECTNODE, MULTISELECTNODEPLUS, MULTISELECTLEAF
+
+when mode is ...PLUS, leaf selections are disabled
+
+
+NOTES:
+1. for the (3) multiselect modes, there will be a List<> of the selected objects
+2. for the individual selection options (node or leaf, individual or multiselect) 
+	an event gets raised that provides the node selected.
+3. for the individual slection options (node or leaf, individual or multiselect) 
+	the selected node is also saved in "last selected node"  this is cleared only
+	from a deselect method
+
+
+
+** TREE class
+
+// methods
+// tree
+	(void)	    		Clear()
+
+
+// system overrides
+	(IEnumerator)			GetEnumerator()
+	(IEnumerator<TreeNode>)	GetEnumerator()
+	(string)	    		ToString()
+
+// node (should be a method in TreeNode)
+	(bool)	    		AddNode(TreeNode node, TreeNode? addNode)
+		notes:	node added becomes the CurrentNode
+
+	(bool)	    		AddNode(TreeNode newNode, List<string> nodePath)
+		notes:	node added becomes the CurrentNode
+
+	(bool)	    		ContainsNode(string nodeKey)
+		notes:	found node added becomes the FoundtNode
+
+	(bool)	    		ContainsNode(string findKey, out TreeNode node, TreeNode? startNode, int nth, bool firstMatch)
+		notes:	found node added becomes the FoundtNode
+
+	(bool)	    		DeleteNode(TreeNode? node)
+	(bool)	    		DeleteNode(List<string> nodePath, out TreeNode? node)
+	(bool)	    		MoveNode(TreeNode? sourceNode, TreeNode? destinationNode)
+		notes:	node moved becomes the CurrentNode
+
+	(bool)	    		RenameNode(TreeNode node, string newName)
+	(int)	    		GetMatchingNodes(string findKey, TreeNode? startNode, int nth, bool firstMatch)
+	(int)	    		CountMatchingNodes(string nodeKey, TreeNode? startPoint)
+	(IEnumerable
+		<TreeNode>)	    GetNodes(TreeNode startNode)
+
+
+// leaf (should be a method in TreeNode)
+	(bool)	    		AddLeaf(TreeLeaf leaf, TreeNode node)
+	(bool)	    		ContainsLeaf(string findKey, out TreeLeaf leaf, TreeNode? startNode, int nth, bool firstMatch)
+	(bool)	    		DeleteLeaf(TreeNode? node, TreeLeaf? leaf)
+	(bool)	    		MoveLeaf(TreeNode? source, TreeNode? destination, string leafKey, out TreeLeaf leaf)
+	(bool)	    		RenameLeaf(TreeNode node, string oldKey, string newKey)
+	(int)	    		GetMatchingLeaves(string findKey, TreeNode? startNode, int nth, bool firstMatch)
+	(int)	    		CountMatchingLeaves(string leafKey, TreeNode? startPoint)
+	(IEnumerable
+		<TreeLeaf>)	    GetLeaves(TreeNode startNode)
+
+
+// properties	
+	(string)			TreeName
+
+	(int)				MaxDepth
+	(bool)				RequireUniqueKeys
+	(bool)				IsTriState
+
+	(TNd)				NodeData
+
+	(int)				CountNodesRoot
+	(int)				CountNodesTree
+	(int)				CountNodesCurrent
+	(int)				CountNodesCurrentEx
+	(int)				CountNodesSelected
+	(int)				CountNodesSelectedEx
+
+	(int)				CountLeavesRoot
+	(int)				CountLeavesTree
+	(int)				CountLeavesCurrent
+	(int)				CountLeavesCurrentEx
+	(int)				CountLeavesSelected
+	(int)				CountLeavesSelectedEx
+
+	(TreeNode)			RootNode
+	(TreeNode)			CurrentNode
+
+	(TreeNode)			FoundNode
+	(List<TreeNodes>)	FoundNodes
+	(TreeLeaf)			FoundLeaf
+	(List<TreeLeaf>)	FoundLeaves
+
+
+// events							   
+	PropertyChanged	
+
+
+
+
+** TREENODE class
+
+// methods
+// general
+	(void)	    		NotifyNodesUpdated()
+	(object)	    	Clone()
+
+// node
+	(void)	    		InitNodes()
+
+	(void)	    		AddNode(string key, TreeNode node)
+	(bool)	    		TryAddNode(string key, TreeNode node)
+	(bool)	    		ContainsNode(string findKey)
+	(bool)	    		ContainsNode(string findKey, out TreeNode node)
+	(bool)	    		DeleteNode(string nodeKey)
+	(bool)	    		TryDeleteNode(string nodeKey)
+	(bool)	    		ReplaceKeyNode(string oldkey, string newKey)
+	(int)	    		NodeCountBranch()
+
+// leaf
+	(void)	    		InitLeaves()
+
+	(void)	    		AddLeaf(string key, TreeLeaf leaf)
+	(bool)	    		TryAddNode(string key, TreeLeaf leaf)
+	(bool)	    		ContainsLeaf(string leafKey)
+	(bool)	    		DeleteLeaf(string leafKey)
+	(bool)	    		TryDeleteLeaf(string leafKey)
+	(bool)	    		ReplaceKeyLeaf(string oldkey, string newKey)
+	(int)	    		LeafCountBranch()
+
+
+// properties
+	(ObservableDictionary
+		<string,TreeNode>?)	    Nodes
+	(ObservableDictionary
+		<string,TreeLeaf>?)	    Leaves
+
+	(string)	    	NodeKey
+
+	(Tree)	    		Tree
+
+	(bool?)	    		IsSelected
+	(bool)	    		IsChosen
+	(bool)	    		IsExpanded
+	(bool)	    		IsNodesNull
+	(bool)	    		IsLeavesNull
+
+	(TNd)	    		NodeData
+
+	(ITreeNode)	    	ParentNode
+	(TreeNode)	    	ParentNodeEx
+	(bool)	    		HasNodes
+	(int)	    		CountNodes
+	(int)	    		CountNodesEx
+	(TreeNode)			FoundNode
+
+	(bool)	    		HasLeaves
+	(int)	    		CountLeaves
+	(int)	    		CountLeavesEx
+	(TreeLeaf)	    	FoundLeaf
+
+
+// system overrides
+	(int)	    		Compare(TreeNode? x, TreeNode? y)
+	(string)		    ToString()
+
+// event
+	(PropertyChangedEventHandler?)	    PropertyChanged
+
+
+
+
+** TREE LEAF class
+   
+// methods
+// general
+	(object)	    	Clone()
+
+	(bool)	    		MoveParent(TreeNode node)
+
+
+// public properties
+	(bool?)	    		IsSelected
+	(bool)	    		IsChosen
+
+	(TLd)	    		LeafData
+	(string)	    	LeafKey
+	(ITreeNode)	    	ParentNode
+
+
+// system overrides
+	(int)	    		Compare(TreeLeaf? x, TreeLeaf? y)
+	(string)			ToString()
+
+
+// event
+	(PropertyChangedEventHandler?)	    PropertyChanged
+
+
+
+

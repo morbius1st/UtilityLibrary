@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--  This file is NOT compatible with Silverlight  -->
+<Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		Name="PlusX"
+		Stretch="Uniform"
+		>
+	<Canvas Name="svg44"
+			Width="11"
+			Height="11"
+			>
+		<Canvas.Resources />
+		<!--  Unknown tag: metadata  -->
+		<!--  Unknown tag: sodipodi:namedview  -->
+		<Rectangle Name="rect40"
+				xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				Canvas.Left="4"
+				Width="3"
+				Height="11"
+				Canvas.Top="0"
+				Fill="#FFC5C5C5"
+				/>
+		<Rectangle Name="rect42"
+				xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				Canvas.Left="0"
+				Width="11"
+				Height="3"
+				Canvas.Top="4"
+				Fill="#FFC5C5C5"
+				/>
+	</Canvas>
+</Viewbox>
+

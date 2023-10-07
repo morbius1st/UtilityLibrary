@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 using System.Windows.Input;
@@ -33,15 +35,15 @@ namespace UtilityLibrary
 	[Serializable]
 	[CollectionDataContract(Namespace = "", ItemName = "KeyValuePair")]
 	public class ObservableDictionary<TKey, TValue> : INotifyCollectionChanged,  ISerializable,
-		IDictionary<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>
+		IDictionary<TKey, TValue>
 
 	{
 		private ObservableCollection<KeyValuePair<TKey, TValue>> list;
 		private ICollection<TKey> keys;
 		private ICollection<TValue> values;
 
-		private KeyValuePair<TKey, TValue> matched;
-		private int matchedIdx;
+		private KeyValuePair<TKey, TValue> found;
+		private int foundIdx;
 		private bool isReadOnly;
 
 		public ObservableDictionary()
@@ -90,11 +92,27 @@ namespace UtilityLibrary
 			}
 		}
 
-	#endregion
+		public KeyValuePair<TKey, TValue> Found
+		{
+			get => found;
+			set => found = value;
+		}
 
+		public int FoundIdx
+		{
+			get => foundIdx;
+			set => foundIdx = value;
+		}
+
+
+	#endregion
 
 	#region indexer
 
+		/// <summary>
+		/// Get a Value using the Key as an index<br/>
+		/// throw exception of key is null
+		/// </summary>
 		public TValue this[TKey key]
 		{
 			get
@@ -103,7 +121,7 @@ namespace UtilityLibrary
 
 				if (ContainsKey(key))
 				{
-					return matched.Value;
+					return found.Value;
 				}
 
 				throw new KeyNotFoundException();
@@ -112,7 +130,7 @@ namespace UtilityLibrary
 			{
 				if (ContainsKey(key))
 				{
-					matched = new KeyValuePair<TKey, TValue>(key, value);
+					found = new KeyValuePair<TKey, TValue>(key, value);
 				}
 				else
 				{
@@ -121,15 +139,23 @@ namespace UtilityLibrary
 			}
 		}
 
+		/// <summary>
+		/// Get a Key-Value pair using the Key as an index<br/>
+		/// throw exception of key is null
+		/// </summary>
 		public KeyValuePair<TKey, TValue> this[int idx]
 		{
 			get => list[idx];
-
+		
 			set => list[idx] = value;
 		}
 
 	#endregion
 
+		/// <summary>
+		/// Add a Key and Value<br/>
+		/// throw exception of key is null
+		/// </summary>
 		public void Add(TKey key, TValue value)
 		{
 			existKeyTest(key);
@@ -137,11 +163,25 @@ namespace UtilityLibrary
 			list.Add(new KeyValuePair<TKey, TValue>(key, value));
 		}
 
+		public bool TryAdd(TKey key, TValue value)
+		{
+			if (ContainsKey(key)) return false;
+			list.Add(new KeyValuePair<TKey, TValue>(key, value));
+			return true;
+		}
+
+		/// <summary>
+		/// Clear the Dictionary
+		/// </summary>
 		public void Clear()
 		{
 			list.Clear();
 		}
 
+		/// <summary>
+		/// Determine of Key exists<br/>
+		/// throw exception of key is null
+		/// </summary>
 		public bool ContainsKey(TKey key)
 		{
 			nullKeyTest(key);
@@ -150,8 +190,8 @@ namespace UtilityLibrary
 			{
 				if (list[i].Key.Equals(key))
 				{
-					matched = list[i];
-					matchedIdx = i;
+					found = list[i];
+					foundIdx = i;
 					return true;
 				}
 			}
@@ -159,14 +199,17 @@ namespace UtilityLibrary
 			return false;
 		}
 
+		/// <summary>
+		/// Determine of Value exists
+		/// </summary>
 		public bool ContainsValue(TValue value)
 		{
 			for (var i = 0; i < list.Count; i++)
 			{
 				if (list[i].Value.Equals(value))
 				{
-					matched = list[i];
-					matchedIdx = i;
+					found = list[i];
+					foundIdx = i;
 					return true;
 				}
 			}
@@ -174,24 +217,74 @@ namespace UtilityLibrary
 			return false;
 		}
 
+		/// <summary>
+		/// Copy the Dictionary to a KeyValue array
+		/// </summary>
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
 		{
 			list.CopyTo(array, arrayIndex);
 		}
 
+		/// <summary>
+		/// Remove the Value based on the Key<br/>
+		/// throw exception of key is null
+		/// </summary>
 		public bool Remove(TKey key)
 		{
 			nullKeyTest(key);
 
 			if (ContainsKey(key))
 			{
-				list.RemoveAt(matchedIdx);
+				list.RemoveAt(foundIdx);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Remove the Value based on the Key<br/>
+		/// Return the removed Value,<br/>
+		/// throw exception of key is null
+		/// </summary>
+		public bool Remove(TKey key, out TValue value)
+		{
+			nullKeyTest(key);
+
+			value = default;
+
+			if (ContainsKey(key))
+			{
+				value = list[foundIdx].Value;
+				list.RemoveAt(foundIdx);
 				return true;
 			}
 
 			return false;
 		}
 
+		/// <summary>
+		/// Remove the Value based on an index<br/>
+		/// Return the removed Value<br/>
+		/// throw exception of index is out of range
+		/// </summary>
+		public bool Remove(int idx, out TValue value)
+		{
+			value = default;
+
+			if (idx >= 0 && idx < list.Count)
+			{
+				value = list[idx].Value;
+				list.RemoveAt(idx);
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Try to get a Value based on the Key<br/>
+		/// return false if Key is null or not found.
+		/// </summary>
 		public bool TryGetValue(TKey key, out TValue value)
 		{
 			bool result;
@@ -202,7 +295,7 @@ namespace UtilityLibrary
 				if (ContainsKey(key))
 				{
 					result = true;
-					value = matched.Value;
+					value = found.Value;
 				}
 				else
 				{
@@ -217,19 +310,45 @@ namespace UtilityLibrary
 			return result;
 		}
 
+		/// <summary>
+		/// Get the index based on the Key<br/>
+		/// throw exception of key is null
+		/// </summary>
 		public int IndexOf(TKey key)
 		{
 			if (ContainsKey(key))
 			{
-				return matchedIdx;
+				return foundIdx;
 			}
 
 			return -1;
 		}
 
+		/// <summary>
+		///Remove the Value based on an index<br/>
+		/// throw exception of index is out of range
+		/// </summary>
 		public void RemoveAt(int index)
 		{
 			list.RemoveAt(index);
+		}
+
+		/// <summary>
+		/// Replace <c>oldKey</c> with <c>newKey</c> if possible<br/>
+		/// throw exception of key is null
+		/// </summary>
+		public bool ReplaceKey(TKey oldKey, TKey newKey)
+		{
+			if (oldKey == null || newKey == null || ContainsKey(newKey)) { return false; }
+
+			TValue value;
+
+			if (!Remove(oldKey, out value)) return false;
+
+			Add(newKey, value);
+
+			return true;
+
 		}
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -241,7 +360,6 @@ namespace UtilityLibrary
 		{
 			return GetEnumerator();
 		}
-
 
 		bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => isReadOnly;
 

@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedCode", "SharedCode\SharedCode.shproj", "{8DBD3451-279A-48D1-8649-71177B33F1F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfProject02", "WpfProject02\WpfProject02.csproj", "{1FCC23CA-5DDE-4621-BEBD-3CC2AD96B167}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedWPF", "SharedWPF\SharedWPF.shproj", "{84025960-B241-458D-8E61-2EBA8E395BC9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FCC23CA-5DDE-4621-BEBD-3CC2AD96B167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FCC23CA-5DDE-4621-BEBD-3CC2AD96B167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FCC23CA-5DDE-4621-BEBD-3CC2AD96B167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FCC23CA-5DDE-4621-BEBD-3CC2AD96B167}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A65F992A-DE51-41D5-A532-8E689893F520}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SharedCode\SharedCode.projitems*{1fcc23ca-5dde-4621-bebd-3cc2ad96b167}*SharedItemsImports = 5
+		SharedWPF\SharedWPF.projitems*{1fcc23ca-5dde-4621-bebd-3cc2ad96b167}*SharedItemsImports = 5
+		SharedWPF\SharedWPF.projitems*{84025960-b241-458d-8e61-2eba8e395bc9}*SharedItemsImports = 13
+		SharedCode\SharedCode.projitems*{8dbd3451-279a-48d1-8649-71177b33f1f6}*SharedItemsImports = 13
+	EndGlobalSection
+EndGlobal
