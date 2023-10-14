@@ -1,262 +1,36 @@
-﻿// selection process
-
-// tristate
-
-* tri-state
-
-*** use utility example project to do thos ***
-
-
-> checked, selected & all sub-nodes selected
-> indetermanent, some sub-nodes selected
-> not-checked, not selected & all sub-nodes not selected
-
-examples
- 1         | 2         | 3         | 4         | 4.5       | 5         | 6         | 7         | 7         |
------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
- [ ]       | [o]       | [o]       | [o]       | [x]       | [o]       | [ ]       | [x]       | [o]       |
------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-   [ ]     |   [ ]     |   [ ]     |   [x]     |   [x]     |   [x]     |   [ ]     |   [x]     |   [x]     |
------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-   [ ]     |   [o]     |   [x]     |   [x]     |   [x]     |   [ ]     |   [ ]     |   [x]     |   [ ]     |
------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-       [ ] |       [x] |       [x] |       [x] |       [x] |       [ ] |       [ ] |       [x] |       [ ] |
------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-       [ ] |       [ ] |       [x] |       [x] |       [x] |       [ ] |       [ ] |       [x] |       [ ] |
------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-   [ ]     |   [ ]     |   [ ]     |   [ ]     |   [x]     |   [ ]     |   [ ]     |   [x]     |   [x]     |
------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-
- 0         | 1           | 1.2         | 1.2.1       | 1.2.1.1     | 1.2.1.1.1   | 1.2.1.1.1.1 | 1.2.1x5     | 1.2.1x6     | 1.2.1x7     |
------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
- [ ]       | [o/ ]       |* [x/x]      |*[ / ]       |* [o/o]      | [o/o]       | [o/o]       | [o/o]       | [x/o]       | [o/o]       |
------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
-   [ ]     |*  [x/x]     |   [x/x]     |   [ /x]     |    [x/x]    |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |
------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
-   [ ]     |   [o/ ]     |   [x/o]     |   [ /o]     |    [o/o]    |*  [x/o]     |*  [ /o]     |*  [o/o]     |*  [x/o]     |*  [ /o]     |
------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
-      [ ]  |*     [x/x]  |      [x/x]  |      [ /x]  |      [x/x]  |      [x/x]  |      [ /x]  |      [x/x]  |      [x/x]  |      [ /x]  |
------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
-      [ ]  |      [ / ]  |      [x/ ]  |      [ / ]  |      [ / ]  |      [x/ ]  |      [ / ]  |      [ / ]  |      [x/ ]  |      [ / ]  |
------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
-   [ ]     |   [ / ]     |   [x/ ]     |   [ / ]     |   [ / ]     |   [ / ]     |   [ / ]     |*  [x/ ]     |   [x/ ]     |   [x/ ]     |
------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
-   [ ]     |*  [x/x]     |   [x/x]     |   [ /x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |
------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
-
-
-processes
-
-not selected -> indeterminant -> selected -> not selected
-
-
-1. select a node for the first time
-	> isselected = true
-	> priorselected = true;
-	> all sub-nodes:
-		> isselected = true
-		> priorselected = true
-	> all parent nodes
-		> isselected = ind
-		> priorselected = ind
-
-
-1.1 child node deselected
-	> isselected = false
-	> prior selected = false
-	> all sub-nodes:
-		> isselected = false
-		> priorselected = false
-	> all parent nodes
-		> is-selected = ind or true - depends on child nodes
-		> priorselected = is-selected
-
-1.1.1 child to 1.1 selected
-	> isselected = true
-	> priorselected = true;
-	> all sub-nodes:
-		> is-selected = true
-		> priorselected = true
-	> all parent nodes
-		> is-selected = ind or true - depends on child nodes
-		> priorselected = is-selected
-
-1.2 parent to node 1 selected (was ind) (to checked)
-	> is-selected = true
-	> priorselected = is-selected;
-	> all sub-nodes:
-		> is-selected = true
-		> priorselected = no change
-	> all parent nodes
-		> is-selected = ind or true - depends on child nodes
-		> priorselected = is-selected
-
-1.2.1 node 1.2 deselected (was checked) (to not checked)
-	> is-selected = false
-	> prior selected = is-selected
-	> all sub-nodes:
-		> is-selected = false
-		> priorselected = no change
-	> all parent nodes
-		> is-selected = ind or false - determined by child nodes
-		> priorselected = is-selected
-
-1.2.1.1 node 1.2.1 selected (not checked) (to ind or checked)
-	> is-selected = ind or true depends on child nodes
-	> prior selected = is-selected
-	> all sub-nodes:
-		> is-selected = priorselected
-		> priorselected = no change
-	> all parent nodes
-		> is-selected = ind
-		> priorselected = is-selected
-
-
-
-
-
-case 1:
-	* via updateselected
-	> repeat
-		> select node = true;
-		> priorIsSelected = true;
-		> add node to current list
-		# select event (on only the one node selected)
-
-
-
-proc 1: (all parent nodes) (select)
-	* current node set
-		> for ea owned node: loop: if node is not selected: break: current node set = ind else selected
-	* current node: priorselect = is-select
-	> parent node (all parent nodes) (select)
-		
-proc 2: (all parent nodes) (deselect)
-	* current node = false
-	* current node: priorselect = no change
-	> parent node (all parent nodes) (select)
-
-
-
-
-// multi
-
-case 1:
-	* via updateselected
-	* nothing else selected
-	* that is, current list count <=0
-	> repeat
-		> select node
-		> add node to current list
-		# select event (on only the one node selected)
-
-case 2:
-	* via updateDeselected
-	* deselect a selected node
-	> repeat
-		> deselect node
-		> remove node from current list
-		> add node to prior list as only node
-		# deselect event (on only the one node selected)
-
-
-// extended
-
-case 1:
-	* via updateselected
-	* nothing else selected
-	* that is, current list count <=0
-	# select event (on only the one node selected)
-	> prior list make empty
-	>> repeat (select branch)
-		> current list make new
-		> select the node selected
-		> add selected to the list
-		> loop: select each child nodes / add each to the selected list
-
-case 2: 
-	* via updateDeselected
-	* deselect a selected child node
-	* that is, selectednodes.count > 0
-	* that is, selected node is in the current list
-	* deselect branch
-	# deselect event (on only the one node selected)
-	>> repeat (deselect branch)
-		> prior list = current list
-		> loop: for each node in current list == deselect()
-			> set isselected = false;
-		> current list make new
-
-
-case 3:
-	* via updateselected
-	* select a node from a different branch
-	* deselect branch
-	# deselect event (on only the one node selected)
-	* select branch
-	# select event (on only the one node selected)
-	* that is, selectednodes.count > 0
-	* that is, selected node is NOT in the current list
-	>> repeat (deselect branch)
-	>> repeat (select branch)
-
-case 4:
-	* via updateselected
-	* select a parent node in the same branch
-	* treat as if case 3.
-
-
-// individual
-
-case 1:
-	* via updateselected
-	* nothing else selected
-	* that is, current list count <=0
-	# Select Event
-	> add to list
-	> prior list stays empty
-
-case 2:
-	* via updateselected
-	* select a node != current list node[0]
-	# Select Event
-	# DeSelect Event
-	> current list node[0] is deselected
-	> current list becomes prior list
-	> current list = new
-	> add node to list
-
-case 3:
-	* via updateDeSelect
-	# DeSelect Event
-	> remove from selection list
-	> prior list stays as is
-
-
+﻿
 
 // Selection Modes
 
 
 selection modes (does not combine - each mode denies the other modes)
-0 individual (selecting a node does not select anything else - nodes or leaves)
-1 individual + leaves (selecting a node does not select other nodes but does select the nodes leaves)
-2 extended (selected a nodes selects all child nodes, etc but does not select leaves)
-3 extended + leaves  (selected a nodes selects all child nodes and all nodes leaves)
-4 tristate - (a node can have (3) different states of selection - selecting a node does not select leaves)
-			state A: not selected / leaves do not get selected or deselected
-			state B: individual node selected  / leaves do not get selected or deselected
-			state C: node + all child nodes are selected / leaves do not get selected or deselected
-5 tristate - (a node can have (3) different states of selection - selecting a node does select leaves)
-			state A: not selected / leaves do not get selected or deselected
-			state B: individual node and leaves selected 
-			state C: node + all child nodes and leaves are selected
-6 MultiSelectNode (can select multiple individual nodes - does not select leaves)
-7 MultiSelectNode + leaves (can select multiple individual nodes and does select leaves)
-7 MultiSelectLeaf (can select multiple individual leaves)
+  D
+  o
+  n									-whole tree-
+  e									---can be---
+-- mode -----------					-selected?--
+0 * individual							no		(selecting a node does not select anything else - nodes or leaves)
+1   individual + leaves					no		(selecting a node does not select other nodes but does select the nodes leaves)
+2 * extended							no		(selected a nodes selects all child nodes, etc but does not select leaves)
+3   extended + leaves					no		(selected a nodes selects all child nodes and all nodes leaves)
+4 * tristate -							yes		(a node can have (3) different states of selection - selecting a node does not select leaves)
+	  												state A: not selected / leaves do not get selected or deselected
+	  												state B: individual node selected  / leaves do not get selected or deselected
+	  												state C: node + all child nodes are selected / leaves do not get selected or deselected
+5   tristate -							yes		(a node can have (3) different states of selection - selecting a node does select leaves)
+	  												state A: not selected / leaves do not get selected or deselected
+	  												state B: individual node and leaves selected 
+	  												state C: node + all child nodes and leaves are selected
+6 * MultiSelectNode						yes		(can select multiple individual nodes - does not select leaves)
+7 * MultiSelectNode-extended			yes		(can select multiple individual nodes - does not select leaves - and, selecting a branch, selects the whole branch)
+8   MultiSelectNode-extended + leaves	yes		(can select multiple individual nodes - does not select leaves - and, selecting a branch, selects the whole branch)
+9   MultiSelectNode + leaves			yes		(can select multiple individual nodes and does select leaves)
+10  MultiSelectLeaf						yes		(can select multiple individual leaves)
 
 
 mode names: INDIVIDUAL, INDIVIDUALPLUS, EXTENDED, EXTENDEDPLUS
-TRISTATE, TRISTATEPLUS, MUTLISELECTNODE, MULTISELECTNODEPLUS, MULTISELECTLEAF
+TRISTATE, TRISTATEPLUS, MUTLISELECTNODE, MUTLISELECTNODEXTENDED, 
+MULTISELECTNODEPLUS, MULTISELECTLEAF
 
 when mode is ...PLUS, leaf selections are disabled
 
@@ -265,9 +39,10 @@ NOTES:
 1. for the (3) multiselect modes, there will be a List<> of the selected objects
 2. for the individual selection options (node or leaf, individual or multiselect) 
 	an event gets raised that provides the node selected.
-3. for the individual slection options (node or leaf, individual or multiselect) 
+3. for the individual slection options (node, individual or multiselect) 
 	the selected node is also saved in "last selected node"  this is cleared only
 	from a deselect method
+4. for leave selection, no prior selection list
 
 
 
@@ -457,5 +232,495 @@ NOTES:
 	(PropertyChangedEventHandler?)	    PropertyChanged
 
 
+
+
+
+	// selection process
+
+// tristate
+
+* tri-state
+
+*** use utility example project to do this ***
+
+tree tristate process (check box actually)
+unchecked -> checked -> mixed -> unchecked
+
+
+
+
+
+> checked, selected & all sub-nodes selected
+> indetermanent, some sub-nodes selected
+> not-checked, not selected & all sub-nodes not selected
+
+examples
+ 1         | 2         | 3         | 4         | 4.5       | 5         | 6         | 7         | 7         |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+ [ ]       | [o]       | [o]       | [o]       | [x]       | [o]       | [ ]       | [x]       | [o]       |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+   [ ]     |   [ ]     |   [ ]     |   [x]     |   [x]     |   [x]     |   [ ]     |   [x]     |   [x]     |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+   [ ]     |   [o]     |   [x]     |   [x]     |   [x]     |   [ ]     |   [ ]     |   [x]     |   [ ]     |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+       [ ] |       [x] |       [x] |       [x] |       [x] |       [ ] |       [ ] |       [x] |       [ ] |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+       [ ] |       [ ] |       [x] |       [x] |       [x] |       [ ] |       [ ] |       [x] |       [ ] |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+   [ ]     |   [ ]     |   [ ]     |   [ ]     |   [x]     |   [ ]     |   [ ]     |   [x]     |   [x]     |
+-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+
+ 0         | 1           | 1.2         | 1.2.1       | 1.2.1.1     | 1.2.1.1.1   | 1.2.1.1.1.1 | 1.2.1x5     | 1.2.1x6     | 1.2.1x7     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+ [ ]       | [o/ ]       |* [x/x]      |*[ / ]       |* [o/o]      | [o/o]       | [o/o]       | [o/o]       | [x/o]       | [o/o]       |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+   [ ]     |*  [x/x]     |   [x/x]     |   [ /x]     |    [x/x]    |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+   [ ]     |   [o/ ]     |   [x/o]     |   [ /o]     |    [o/o]    |*  [x/o]     |*  [ /o]     |*  [o/o]     |*  [x/o]     |*  [ /o]     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+      [ ]  |*     [x/x]  |      [x/x]  |      [ /x]  |      [x/x]  |      [x/x]  |      [ /x]  |      [x/x]  |      [x/x]  |      [ /x]  |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+      [ ]  |      [ / ]  |      [x/ ]  |      [ / ]  |      [ / ]  |      [x/ ]  |      [ / ]  |      [ / ]  |      [x/ ]  |      [ / ]  |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+   [ ]     |   [ / ]     |   [x/ ]     |   [ / ]     |   [ / ]     |   [ / ]     |   [ / ]     |*  [x/ ]     |   [x/ ]     |   [x/ ]     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+   [ ]     |*  [x/x]     |   [x/x]     |   [ /x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |   [x/x]     |
+-----------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|-------------|
+
+not selected -> indeterminant -> selected -> not selected
+x = soft check | X = hard check
+m = soft mixed | M = hard mixed
+u = soft unckd | U = hard unckd
+
+ a0            | a1            | a2            | a2            | a2              | a2              |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+ [ ]           | [m]           | [x]           |*[X]           |*[U/ ]           |*[M/ ]           |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+   [ ]         |   [ ]         |   [ ]         |   [x]         |   [ /x]         |   [ /x]         |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+   [ ]         |   [m]         |   [x]         |   [x]         |   [ /x]         |   [ /x]         |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+      [ ]      |      [ ]      |*     [X]      |      [X]      |      [ /X]      |      [ /X]      |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+      [ ]      |*     [X]      |      [X]      |      [X]      |      [ /X]      |      [ /X]      |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+        [ ]    |        [x]    |        [x]    |        [x]    |        [ /x]    |        [ /x]    |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+        [ ]    |        [x]    |        [x]    |        [x]    |        [ /x]    |        [ /x]    |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+          [ ]  |          [x]  |          [x]  |          [x]  |          [ /x]  |          [ /x]  |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+          [ ]  |          [x]  |          [x]  |          [x]  |          [ /x]  |          [ /x]  |
+---------------|---------------|---------------|---------------|-----------------|-----------------|
+
+
+not selected -> indeterminant -> selected -> not selected
+
+x = check
+m = mixed
+u = unckd
+- = unset
+
+ a0              | a1              | a2              |           ax              | ax              |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+ [u/u]           | [m/u]           | [u/u]           |           [m/u]           | [u/u]           |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+   [u/u]         |   [u/u]         |   [u/u]         |             [u/u]         |   [u/u]         |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+   [u/u]         |   [m/u]         |   [u/u]         |             [m/u]         |   [u/u]         |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+      [u/u]      |      [u/u]      |      [u/u]      |                [u/u]      |      [u/u]      |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+      [u/u]      |      [m/u]      |      [u/u]      |          *     [x/u]      |*     [m/u]      |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+        [u/u]    |*       [x/u]    |*       [u/u]    |                  [x/u]    |        [x/x]    |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+        [u/u]    |        [u/u]    |        [u/u]    |                  [x/u]    |        [u/u]    |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+          [u/u]  |          [u/u]  |          [u/u]  |                    [x/u]  |          [u/u]  |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+          [u/u]  |          [u/u]  |          [u/u]  |                    [x/u]  |          [u/u]  |
+-----------------|-----------------|-----------------|          -----------------|-----------------|
+notes:
+a2: if checked is re-checked -> children: return to prior | parents: return to prior
+
+
+
+ b0              | b1              | b2              |
+-----------------|-----------------|-----------------|
+ [u/u]           | [m/u]           | [u/u]           |
+-----------------|-----------------|-----------------|
+   [u/u]         |   [u/u]         |   [u/u]         |
+-----------------|-----------------|-----------------|
+   [u/u]         |   [m/u]         |   [u/u]         |
+-----------------|-----------------|-----------------|
+      [u/u]      |      [u/u]      |      [u/u]      |
+-----------------|-----------------|-----------------|
+      [u/u]      |      [m/u]      |      [u/u]      |
+-----------------|-----------------|-----------------|
+        [u/u]    |        [u/u]    |        [u/u]    |
+-----------------|-----------------|-----------------|
+        [u/u]    |*       [x/u]    |*       [u/u]    |
+-----------------|-----------------|-----------------|
+          [u/u]  |          [x/u]  |          [u/u]  |
+-----------------|-----------------|-----------------|
+          [u/u]  |          [x/u]  |          [u/u]  |
+-----------------|-----------------|-----------------|
+b1: if node checked: children: save state, then check | parents: if any children are mixed -> mixed, else checked
+b2: if checked is re-checked -> children: return to prior | return to prior
+
+
+ c0              | c1              | c2              | c3              |
+-----------------|-----------------|-----------------|-----------------|
+ [u/u]           | [m/u]           | [m/u]           | [m/u]           |
+-----------------|-----------------|-----------------|-----------------|
+   [u/u]         |   [u/u]         |   [u/u]         |   [u/u]         |
+-----------------|-----------------|-----------------|-----------------|
+   [u/u]         |   [m/u]         |   [m/u]         |   [m/u]         |
+-----------------|-----------------|-----------------|-----------------|
+      [u/u]      |      [u/u]      |      [u/u]      |      [u/u]      |
+-----------------|-----------------|-----------------|-----------------|
+      [u/u]      |      [m/u]      |      [m/u]      |      [m/u]      |
+-----------------|-----------------|-----------------|-----------------|
+        [u/u]    |        [u/u]    |        [u/u]    |        [u/u]    |
+-----------------|-----------------|-----------------|-----------------|
+        [u/u]    |        [m/u]    |*       [x/u]    |*       [u/u]    |
+-----------------|-----------------|-----------------|-----------------|
+          [u/u]  |*         [x/u]  |          [x/x]  |          [x/x]  |
+-----------------|-----------------|-----------------|-----------------|
+          [u/u]  |          [u/u]  |          [x/u]  |          [x/u]  |
+-----------------|-----------------|-----------------|-----------------|
+c1: if node checked: children: save state, then check | parents: if any children are mixed -> mixed, else checked
+c2: if parent checked -> children: save checked, move to next state | parents: no change
+
+
+
+not selected -> indeterminant -> selected -> not selected
+
+               |               |               |                |               |               |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+ [ ]           | [m]           | [ ]           |  [m]           | [m]           | [m]           |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+   [ ]         |   [ ]         |   [ ]         |    [ ]         |   [ ]         |   [ ]         |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+   [ ]         |   [m]         |   [ ]         |    [m]         |   [m]         |   [m]         |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+      [ ]      |      [ ]      |      [ ]      |       [ ]      |      [ ]      |      [ ]      |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+      [ ]      |*     [x]      |*     [ ]      |       [m]      |      [x]      |      [m]      |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+        [ ]    |        [x]    |        [ ]    |         [x]    |        [x]    |        [x]    |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+        [ ]    |        [x]    |        [ ]    |         [ ]    |*       [x]    |*       [ ]    |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+          [ ]  |          [x]  |          [ ]  |           [ ]  |          [x]  |          [ ]  |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+          [ ]  |          [x]  |          [ ]  |           [ ]  |          [x]  |          [ ]  |  
+---------------|---------------|---------------| ---------------|---------------|---------------|  
+
+
+
+
+x = check
+m = mixed
+- = notck
+
+
+  1             | 2             | 3             | 4             | 5             | 6             |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+A [-]           | [m]           | [m]           | [m]           | [-]           | [m]           |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+B   [-]         |   [-]         |   [-]         |   [-]         |   [-]         |   [-]         |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+C   [-]         |   [m]         |   [m]         |   [m]         |   [-]         |   [m]         |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+D      [-]      |      [-]      |      [-]      |      [-]      |      [-]      |      [-]      |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+E      [-]      |      [m]      |      [m]      |*     [x]m     |*     [-]m     |*     [m]      |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+F        [-]    |        [-]    |*       [x]    |        [x]x   |        [-]x   |        [x]    |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+G        [-]    |        [m]    |        [m]    |        [x]m   |        [-]m   |        [m]    |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+H          [-]  |*         [x]  |          [x]  |          [x]x |          [-]x |          [x]  |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+I          [-]  |          [-]  |          [-]  |          [x]  |          [-]  |          [-]  |
+ ---------------|---------------|---------------|---------------|---------------|---------------|
+ 
+4: when M is checked: node: to x & use tristate is true (pass to each child)|  children: if tristate: save state: check | parent: adjust depending on checked children
+5: when X is checked & use tristate is true: node: to - | children: uncheck | parents: uncheck / mixed depending on checked children
+6: when - is checked & use tristate is true: node: to M: | children: to prior (use tristate is false) | parents: mixed or checked depending on children
+
+treeclass processes
+unchecked -> mixed -> checked -> unchecked
+
+checkbox process
+unchecked -> checked -> mixed -> unchecked
+(false)      (true)     (null)
+
+when m is checked (e.g., m parent node)
+
+m -> x
+	> tell children: x
+	> parents now x
+
+
+if checked when unchecked  (any node)
+	-> self: checked
+	-> parents: check or mixed depending on children selected
+		-> if (less than all selected) -> mixed
+		-> if (if all selected) -> checked
+	-> children: check
+
+if checked when checked (parent node)
+	-> self: unchecked
+	-> parents: mixed or unchecked (per child checked)
+	-> children: unchecked
+
+
+if checked when checked (child node)
+	-> self: unchecked
+	-> parents: mixed or unchecked (per child checked)
+	-> children: unchecked
+
+
+if checked when mixed (a child must be selected)
+	-> self: checked
+	-> parents: mixed (per child checked)
+	-> children: checked
+
+
+treeclass processes
+unchecked -> mixed -> checked -> unchecked
+
+x = check - has a check mark == true
+m = mixed - has indetermanet mark (square) == null
+u = unchkd - has no mark (blank) == false
+- = unset - has no mark (blank) == false
+d = checkbox is dual state
+t = checkbox is three state
+
+0. node default os unchecked and prior is unset
+
+1. parents - set per nodes
+	> update parents - unless no change, then stop
+	> when a parent becomes mixed, change to three state
+	> when a parent becomes unchecked, change to two state
+2. self - if two state: unchecked to checked to unchecked | three state: unchecked to mixed to checked to unchecked
+	> update parents
+	> undate children
+3. children
+	> change from the bottom up
+	> when a child becomes mixed, set as three state
+	> when a child becomes unchecked, set as two state
+	> parent to checked
+		> all children, save current to prior
+		> all children, set to checked
+	> parent to unchecked (parent was checked just before so prior saved - no change here)
+		> all children to unchecked, when unchecked, change to two state
+	> parent to mixed
+		> all children: restore from prior.  when mixed, change to three state
+		> all children, prior becomes unset
+
+
+
+   1             | 2             | 3             | 4             | 5             | 6             | 7             | 8             | 8             | 9             | 9             |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+A d[u]-          |t[m]u          |t[m]u          |t[m]u          |t[u]u          |t[m]u          |t[m]u          |t[m]u          |t[m]u          |t[m]u          |t[m]u          |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+B   d[u]-        |  d[u]-        |  d[u]-        |  d[u]-        |  d[u]-        |  d[u]-        |  d[u]-        |  d[u]-        |  d[u]-        |  d[u]-        |  d[u]-        |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+C   d[u]-        |  t[m]u        |  t[m]u        |  t[m]u        |  t[u]u        |  t[m]u        |  t[m]u        |  t[m]u        |  t[m]u        |  t[m]u        |  t[m]u        |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+D      d[u]-     |     d[u]-     |     d[u]-     |     d[u]-     |     d[u]-     |     d[u]-     |     d[u]-     |     d[u]-     |     d[u]-     |     d[u]-     |     d[u]-     |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+E      d[u]-     |     t[m]u     |     t[m]u     |*    t[x]m     |*    t[u]x     |*    t[m]u     |     t[x]u     |     t[m]u     |*    t[x]-     |*    t[u]-     |*    t[m]-     |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+F        d[u]-   |       d[u]-   |*      d[x]-   |       d[x]x   |       d[u]x   |       d[x]-   |       d[x]-   |       d[x]-   |       d[x]x   |       d[u]x   |       d[x]-   |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+G        d[u]-   |       t[m]u   |       t[m]-   |       t[x]m   |       t[u]m   |       t[m]u   |*      t[x]u   |*      t[u]u   |       t[x]u   |       t[u]u   |       t[u]-   |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+H          d[u]- |*        d[x]- |         d[x]- |         d[x]x |         d[u]x |         d[x]- |         d[x]x |         d[u]x |         d[x]u |         d[u]u |         d[u]- |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+I          d[u]- |         d[u]- |         d[u]- |         d[x]u |         d[u]u |         d[u]- |         d[x]u |         d[u]u |         d[x]u |         d[u]u |         d[u]- |
+  ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+
+1  start
+2  H checked (unset -> checked) (false -> true)
+ 	 parents become m & t & save to prior
+3  F checked  (unset -> checked) (false -> true)
+ 	 parent E - no change - stop updating
+4  E checked (mixed to checked) (null to true)
+ 	 children - all, save to prior; all to checked; three state, no change
+ 	 parent C - no change - stop updating
+5  E checked (checked to unchecked) (true to false)
+ 	 children = all to unchecked.  no change to prior since prior has a value
+ 	 parents = all change tp unchecked, 
+6  E checked (unchecked to mixed) (false to null)
+ 	 children (from bottom up) set per prior, prior to unset
+ 	 parents per nodes selected
+ 	 (matches 4)
+7  H checked (checked to unchecked) (true to false)
+	 children
+
+
+   6a            |   6b            |
+  ---------------|  ---------------|
+  t[m]-          |* t[m]-          |
+  ---------------|  ---------------|
+    d[-]-        |    d[-]-        |
+  ---------------|  ---------------|
+    t[m]-        |    t[m]-        |
+  ---------------|  ---------------|
+       d[-]-     |       d[-]-     |
+  ---------------|  ---------------|
+       t[m]-     |       t[m]-     |
+  ---------------|  ---------------|
+         d[x]-   |         d[x]-   |
+  ---------------|  ---------------|
+  *      t[m]-   |         t[m]-   |
+  ---------------|  ---------------|
+           d[x]- |           d[x]- |
+  ---------------|  ---------------|
+           d[-]- |           d[-]- |
+  ---------------|  ---------------|
+
+alt
+6a G checked (unchecked to mixed) (false to null) 
+	 children - set per prior, prior to unset
+	 parents per nodes selected
+
+alt
+6b A checked (unchecked to mixed) (false to null)
+	 children - (from the bottom up) - set per prior, if no prior, per nodes
+	 parent (n/a)
+
+
+     4b            |
+    ---------------|
+  A t[m]           |
+    ---------------|
+  B   d[-]         |
+    ---------------|
+  C   t[x]         |
+    ---------------|
+  D *    d[x]      |
+    ---------------|
+  E      t[x]      |
+    ---------------|
+  F        d[x]x   |
+    ---------------|
+  G        t[x]m   |
+    ---------------|
+  H          d[x]x |
+    ---------------|
+  I          d[x]- |
+    ---------------|
+
+alt
+4b D checked (unset -> checked) (false -> true)
+	 parent update per child nodes
+	  
+
+
+
+
+
+
+
+
+
+// multi
+
+case 1:
+	* via updateselected
+	* nothing else selected
+	* that is, current list count <=0
+	> repeat
+		> select node
+		> add node to current list
+		# select event (on only the one node selected)
+
+case 2:
+	* via updateDeselected
+	* deselect a selected node
+	> repeat
+		> deselect node
+		> remove node from current list
+		> add node to prior list as only node
+		# deselect event (on only the one node selected)
+
+
+// extended
+
+case 1:
+	* via updateselected
+	* nothing else selected
+	* that is, current list count <=0
+	# select event (on only the one node selected)
+	> prior list make empty
+	>> repeat (select branch)
+		> current list make new
+		> select the node selected
+		> add selected to the list
+		> loop: select each child nodes / add each to the selected list
+
+case 2: 
+	* via updateDeselected
+	* deselect a selected child node
+	* that is, selectednodes.count > 0
+	* that is, selected node is in the current list
+	* deselect branch
+	# deselect event (on only the one node selected)
+	>> repeat (deselect branch)
+		> prior list = current list
+		> loop: for each node in current list == deselect()
+			> set isselected = false;
+		> current list make new
+
+
+case 3:
+	* via updateselected
+	* select a node from a different branch
+	* deselect branch
+	# deselect event (on only the one node selected)
+	* select branch
+	# select event (on only the one node selected)
+	* that is, selectednodes.count > 0
+	* that is, selected node is NOT in the current list
+	>> repeat (deselect branch)
+	>> repeat (select branch)
+
+case 4:
+	* via updateselected
+	* select a parent node in the same branch
+	* treat as if case 3.
+
+
+// individual
+
+case 1:
+	* via updateselected
+	* nothing else selected
+	* that is, current list count <=0
+	# Select Event
+	> add to list
+	> prior list stays empty
+
+case 2:
+	* via updateselected
+	* select a node != current list node[0]
+	# Select Event
+	# DeSelect Event
+	> current list node[0] is deselected
+	> current list becomes prior list
+	> current list = new
+	> add node to list
+
+case 3:
+	* via updateDeSelect
+	# DeSelect Event
+	> remove from selection list
+	> prior list stays as is
 
 

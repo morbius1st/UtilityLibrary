@@ -1,37 +1,33 @@
 ﻿// Solution:     WpfProject02
 // Project:       WpfProject02
-// File:             TreeLeafData.cs
+// File:             TreeNodeData.cs
 // Created:      2023-10-05 (7:32 PM)
 
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using WpfProject02.Annotations;
 
-namespace SharedCode.SampleData;
+namespace SharedCode.TreeClasses;
 
-public class TreeLeafData : INotifyPropertyChanged
+public class TreeNodeData : INotifyPropertyChanged
 {
-	private string value1;
-	private string value2;
+	// represents EXTRA information saved with each node
+	// private string name - this is a part of node and is not Extra information
+	private string value;
 
-	public string Value1
+	public TreeNodeData(string value)
 	{
-		get => value1;
-		set
-		{
-			if (value == value1) return;
-			value1 = value;
-			OnPropertyChanged();
-		}
+		this.value = value;
 	}
 
-	public string Value2
+
+	public string Value
 	{
-		get => value2;
+		get => value;
 		set
 		{
-			if (value == value2) return;
-			value2 = value;
+			if (value == this.value) return;
+			this.value = value;
 			OnPropertyChanged();
 		}
 	}
@@ -44,12 +40,8 @@ public class TreeLeafData : INotifyPropertyChanged
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 
-#region system overrides
-
 	public override string ToString()
 	{
-		return $"{nameof(TreeLeafData)} | v1| {value1} | v2| {value2}";
+		return $"{nameof(TreeNodeData)}| ({value})";
 	}
-
-#endregion
 }

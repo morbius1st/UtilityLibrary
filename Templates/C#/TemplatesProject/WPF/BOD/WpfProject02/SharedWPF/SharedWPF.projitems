@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\CsButtonsAp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\CsCheckBoxAp.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ShSupport\CsCheckBoxTriState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\CsComboBoxAp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\CsCommonAp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\CsPathAp.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\CsScrollViewerAp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\CustomProperties.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\MainHelp.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ShSupport\MarkupExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShSupport\ValueConverters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShWin\Examples.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShWin\IWinMsg.cs" />

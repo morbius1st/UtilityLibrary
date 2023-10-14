@@ -8,9 +8,11 @@
 		xmlns:dst="clr-namespace:SharedCode.SampleData"
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		xmlns:local="clr-namespace:SharedWPF.ShWin"
+		xmlns:Sys="clr-namespace:System;assembly=System.Runtime"
+		xmlns:treeClasses="clr-namespace:SharedCode.TreeClasses"
 		Title="Examples"
-		Width="1100"
-		Height="900"
+		Width="1300"
+		Height="1100"
 		DataContext="{Binding ElementName=ExWin}"
 		mc:Ignorable="d"
 		Background="#333333"
@@ -46,6 +48,23 @@
 
 			<cs:InvertBool x:Key="InvertBool" />
 
+			<x:Array x:Key="DataTypes"
+					Type="{x:Type sys:Type}"
+					>
+				<x:Type TypeName="treeClasses:TreeNodeData" />
+				<x:Type TypeName="treeClasses:TreeLeafData" />
+			</x:Array>
+
+			<cs:GenericType x:Key="TreeNode"
+					BaseType="{x:Type TypeName=treeClasses:TreeClassNode`2}"
+					InnerTypes="{StaticResource DataTypes}"
+					/>
+
+
+			<cs:GenericType x:Key="TreeLeaf"
+					BaseType="{x:Type TypeName=treeClasses:TreeClassLeaf`2}"
+					InnerTypes="{StaticResource DataTypes}"
+					/>
 
 			<!--#region > icon info-->
 
@@ -332,29 +351,30 @@
 			</Style>
 
 
-			<Style TargetType="CheckBox" x:Key="CkbxBase">
-				<Setter Property="Foreground" Value="White"/>
-				<Setter Property="Margin" Value="0,2,10,2"/>
-				<Setter Property="IsEnabled" 
-						Value="{Binding Path=Data.CanMultiSelect}"/>
+			<Style x:Key="Button1"
+					TargetType="Button"
+					>
+				<Setter Property="Foreground" Value="Black" />
+				<Setter Property="Margin" Value="0,0,10,0" />
+				<Setter Property="IsEnabled" Value="{Binding Path=Data.CanSelectTree}" />
 				<Style.Triggers>
 					<Trigger Property="IsEnabled" Value="False">
-						<Setter Property="Background" Value="LightGray"/>
-						<Setter Property="Foreground" Value="Gray"/>
+						<Setter Property="Background" Value="LightGray" />
+						<Setter Property="Foreground" Value="Gray" />
 					</Trigger>
 				</Style.Triggers>
 			</Style>
 
-			<Style TargetType="ComboBox" x:Key="CbxBase">
-				<Setter Property="Foreground" Value="Black"/>
-				<Setter Property="Margin" Value="0,2,10,2"/>
-				<Setter Property="IsEnabled" 
-						Value="{Binding Path=Data.TreeCreated,
-																	Converter={StaticResource InvertBool}}"/>
+			<Style x:Key="CbxBase"
+					TargetType="ComboBox"
+					>
+				<Setter Property="Foreground" Value="Black" />
+				<Setter Property="Margin" Value="0,2,10,2" />
+				<Setter Property="IsEnabled" Value="{Binding Path=Data.TreeCreated, Converter={StaticResource InvertBool}}" />
 				<Style.Triggers>
 					<Trigger Property="IsEnabled" Value="False">
-						<Setter Property="Background" Value="LightGray"/>
-						<Setter Property="Foreground" Value="Gray"/>
+						<Setter Property="Background" Value="LightGray" />
+						<Setter Property="Foreground" Value="Gray" />
 					</Trigger>
 				</Style.Triggers>
 			</Style>
@@ -362,8 +382,8 @@
 
 
 			<DataTemplate x:Key="CC_ListBox"
-					DataType="{x:Type dst:TreeLeaf}"
-					>
+					DataType="dst:TreeLeaf"
+			>
 
 				<ListBox Margin="5,0,0,0"
 						DataContext="{Binding DataContext,
@@ -373,8 +393,16 @@
 						ItemsSource="{Binding Leaves.Values}"
 						>
 					<ListBox.ItemTemplate>
-						<DataTemplate DataType="{x:Type dst:TreeLeaf}">
+						<DataTemplate DataType="dst:TreeLeaf">
 							<DockPanel HorizontalAlignment="Stretch">
+
+								<CheckBox Foreground="White"
+										DockPanel.Dock="Left"
+										Margin="0,0,10,0"
+										IsChecked="{Binding IsSelected, Mode=TwoWay, TargetNullValue=false, FallbackValue=false}"
+										/>
+
+
 								<TextBlock Foreground="White"
 										Text="{Binding LeafKey}"
 										DockPanel.Dock="Left"
@@ -453,7 +481,7 @@
 									<TextBlock Grid.Column="1"
 											Grid.Row="1"
 											Grid.ColumnSpan="2"
-											Margin="-6,0,0,0"
+											Margin="-6,0,6,0"
 											VerticalAlignment="Bottom"
 											FontSize="12"
 											Foreground="White"
@@ -470,7 +498,7 @@
 									<TextBlock Grid.Column="2"
 											Grid.Row="1"
 											Grid.ColumnSpan="3"
-											Margin="-10,0,0,0"
+											Margin="-10,0,8,0"
 											VerticalAlignment="Bottom"
 											FontSize="12"
 											Foreground="White"
@@ -485,7 +513,24 @@
 									<TextBlock Grid.Column="3"
 											Grid.Row="1"
 											Grid.ColumnSpan="3"
-											Margin="-12,0,0,0"
+											Margin="-10,0,4,0"
+											VerticalAlignment="Bottom"
+											FontSize="12"
+											Foreground="White"
+											RenderTransformOrigin="0.0,1.0"
+											>
+										<Run>IsTriState</Run>
+										<TextBlock.RenderTransform>
+											<RotateTransform Angle="-45" />
+										</TextBlock.RenderTransform>
+									</TextBlock>
+
+
+
+									<TextBlock Grid.Column="4"
+											Grid.Row="1"
+											Grid.ColumnSpan="3"
+											Margin="-12,0,8,0"
 											VerticalAlignment="Bottom"
 											FontSize="12"
 											Foreground="White"
@@ -497,7 +542,7 @@
 										</TextBlock.RenderTransform>
 									</TextBlock>
 
-									<TextBlock Grid.Column="4"
+									<TextBlock Grid.Column="5"
 											Grid.Row="1"
 											Grid.ColumnSpan="3"
 											Margin="-12,0,0,0"
@@ -512,10 +557,10 @@
 										</TextBlock.RenderTransform>
 									</TextBlock>
 
-									<TextBlock Grid.Column="5"
+									<TextBlock Grid.Column="6"
 											Grid.Row="1"
-											Grid.ColumnSpan="4"
-											Margin="-8,0,0,0"
+											Grid.ColumnSpan="3"
+											Margin="-8,0,-10,0"
 											VerticalAlignment="Bottom"
 											FontSize="12"
 											Foreground="White"
@@ -578,6 +623,273 @@
 					</Trigger>
 				</Style.Triggers>
 			</Style>
+
+
+			<!-- removed
+			<HierarchicalDataTemplate x:Key="ItemTemp"
+					DataType="{StaticResource TreeNode}"
+					ItemsSource="{Binding Nodes.Values}"
+					>
+					-->
+
+			<!-- removed
+				<DockPanel HorizontalAlignment="Stretch">
+					<Grid HorizontalAlignment="Stretch"
+							DockPanel.Dock="Top"
+							>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="95" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*" />
+							<RowDefinition Height="*" />
+							<RowDefinition Height="*" />
+						</Grid.RowDefinitions>
+
+
+						<TextBlock Grid.Column="0"
+								Grid.Row="0"
+								Grid.ColumnSpan="2"
+								Text="{Binding Path=NodeKey}"
+								>
+
+							<TextBlock.Style>
+								<Style TargetType="TextBlock">
+									<Style.Triggers>
+										<DataTrigger Value="True" Binding="{Binding HasNodes}">
+											<Setter Property="Foreground" Value="Cyan">
+											</Setter>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</TextBlock.Style>
+						</TextBlock>
+
+
+						<StackPanel Grid.Column="0"
+								Grid.Row="1"
+								Grid.ColumnSpan="2"
+								HorizontalAlignment="Stretch"
+								Orientation="Horizontal"
+								>
+
+							<cs:CsCheckBoxTriState Margin="0,4,10,0"
+									Width="15"
+									Height="15"
+									VerticalAlignment="Top"
+									IsThreeState="{Binding IsTriState,
+																				 Mode=OneWay}"
+									IsChecked="{Binding IsChecked,
+																			FallbackValue=false}"
+									InvertCheckStateOrder="True"
+									/>
+
+
+							<CheckBox Margin="0,4,10,0"
+									Width="15"
+									Height="15"
+									VerticalAlignment="Top"
+									IsChecked="{Binding IsTriState,
+																			FallbackValue=false}"
+									/>
+
+
+							<CheckBox Margin="0,4,10,0"
+									Width="15"
+									Height="15"
+									VerticalAlignment="Top"
+									IsEnabled="False"
+									IsChecked="{Binding IsChosen,
+																			FallbackValue=false,
+																			Mode=OneWay}"
+									/>
+
+							<CheckBox Margin="0,4,10,0"
+									Width="15"
+									Height="15"
+									VerticalAlignment="Top"
+									IsChecked="{Binding IsExpanded,
+																			FallbackValue=false,
+																			Mode=TwoWay}"
+									/>
+
+							<TextBlock Margin="0,4,10,0"
+									Height="15"
+									VerticalAlignment="Top"
+									Background="White"
+									Foreground="Blue"
+									Text="{Binding PriorIsCheckedState}"
+									/>
+
+
+						</StackPanel>
+
+						<ContentControl Grid.Column="0"
+								Grid.Row="2"
+								Grid.ColumnSpan="2"
+								>
+
+							<ContentControl.Style>
+								<Style TargetType="ContentControl">
+									<Style.Triggers>
+										<DataTrigger Value="true" Binding="{Binding HasLeaves, FallbackValue=true}">
+											<Setter Property="ContentTemplate" Value="{StaticResource CC_Expander}">
+											</Setter>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</ContentControl.Style>
+
+						</ContentControl>
+
+					</Grid>
+				</DockPanel>
+
+			</HierarchicalDataTemplate>
+			-->
+
+			<DataTemplate x:Key="CC_ListBox1"
+					DataType="dst:TreeLeaf"
+					>
+				<ListBox Margin="5,0,0,0"
+						DataContext="{Binding DataContext,
+																	RelativeSource={RelativeSource AncestorType={x:Type TreeViewItem}}}"
+						Background="Transparent"
+						ItemsSource="{Binding Leaves.Values}"
+						>
+					<ListBox.ItemTemplate>
+						<DataTemplate DataType="dst:TreeLeaf">
+							<DockPanel HorizontalAlignment="Stretch">
+								<CheckBox Foreground="White"
+										DockPanel.Dock="Left"
+										/>
+								<TextBlock Foreground="White"
+										DockPanel.Dock="Left"
+										Text="{Binding LeafKey}"
+										/>
+							</DockPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DataTemplate>
+
+			<!-- <x:Array x:Key="DataTypes1" Type="{x:Type Sys:Type}"> -->
+			<!-- 	<x:Type TypeName="dst:TreeNodeData"/> -->
+			<!-- 	<x:Type TypeName="dst:TreeLeafData"/> -->
+			<!-- </x:Array> -->
+			<!-- <cs:GenericType x:Key="TreeNode1" BaseType="{x:Type dst:TreeClassNode}" InnerTypes="{StaticResource DataTypes1}"/> -->
+			<!-- <cs:GenericType x:Key="TreeLeaf1" BaseType="{x:Type dst:TreeClassLeaf}" InnerTypes="{StaticResource DataTypes1}"/> -->
+
+			<!-- <DataTemplate x:Key="CC_Expander"> -->
+			<!-- 	<Expander IsExpanded="false" -->
+			<!-- 			ExpandDirection="Right" -->
+			<!-- 			ContentTemplate="{StaticResource CC_ListBox}" -->
+			<!-- 			/> -->
+			<!-- </DataTemplate> -->
+
+
+
+
+			<HierarchicalDataTemplate x:Key="TreeViewItemTemplate1"
+					DataType="dst:TreeNode"
+					ItemsSource="{Binding Nodes.Values}"
+					>
+				<!-- DataType="{StaticResource TreeNode}" -->
+				<DockPanel HorizontalAlignment="Stretch">
+					<Grid HorizontalAlignment="Stretch"
+							DockPanel.Dock="Top"
+							>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="95" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*" />
+							<RowDefinition Height="*" />
+							<RowDefinition Height="*" />
+						</Grid.RowDefinitions>
+						<TextBlock Grid.Column="0"
+								Grid.Row="0"
+								Grid.ColumnSpan="2"
+								Text="{Binding NodeKey}"
+								>
+							<TextBlock.Style>
+								<Style TargetType="{x:Type TextBlock}">
+									<Style.Triggers>
+										<DataTrigger Value="True" Binding="{Binding HasNodes}">
+											<Setter Property="Foreground" Value="Cyan" />
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</TextBlock.Style>
+						</TextBlock>
+						<StackPanel Grid.Column="0"
+								Grid.Row="1"
+								Grid.ColumnSpan="2"
+								HorizontalAlignment="Stretch"
+								Orientation="Horizontal"
+								>
+							<cs:CsCheckBoxTriState Margin="0,4,10,0"
+									Width="15"
+									Height="15"
+									VerticalAlignment="Top"
+									IsChecked="{Binding IsChecked,
+																			FallbackValue=false}"
+									IsThreeState="{Binding IsTriState,
+																				 Mode=OneWay}"
+									InvertCheckStateOrder="True"
+									/>
+							<CheckBox Margin="0,4,10,0"
+									Width="15"
+									Height="15"
+									VerticalAlignment="Top"
+									IsChecked="{Binding IsTriState,
+																			FallbackValue=false}"
+									/>
+							<CheckBox Margin="0,4,10,0"
+									Width="15"
+									Height="15"
+									VerticalAlignment="Top"
+									IsChecked="{Binding IsChosen,
+																			FallbackValue=false,
+																			Mode=OneWay}"
+									IsEnabled="False"
+									/>
+							<CheckBox Margin="0,4,10,0"
+									Width="15"
+									Height="15"
+									VerticalAlignment="Top"
+									IsChecked="{Binding IsExpanded,
+																			FallbackValue=false,
+																			Mode=TwoWay}"
+									/>
+							<TextBlock Margin="0,4,10,0"
+									Height="15"
+									VerticalAlignment="Top"
+									Background="White"
+									Foreground="Blue"
+									Text="{Binding PriorIsCheckedState}"
+									/>
+						</StackPanel>
+						<ContentControl Grid.Column="0"
+								Grid.Row="2"
+								Grid.ColumnSpan="2"
+								>
+							<ContentControl.Style>
+								<Style TargetType="{x:Type ContentControl}">
+									<Style.Triggers>
+										<DataTrigger Value="true" Binding="{Binding HasLeaves, FallbackValue=true}">
+											<Setter Property="ContentTemplate" Value="{StaticResource CC_Expander}" />
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</ContentControl.Style>
+						</ContentControl>
+					</Grid>
+				</DockPanel>
+			</HierarchicalDataTemplate>
 
 
 		</ResourceDictionary>
@@ -655,6 +967,15 @@
 					DockPanel.Dock="Bottom"
 					Orientation="Vertical"
 					>
+
+
+				<Button x:Name="BtnShowSelDeSelLists"
+						Content="Sel Desel Lists"
+						Margin="0,0,0,5"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnShowSelDeSelLists_OnClick"
+						/>
 
 
 				<Button x:Name="BtnTestCountMatchingLeaves"
@@ -758,8 +1079,7 @@
 				VerticalAlignment="Stretch"
 				>
 
-			<StackPanel
-					Margin="0,0,0,0"
+			<StackPanel Margin="0,0,0,0"
 					Orientation="Vertical"
 					DockPanel.Dock="Top"
 					>
@@ -770,7 +1090,7 @@
 						Width="{StaticResource Btn.Width.Std}"
 						Height="{StaticResource Btn.Height.Std}"
 						Click="BtnTreeClear_OnClick"
-				/>
+						/>
 
 			</StackPanel>
 
@@ -834,9 +1154,7 @@
 		</DockPanel>
 
 
-		<DockPanel Grid.Column="1"
-				
-				>
+		<DockPanel Grid.Column="1">
 
 			<DockPanel DockPanel.Dock="Top">
 
@@ -1387,10 +1705,6 @@
 
 
 		</DockPanel>
-
-		<!--#endregion-->
-
-
 		<StackPanel Grid.Column="0"
 				Grid.Row="6"
 				Height="Auto"
@@ -1401,33 +1715,17 @@
 			<TextBlock Width="150"
 					Foreground="Aqua"
 					LineHeight="10"
-					>
-				<Run>
-					this is text
-				</Run><LineBreak />
-				<Run>Line 2</Run>
-
-			</TextBlock>
+					><Run Text="this is text"/><LineBreak /><Run Text="Line 2"/></TextBlock>
 
 			<TextBlock Foreground="Aqua"
 					LineHeight="4"
-					>
-				<Span>
-					<Run>this is text</Run>
-					<Run>with a button</Run><LineBreak />
-					<Run Text="{Binding ObservTree.RootNode.NodeKey}">
-					</Run>
-					<InlineUIContainer>
-						<Button Click="InLineButton_OnClick">Press Me</Button>
-					</InlineUIContainer>
-				</Span>
-
-			</TextBlock>
+					><Span><Run Text="this is text"/><Run Text=" "/><Run Text="with a button"/><LineBreak /><Run Text="{Binding ObservTree.RootNode.NodeKey}"/><Run Text=" "/><InlineUIContainer>
+						<Button Click="InLineButton_OnClick" Content="Press Me"/>
+					</InlineUIContainer></Span></TextBlock>
 
 		</StackPanel>
 
-
-
+		<!--#endregion-->
 		<DockPanel Grid.Column="0"
 				Grid.Row="0"
 				Grid.RowSpan="3"
@@ -1436,31 +1734,35 @@
 			<TextBlock FontSize="16"
 					Foreground="White"
 					DockPanel.Dock="Top"
-					Text="{Binding Data.TreeTitle,
-												 Mode=OneWay,
-												 FallbackValue='Tree'}"
+					Text="{Binding Data.TreeTitle, FallbackValue=Tree, Mode=OneWay}"
 					/>
+
+
+			<!-- removed
 
 			<StackPanel Orientation="Horizontal"
 					DockPanel.Dock="Top"
 					>
 
-				<CheckBox x:Name="CkbxSelTree"
-						Content="Select Tree"
-						Style="{StaticResource CkbxBase}"
-						Click="CkbxSelTree_OnClick"
-						>
+				<cs:CsCheckBoxTriState x:Name="CkbxTriState"
+						Content="TriState CkBx Test"
+						Foreground="White"
+						IsThreeState="True"
+						IsEnabled="True"
+						IsChecked="{Binding IsSelected}"
+						InvertCheckStateOrder="True"
+				/>
 
-				</CheckBox>
-
-				<CheckBox x:Name="CkbxDeSelTree"
-						Content="DeSelect Tree"
-						Margin="0,2,5,2"
-						Style="{StaticResource CkbxBase}"
-						Click="CkbxDeSelTree_OnClick"
+				<TextBlock
+						Text="{Binding IsChecked, ElementName=CkbxTriState, TargetNullValue='null'}"
+						Foreground="White"
+						Margin="10,0,0,0"
 						/>
 
 			</StackPanel>
+
+			-->
+
 
 			<StackPanel Height="Auto"
 					Orientation="Vertical"
@@ -1503,6 +1805,26 @@
 							Click="BtnRenameNode_OnClick"
 							/>
 
+					<Button x:Name="BtnSelTree"
+							Content="Sel Tree"
+							Margin="5,0,0,0"
+							Width="50"
+							Height="20"
+							Padding="0,-1,0,1"
+							Style="{StaticResource Button1}"
+							Click="BtnSelTree_OnClick"
+							/>
+
+					<Button x:Name="BtnDeSelTree"
+							Content="DeSel Tree"
+							Margin="5,0,0,0"
+							Width="50"
+							Height="20"
+							Padding="0,-1,0,1"
+							Style="{StaticResource Button1}"
+							Click="BtnDeSelTree_OnClick"
+							/>
+
 				</StackPanel>
 
 				<Grid Margin="0,0,0,5">
@@ -1516,11 +1838,28 @@
 
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*" />
+						<!--  11  -->
+						<!--  0  -->
 						<RowDefinition Height="*" />
+						<!--  1  -->
 						<RowDefinition Height="*" />
+						<!--  2  -->
 						<RowDefinition Height="*" />
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
+						<!--  3  -->
+						<RowDefinition Height="*" />
+						<!--  4  -->
+						<RowDefinition Height="*" />
+						<!--  5  -->
+						<RowDefinition Height="*" />
+						<!--  6  -->
+						<RowDefinition Height="*" />
+						<!--  7  -->
+						<RowDefinition Height="*" />
+						<!--  8  -->
+						<RowDefinition Height="*" />
+						<!--  9  -->
+						<RowDefinition Height="*" />
+						<!--  10  -->
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
 
@@ -1528,22 +1867,34 @@
 					<ComboBox Grid.Column="0"
 							Grid.Row="0"
 							Grid.ColumnSpan="2"
-							Style="{StaticResource CbxBase}"
 							SelectedIndex="0"
 							SelectedItem="{Binding Data.SelectedMode}"
 							DisplayMemberPath="Value.Description"
-							ItemsSource="{Binding Data.SelectionModes,
-																		Mode=OneWay}"
+							ItemsSource="{Binding Data.SelectionModeView, Mode=OneWay}"
+							Style="{StaticResource CbxBase}"
 							/>
-					<!-- SelectedValue="{Binding SelItem}" -->
+
+
+					<!--
+						settings
+						> row 7  > is tri state (enum)
+						> row 8  > select mode (enum)
+						> row 8  > select mode description (string)
+						> row 9  > select first class (enum)
+						> row 9  > select second class (enum)
+						> row 10 > select tree allowed (enum)
+						> row 10 > select tree allowed (bool)
+					-->
+
+					<!--  SelectedValue="{Binding SelItem}"  -->
 
 					<TextBlock Grid.Column="2"
 							Grid.Row="0"
 							Grid.ColumnSpan="2"
 							Margin="5,0,3,0"
+							VerticalAlignment="Center"
 							Foreground="White"
-							Text="{Binding Data.SelectModeName,
-														 FallbackValue='IND'}"
+							Text="{Binding Data.SelectModeDesc, FallbackValue=IND}"
 							/>
 
 
@@ -1566,9 +1917,7 @@
 							Grid.Row="2"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelectedNodeKey,
-														 Mode=OneWay,
-														 FallbackValue='none'}"
+							Text="{Binding Data.SelectedNodeKey, FallbackValue=none, Mode=OneWay}"
 							/>
 
 
@@ -1583,9 +1932,22 @@
 							Grid.Row="3"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.DeSelectedNodeKey,
-														 Mode=OneWay,
-														 FallbackValue='none'}"
+							Text="{Binding Data.DeSelectedNodeKey, FallbackValue=none, Mode=OneWay}"
+							/>
+
+
+					<TextBlock Grid.Column="0"
+							Grid.Row="4"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="Mix sel node"
+							/>
+
+					<TextBlock Grid.Column="1"
+							Grid.Row="4"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.MixedNodeKey, FallbackValue=none, Mode=OneWay}"
 							/>
 
 
@@ -1611,10 +1973,8 @@
 							Grid.Row="2"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelNodeKey,
-														 Mode=OneWay,
-														 FallbackValue='none'}"
-					/>
+							Text="{Binding Data.SelNodeKey, FallbackValue=none, Mode=OneWay}"
+							/>
 
 
 
@@ -1629,93 +1989,209 @@
 							Grid.Row="3"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.PriorSelNodeKey,
-														 Mode=OneWay,
-														 FallbackValue='none'}"
+							Text="{Binding Data.PriorSelNodeKey, FallbackValue=none, Mode=OneWay}"
 							/>
 
 
 
 					<TextBlock Grid.Column="0"
-							Grid.Row="5"
+							Grid.Row="6"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="Sel node count"
-					/>
+							/>
 
 
 					<TextBlock Grid.Column="1"
-							Grid.Row="5"
+							Grid.Row="6"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.SelectedNodes.Count,
-														 Mode=OneWay,
-														 FallbackValue=0}"
-					/>
+							Text="{Binding Data.Tree.SelectedNodes.Count, FallbackValue=0, Mode=OneWay}"
+							/>
 
 
 					<TextBlock Grid.Column="2"
-							Grid.Row="5"
+							Grid.Row="6"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="prior sel node count"
-					/>
+							Text="Prior sel node count"
+							/>
 
 
 					<TextBlock Grid.Column="3"
-							Grid.Row="5"
+							Grid.Row="6"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.PriorSelectedNodes.Count,
-														 Mode=OneWay,
-														 FallbackValue=0}"
-					/>
+							Text="{Binding Data.Tree.PriorSelectedNodes.Count, FallbackValue=0, Mode=OneWay}"
+							/>
+
+					<TextBlock Grid.Column="0"
+							Grid.Row="7"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="tree settings"
+							/>
+
+
+
+					<TextBlock Grid.Column="2"
+							Grid.Row="7"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="tree name"
+							/>
+
+
+					<TextBlock Grid.Column="3"
+							Grid.Row="7"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.TreeName, FallbackValue=no name, Mode=OneWay, TargetNullValue=null}"
+							/>
 
 
 					<TextBlock Grid.Column="0"
-							Grid.Row="6"
+							Grid.Row="8"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="can multi sel"
-					/>
+							Text="sel mode"
+							/>
 
 
 					<TextBlock Grid.Column="1"
-							Grid.Row="6"
+							Grid.Row="8"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.CanMultiSelect,
-														 Mode=OneWay,
-														 FallbackValue=false}"
-					/>
+							Text="{Binding Data.SelectModeName, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							/>
+
 
 					<TextBlock Grid.Column="2"
-							Grid.Row="6"
+							Grid.Row="8"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="sel class"
-					/>
+							Text="sel mode desc"
+							/>
 
 
 					<TextBlock Grid.Column="3"
-							Grid.Row="6"
+							Grid.Row="8"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelectedClass,
-														 Mode=OneWay,
-														 FallbackValue='not set'}"
-					/>
+							Text="{Binding Data.SelectModeDesc, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							/>
+
+
+
+
+
+					<TextBlock Grid.Column="0"
+							Grid.Row="9"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="sel first class"
+							/>
+
+
+					<TextBlock Grid.Column="1"
+							Grid.Row="9"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.SelectedFirstClass, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							/>
+
+
+
+
+					<TextBlock Grid.Column="2"
+							Grid.Row="9"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="is tri state"
+							/>
+
+
+					<TextBlock Grid.Column="3"
+							Grid.Row="9"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.UseThreeState, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							/>
+
+
+
+					<TextBlock Grid.Column="0"
+							Grid.Row="10"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="sel second class"
+							/>
+
+
+					<TextBlock Grid.Column="1"
+							Grid.Row="10"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.SelectedSecondClass, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							/>
+
+
+					<TextBlock Grid.Column="2"
+							Grid.Row="10"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="will sel leaves"
+							/>
+
+
+					<TextBlock Grid.Column="3"
+							Grid.Row="10"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.WillSelectLeaves, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							/>
+
+
+
+					<TextBlock Grid.Column="0"
+							Grid.Row="11"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="sel tree name"
+							/>
+
+
+					<TextBlock Grid.Column="1"
+							Grid.Row="11"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.SelectTreeAllowed, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							/>
+
+
+					<TextBlock Grid.Column="2"
+							Grid.Row="11"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="sel tree bool"
+							/>
+
+
+					<TextBlock Grid.Column="3"
+							Grid.Row="11"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.CanSelectTree, FallbackValue=not sel, Mode=OneWay, TargetNullValue=null}"
+							/>
+
 
 				</Grid>
 
 			</StackPanel>
-
-
 			<TreeView VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					VerticalContentAlignment="Stretch"
-					DataContext="{Binding ElementName=ExWin,
-																Path=ObservTree}"
+					DataContext="{Binding ObservTree, ElementName=ExWin}"
 					FontFamily="Hack"
 					Background="#222222"
 					Foreground="White"
@@ -1725,117 +2201,10 @@
 					ScrollViewer.VerticalScrollBarVisibility="Visible"
 					ItemsSource="{Binding RootNode.Nodes.Values}"
 					ItemContainerStyle="{DynamicResource TreeViewItemContainerStyle}"
+					ItemTemplate="{DynamicResource TreeViewItemTemplate1}"
 					Style="{DynamicResource TreeViewStyle}"
 					>
 				<!--  SelectedItemChanged="TreeView_OnSelectedItemChanged"  -->
-
-				<TreeView.Resources>
-
-				</TreeView.Resources>
-
-
-				<TreeView.ItemTemplate>
-
-					<HierarchicalDataTemplate DataType="{x:Type dst:TreeNode}"
-							ItemsSource="{Binding Nodes.Values}"
-							>
-
-
-						<DockPanel HorizontalAlignment="Stretch">
-							<Grid HorizontalAlignment="Stretch"
-									DockPanel.Dock="Top"
-									>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="75" />
-									<ColumnDefinition Width="*" />
-								</Grid.ColumnDefinitions>
-
-								<Grid.RowDefinitions>
-									<RowDefinition Height="*" />
-									<RowDefinition Height="*" />
-									<RowDefinition Height="*" />
-								</Grid.RowDefinitions>
-
-
-								<TextBlock Grid.Column="0"
-										Grid.Row="0"
-										Grid.ColumnSpan="2"
-										Text="{Binding Path=NodeKey}"
-										>
-
-									<TextBlock.Style>
-										<Style TargetType="TextBlock">
-											<Style.Triggers>
-												<DataTrigger Value="True" Binding="{Binding HasNodes}">
-													<Setter Property="Foreground" Value="Cyan">
-													</Setter>
-												</DataTrigger>
-											</Style.Triggers>
-										</Style>
-									</TextBlock.Style>
-								</TextBlock>
-
-
-								<StackPanel Grid.Column="0"
-										Grid.Row="1"
-										Grid.ColumnSpan="2"
-										HorizontalAlignment="Stretch"
-										Orientation="Horizontal"
-										>
-									<CheckBox Margin="0,4,10,0"
-											Width="15"
-											Height="15"
-											VerticalAlignment="Top"
-											IsChecked="{Binding IsChecked,
-																					FallbackValue=false}"
-											/>
-									<CheckBox Margin="0,4,10,0"
-											Width="15"
-											Height="15"
-											VerticalAlignment="Top"
-											IsEnabled="False"
-											IsChecked="{Binding IsChosen,
-																					FallbackValue=false,
-																					Mode=OneWay}"
-											/>
-
-									<CheckBox Margin="0,4,10,0"
-											Width="15"
-											Height="15"
-											VerticalAlignment="Top"
-											IsChecked="{Binding IsExpanded,
-																					FallbackValue=false,
-																					Mode=TwoWay}"
-											/>
-
-
-
-								</StackPanel>
-
-								<ContentControl Grid.Column="1"
-										Grid.Row="1"
-										Grid.ColumnSpan="1"
-										>
-
-									<ContentControl.Style>
-										<Style TargetType="ContentControl">
-											<Style.Triggers>
-												<DataTrigger Value="true" Binding="{Binding HasLeaves, FallbackValue=true}">
-													<Setter Property="ContentTemplate" Value="{StaticResource CC_Expander}">
-													</Setter>
-												</DataTrigger>
-											</Style.Triggers>
-										</Style>
-									</ContentControl.Style>
-
-								</ContentControl>
-
-
-
-							</Grid>
-						</DockPanel>
-					</HierarchicalDataTemplate>
-				</TreeView.ItemTemplate>
 
 			</TreeView>
 

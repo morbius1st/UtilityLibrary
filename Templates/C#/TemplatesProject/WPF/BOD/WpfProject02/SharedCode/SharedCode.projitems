@@ -13,10 +13,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSampleGenericTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSamples.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DataSampleTree.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SampleData\TreeClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeClassLeaf.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeLeafData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeNodeData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeVoid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DictionaryDataSample.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SampleData\TreeLeafData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SampleData\TreeNodeData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeClassNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShDebugAssist\ShDebugMessages.cs" />
     <Compile Include="C:\Users\jeffs\Documents\Programming\VisualStudioProjects\UtilityLibrary\UtilityLibrary\CsObservableDictionary.cs">
       <Link>.Linked\CsObservableDictionary.cs</Link>

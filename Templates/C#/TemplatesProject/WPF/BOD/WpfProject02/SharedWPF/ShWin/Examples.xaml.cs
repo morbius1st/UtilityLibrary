@@ -18,13 +18,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using SharedCode.SampleData;
 using SharedCode.ShDebugAssist;
+using SharedCode.TreeClasses;
 using SharedWPF.ShWin;
 using ShCode.SampleData;
 using WpfProject02.Annotations;
 
 using static SharedCode.SampleData.Selection;
 using static SharedCode.SampleData.Selection.SelectMode;
-using static SharedCode.SampleData.Selection.SelectClass;
+using static SharedCode.SampleData.Selection.SelectFirstClass;
 
 /*
  notes:
@@ -85,6 +86,7 @@ namespace SharedWPF.ShWin
 
 		public static  ShDebugMessages M;
 		private object selItem;
+		private bool? isSelected = false;
 
 
 		#region message boxes
@@ -175,9 +177,9 @@ namespace SharedWPF.ShWin
 		public string Title { get; set; } = "Examples";
 
 		// T Observable Tree
-		public Tree ObservTree => dst?.Tree;
+		public TreeClass<TreeNodeData, TreeLeafData> ObservTree => dst?.Tree;
 
-		public TreeNode ObservTreeNode => dst?.Tree?.RootNode;
+		public TreeClassNode<TreeNodeData, TreeLeafData> ObservTreeNode => dst?.Tree?.RootNode;
 
 		public string TestString
 		{
@@ -278,7 +280,21 @@ namespace SharedWPF.ShWin
 		public DataSampleTree Data => dst;
 
 
-	#endregion
+		public bool? IsSelected
+		{
+			get => isSelected; 
+			set
+			{ 
+				isSelected = value;
+				if (M != null)
+				{
+					M.WriteLine($"Example.IsSelected| value| {(value.HasValue ? value :"null")}");
+				}
+				OnPropertyChanged();
+			}
+		}
+
+		#endregion
 
 		#region methods
 
@@ -332,7 +348,6 @@ namespace SharedWPF.ShWin
 
 	#region buttons
 
-
 		private void BtnExit_OnClick(object sender, RoutedEventArgs e)
 		{
 			this.Close();
@@ -340,7 +355,7 @@ namespace SharedWPF.ShWin
 
 		private void BtnDebug_OnClick(object sender, RoutedEventArgs e)
 		{
-			Tree t = dst.Tree;
+			TreeClass<TreeNodeData, TreeLeafData> t = dst.Tree;
 
 			string sel = (t?.SelectedNodes?.Count ?? 0) > 0 ? t.SelectedNodes[0].NodeKey : "none";
 			string psel = (t?.PriorSelectedNodes?.Count ?? 0) > 0 ? t.PriorSelectedNodes[0].NodeKey : "none";
@@ -550,12 +565,15 @@ namespace SharedWPF.ShWin
 
 		// selection 
 
-		private void CkbxSelTree_OnClick(object sender, RoutedEventArgs e)
+		private void BtnSelTree_OnClick(object sender, RoutedEventArgs e)
 		{
 			dst.SelectTree();
 		}
 
-		private void CkbxDeSelTree_OnClick(object sender, RoutedEventArgs e) { }
+		private void BtnDeSelTree_OnClick(object sender, RoutedEventArgs e)
+		{
+			dst.DeSelectTree();
+		}
 
 
 
@@ -586,7 +604,11 @@ namespace SharedWPF.ShWin
 		//
 		// }
 
-		
+
+		private void BtnShowSelDeSelLists_OnClick(object sender, RoutedEventArgs e)
+		{
+			dst.ShowSelDeselLists();
+		}
 	}
 
 	
