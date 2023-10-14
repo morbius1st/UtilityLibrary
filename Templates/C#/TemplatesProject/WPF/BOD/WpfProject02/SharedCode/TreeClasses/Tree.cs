@@ -192,57 +192,57 @@ namespace SharedCode.TreeClasses
 		bool SelectNode();
 	}
 
-	public class TreeClass<TNd, TLd> : INotifyPropertyChanged,
-		IEnumerable<TreeClassNode<TNd, TLd>>
+	public class Tree<TNd, TLd> : INotifyPropertyChanged,
+		IEnumerable<TreeNode<TNd, TLd>>
 		where TNd : class
 		where TLd : class
 	{
 	#region private fields
 
-		private TreeClassNode<TNd, TLd> rootNode;
+		private TreeNode<TNd, TLd> rootNode;
 
 		// represents the last selected (or deselected) node - since
 		// multiple nodes / leaves can be selected
-		// private TreeClassNode<TNd, TLd>? selectedNode;
+		// private TreeNode<TNd, TLd>? selectedNode;
 
 		// represents the node currently being used for node operations
 		// there must always be a current node
 		// can and does change during most node operations 
 		// can only be stable if no other node operations occur
-		private TreeClassNode<TNd, TLd>? currentNode;
+		private TreeNode<TNd, TLd>? currentNode;
 
 		// represents a temporary node that remains stable during
 		// multi-step operations
 		// important that this only get used for multi-step
 		// but single subject operations
-		private TreeClassNode<TNd, TLd>? tempNode;
+		private TreeNode<TNd, TLd>? tempNode;
 
 		// represents a node found during search operations
 		// such as ContainsNode
-		private TreeClassNode<TNd, TLd>? foundNode;
+		private TreeNode<TNd, TLd>? foundNode;
 
-		private TreeClassLeaf<TNd, TLd>? foundLeaf;
+		private TreeLeaf<TNd, TLd>? foundLeaf;
 
 
 		// private bool isTriState;
 		private bool requireUniqueKeys;
 
 		private string leafToFind;
-		private List<TreeClassLeaf<TNd, TLd>> foundLeaves;
+		private List<TreeLeaf<TNd, TLd>> foundLeaves;
 		private int foundLeafIdx = -1;
 
 		private string nodeToFind;
-		private List<TreeClassNode<TNd, TLd>> foundNodes;
+		private List<TreeNode<TNd, TLd>> foundNodes;
 		private int foundNodeIdx = -1;
 
 		// selection
 
 		private SelectMode selectMode = INDIVIDUAL;
 		// private SelectFirstClass selectFirstClass = NODE_ONLY;
-		private List<TreeClassNode<TNd, TLd>> selectedNodes;
-		private List<TreeClassNode<TNd, TLd>> priorSelectedNodes;
+		private List<TreeNode<TNd, TLd>> selectedNodes;
+		private List<TreeNode<TNd, TLd>> priorSelectedNodes;
 
-		private List<TreeClassLeaf<TNd, TLd>> selectedLeaves;
+		private List<TreeLeaf<TNd, TLd>> selectedLeaves;
 
 		// .................................check state		  mixed >	checked >	unchecked >	mixed
 		//														0			1			2			3 (0)
@@ -252,9 +252,9 @@ namespace SharedCode.TreeClasses
 
 	#region ctor
 
-		public TreeClass() { }
+		public Tree() { }
 
-		public TreeClass(string treeName, SelectMode mode, TNd nodeData = null)
+		public Tree(string treeName, SelectMode mode, TNd nodeData = null)
 		{
 			TreeName = treeName;
 			// NodeData = nodeData;
@@ -262,8 +262,8 @@ namespace SharedCode.TreeClasses
 
 			makeRootNode(nodeData);
 
-			selectedNodes = new List<TreeClassNode<TNd, TLd>>();
-			priorSelectedNodes = new List<TreeClassNode<TNd, TLd>>();
+			selectedNodes = new List<TreeNode<TNd, TLd>>();
+			priorSelectedNodes = new List<TreeNode<TNd, TLd>>();
 		}
 
 	#endregion
@@ -276,9 +276,9 @@ namespace SharedCode.TreeClasses
 
 		// public TNd NodeData { get; set; }
 
-		public TreeClassNode<TNd, TLd> RootNode => rootNode;
+		public TreeNode<TNd, TLd> RootNode => rootNode;
 
-		public TreeClassNode<TNd, TLd> CurrentNode
+		public TreeNode<TNd, TLd> CurrentNode
 		{
 			get => currentNode;
 			set
@@ -289,7 +289,7 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		public TreeClassNode<TNd, TLd> FoundNode
+		public TreeNode<TNd, TLd> FoundNode
 		{
 			get => foundNode;
 			set
@@ -300,7 +300,7 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		public TreeClassLeaf<TNd, TLd> FoundLeaf
+		public TreeLeaf<TNd, TLd> FoundLeaf
 		{
 			get => foundLeaf;
 			set
@@ -311,13 +311,13 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		public List<TreeClassNode<TNd, TLd>> FoundNodes => foundNodes;
-		public List<TreeClassLeaf<TNd, TLd>> FoundLeaves => foundLeaves;
+		public List<TreeNode<TNd, TLd>> FoundNodes => foundNodes;
+		public List<TreeLeaf<TNd, TLd>> FoundLeaves => foundLeaves;
 
 		// selection
 		// most selection login is in the node class
 
-		public List<TreeClassNode<TNd, TLd>> SelectedNodes
+		public List<TreeNode<TNd, TLd>> SelectedNodes
 		{
 			get => selectedNodes;
 			private set
@@ -327,7 +327,7 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		public List<TreeClassNode<TNd, TLd>> PriorSelectedNodes
+		public List<TreeNode<TNd, TLd>> PriorSelectedNodes
 		{
 			get => priorSelectedNodes;
 			private set
@@ -337,7 +337,7 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		public List<TreeClassLeaf<TNd, TLd>> SelectedLeaves
+		public List<TreeLeaf<TNd, TLd>> SelectedLeaves
 		{
 			get => selectedLeaves;
 			set
@@ -468,7 +468,7 @@ namespace SharedCode.TreeClasses
 
 		// node 
 
-		public void UpdateSelected(TreeClassNode<TNd, TLd>? node)
+		public void UpdateSelected(TreeNode<TNd, TLd>? node)
 		{
 			switch (SelectFirstClass)
 			{
@@ -507,7 +507,7 @@ namespace SharedCode.TreeClasses
 			OnPropUpdateSelectedNodes();
 		}
 
-		public void UpdateDeSelected(TreeClassNode<TNd, TLd> node)
+		public void UpdateDeSelected(TreeNode<TNd, TLd> node)
 		{
 			switch (SelectFirstClass)
 			{
@@ -551,7 +551,7 @@ namespace SharedCode.TreeClasses
 			OnPropUpdateSelectedNodes();
 		}
 
-		public void UpdateSelectionTriState(TreeClassNode<TNd, TLd>? node)
+		public void UpdateSelectionTriState(TreeNode<TNd, TLd>? node)
 		{
 			// Examples.M.WriteLine("\n+501 00 doing tri-state");
 			// Debug.WriteLine($"\n+501 00 doing tri-state| {node}");
@@ -560,7 +560,7 @@ namespace SharedCode.TreeClasses
 
 			if (node.Nodes != null)
 			{
-				foreach (KeyValuePair<string, TreeClassNode<TNd, TLd>> kvp in node.Nodes)
+				foreach (KeyValuePair<string, TreeNode<TNd, TLd>> kvp in node.Nodes)
 				{
 					// Debug.WriteLine($"+500     update children| name| {kvp.Value.NodeKey}");
 					kvp.Value.CheckedChangeFromParent(node.IsCheckedState);
@@ -583,7 +583,7 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		private void updateSelectedIndividual(TreeClassNode<TNd, TLd> node)
+		private void updateSelectedIndividual(TreeNode<TNd, TLd> node)
 		{
 			// only one node selected at a time
 			// will always add a node
@@ -594,7 +594,7 @@ namespace SharedCode.TreeClasses
 			// else 
 			// {
 				priorSelectedNodes = selectedNodes;
-				// selectedNodes = new List<TreeClassNode<TNd, TLd>> { node };
+				// selectedNodes = new List<TreeNode<TNd, TLd>> { node };
 
 				priorSelectedNodes[0].DeSelectNode();
 
@@ -604,7 +604,7 @@ namespace SharedCode.TreeClasses
 			selectedNodes.Add(node);
 		}
 
-		private bool updateDeselectedIndividual(TreeClassNode<TNd, TLd> node)
+		private bool updateDeselectedIndividual(TreeNode<TNd, TLd> node)
 		{
 			selectedNodes.Remove(node);
 
@@ -613,7 +613,7 @@ namespace SharedCode.TreeClasses
 			return true;
 		}
 
-		private bool updateSelectedExtended(TreeClassNode<TNd, TLd> node)
+		private bool updateSelectedExtended(TreeNode<TNd, TLd> node)
 		{
 			// two cases:
 			// new - nothing selected before
@@ -645,7 +645,7 @@ namespace SharedCode.TreeClasses
 			return true;
 		}
 
-		private bool updateDeselectedExtended(TreeClassNode<TNd, TLd> node)
+		private bool updateDeselectedExtended(TreeNode<TNd, TLd> node)
 		{
 			// case 2
 			// one of the selected nodes was deselected
@@ -664,7 +664,7 @@ namespace SharedCode.TreeClasses
 			return result;
 		}
 
-		private bool selectBranch(TreeClassNode<TNd, TLd> node)
+		private bool selectBranch(TreeNode<TNd, TLd> node)
 		{
 			// case 1 - nothing selected before
 			// Examples.M.WriteLine(" 100 1A extended select| case 1| nothing selected before");
@@ -679,7 +679,7 @@ namespace SharedCode.TreeClasses
 			return true;
 		}
 
-		private bool deselectBranch(TreeClassNode<TNd, TLd> node)
+		private bool deselectBranch(TreeNode<TNd, TLd> node)
 		{
 			// generic method - start at node provided and work 
 			// down from there
@@ -696,7 +696,7 @@ namespace SharedCode.TreeClasses
 			// while deselecting
 			node.DeSelectNode();
 
-			List<TreeClassNode<TNd, TLd>> removed = new() { node };
+			List<TreeNode<TNd, TLd>> removed = new() { node };
 
 			removed.AddRange(DeSelectNodeAllBranches(node));
 
@@ -706,7 +706,7 @@ namespace SharedCode.TreeClasses
 		}
 
 
-		public bool AddNodeToSelected(TreeClassNode<TNd, TLd> node)
+		public bool AddNodeToSelected(TreeNode<TNd, TLd> node)
 		{
 			if (node == null) return false;
 
@@ -724,7 +724,7 @@ namespace SharedCode.TreeClasses
 			return true;
 		}
 
-		public bool RemoveNodeFromSelected(TreeClassNode<TNd, TLd> node)
+		public bool RemoveNodeFromSelected(TreeNode<TNd, TLd> node)
 		{
 			if (!selectedNodes.Contains(node)) return false;
 
@@ -743,13 +743,13 @@ namespace SharedCode.TreeClasses
 
 		// leaf
 
-		public bool SelectAllLeavesInAllNodes(TreeClassNode<TNd, TLd> node)
+		public bool SelectAllLeavesInAllNodes(TreeNode<TNd, TLd> node)
 		{
 			if (node == null) return false;
 
 			bool result = true;
 
-			foreach (TreeClassNode<TNd, TLd> n in node)
+			foreach (TreeNode<TNd, TLd> n in node)
 			{
 				result = result && selectAllLeavesInNode(n);
 			}
@@ -757,13 +757,13 @@ namespace SharedCode.TreeClasses
 			return result;
 		}
 
-		public bool DeSelectAllLeavesInAllNodes(TreeClassNode<TNd, TLd> node)
+		public bool DeSelectAllLeavesInAllNodes(TreeNode<TNd, TLd> node)
 		{
 			if (node == null) return false;
 
 			bool result = true;
 
-			foreach (TreeClassNode<TNd, TLd> n in node)
+			foreach (TreeNode<TNd, TLd> n in node)
 			{
 				result = result && deSelectAllLeavesInNode(n);
 			}
@@ -772,13 +772,13 @@ namespace SharedCode.TreeClasses
 		}
 
 
-		private bool selectAllLeavesInNode(TreeClassNode<TNd, TLd> node)
+		private bool selectAllLeavesInNode(TreeNode<TNd, TLd> node)
 		{
 			if (node == null) return false;
 
 			bool result = true;
 
-			foreach (KeyValuePair<string, TreeClassLeaf<TNd, TLd>> kvp in node.Leaves)
+			foreach (KeyValuePair<string, TreeLeaf<TNd, TLd>> kvp in node.Leaves)
 			{
 				kvp.Value.SelectLeaf();
 				result = result && AddLeafToSelected(kvp.Value);
@@ -787,13 +787,13 @@ namespace SharedCode.TreeClasses
 			return result;
 		}
 
-		private bool deSelectAllLeavesInNode(TreeClassNode<TNd, TLd> node)
+		private bool deSelectAllLeavesInNode(TreeNode<TNd, TLd> node)
 		{
 			if (node == null) return false;
 
 			bool result = true;
 
-			foreach (KeyValuePair<string, TreeClassLeaf<TNd, TLd>> kvp in node.Leaves)
+			foreach (KeyValuePair<string, TreeLeaf<TNd, TLd>> kvp in node.Leaves)
 			{
 				kvp.Value.SelectLeaf();
 				result = result && RemoveLeafFromSelected(kvp.Value);
@@ -803,7 +803,7 @@ namespace SharedCode.TreeClasses
 		}
 
 
-		public bool AddLeafToSelected(TreeClassLeaf<TNd, TLd> leaf)
+		public bool AddLeafToSelected(TreeLeaf<TNd, TLd> leaf)
 		{
 			if (leaf == null || selectedLeaves.Contains(leaf)) return false;
 
@@ -817,7 +817,7 @@ namespace SharedCode.TreeClasses
 			return true;
 		}
 
-		public bool RemoveLeafFromSelected(TreeClassLeaf<TNd, TLd> leaf)
+		public bool RemoveLeafFromSelected(TreeLeaf<TNd, TLd> leaf)
 		{
 			if (leaf == null || !selectedLeaves.Contains(leaf)) return false;
 
@@ -832,7 +832,7 @@ namespace SharedCode.TreeClasses
 
 		// private
 
-		private bool AddNodeToPriorSelected(TreeClassNode<TNd, TLd> node)
+		private bool AddNodeToPriorSelected(TreeNode<TNd, TLd> node)
 		{
 			if (priorSelectedNodes.Contains(node)) return false;
 			priorSelectedNodes.Add(node);
@@ -840,7 +840,7 @@ namespace SharedCode.TreeClasses
 			return true;
 		}
 
-		private bool RemoveNodeFromPriorSelected(TreeClassNode<TNd, TLd> node)
+		private bool RemoveNodeFromPriorSelected(TreeNode<TNd, TLd> node)
 		{
 			if (!priorSelectedNodes.Contains(node)) return false;
 			priorSelectedNodes.Remove(node);
@@ -849,11 +849,11 @@ namespace SharedCode.TreeClasses
 		}
 
 
-		private void SelectNodeAllBranches(TreeClassNode<TNd, TLd> node)
+		private void SelectNodeAllBranches(TreeNode<TNd, TLd> node)
 		{
 			if (node.Nodes == null || node.Nodes.Count == 0) return;
 
-			foreach (KeyValuePair<string, TreeClassNode<TNd, TLd>> kvp in node.Nodes)
+			foreach (KeyValuePair<string, TreeNode<TNd, TLd>> kvp in node.Nodes)
 			{
 				kvp.Value.SelectNode();
 				AddNodeToSelected(kvp.Value);
@@ -861,17 +861,17 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		private List<TreeClassNode<TNd, TLd>> DeSelectNodeAllBranches(TreeClassNode<TNd, TLd> node)
+		private List<TreeNode<TNd, TLd>> DeSelectNodeAllBranches(TreeNode<TNd, TLd> node)
 		{
 			// need to be careful here - cannot modify the selectednode list while deselecting
 			// as this will cause conflict issues
-			List<TreeClassNode<TNd, TLd>> removed = new List<TreeClassNode<TNd, TLd>>();
+			List<TreeNode<TNd, TLd>> removed = new List<TreeNode<TNd, TLd>>();
 
 			if (node.Nodes == null || node.Nodes.Count == 0) return removed;
 
 			// this will deselect all nodes and add them to the
 			// prior selected list.
-			foreach (KeyValuePair<string, TreeClassNode<TNd, TLd>> kvp in node.Nodes)
+			foreach (KeyValuePair<string, TreeNode<TNd, TLd>> kvp in node.Nodes)
 			{
 				removed.AddRange(DeSelectNodeAllBranches(kvp.Value));
 
@@ -884,11 +884,11 @@ namespace SharedCode.TreeClasses
 			return removed;
 		}
 
-		private void removeListFromSelected(List<TreeClassNode<TNd, TLd>> removed)
+		private void removeListFromSelected(List<TreeNode<TNd, TLd>> removed)
 		{
 			if (removed == null || removed.Count < 1) return;
 
-			foreach (TreeClassNode<TNd, TLd> node in removed)
+			foreach (TreeNode<TNd, TLd> node in removed)
 			{
 				RemoveNodeFromSelected(node);
 			}
@@ -905,8 +905,8 @@ namespace SharedCode.TreeClasses
 
 		public void ResetSelected()
 		{
-			priorSelectedNodes = new List<TreeClassNode<TNd, TLd>>();
-			selectedNodes = new List<TreeClassNode<TNd, TLd>>();
+			priorSelectedNodes = new List<TreeNode<TNd, TLd>>();
+			selectedNodes = new List<TreeNode<TNd, TLd>>();
 
 			OnPropUpdateSelectedNodes();
 		}
@@ -968,8 +968,8 @@ namespace SharedCode.TreeClasses
 			SelectMode = SelectMode.UNDEFINED; // and SelectClass
 			TreeName = null;
 
-			SelectedNodes = new List<TreeClassNode<TNd, TLd>>();
-			PriorSelectedNodes = new List<TreeClassNode<TNd, TLd>>();
+			SelectedNodes = new List<TreeNode<TNd, TLd>>();
+			PriorSelectedNodes = new List<TreeNode<TNd, TLd>>();
 
 			// if (rootNode == null)
 			// {
@@ -996,9 +996,9 @@ namespace SharedCode.TreeClasses
 		/// to the node provided. respects RequireUniqueKeys<br/>
 		/// Returns: true->worked / false->failed
 		/// </summary>
-		public bool AddNode(TreeClassNode<TNd, TLd> node, TreeClassNode<TNd, TLd>? addNode = null)
+		public bool AddNode(TreeNode<TNd, TLd> node, TreeNode<TNd, TLd>? addNode = null)
 		{
-			TreeClassNode<TNd, TLd>? an;
+			TreeNode<TNd, TLd>? an;
 
 			an = addNode ?? currentNode;
 
@@ -1027,10 +1027,10 @@ namespace SharedCode.TreeClasses
 		/// node path is absolute (starts at rootNode<br/>
 		/// return true -> worked; false -> failed
 		/// </summary>
-		public bool AddNode(TreeClassNode<TNd, TLd> newNode, List<string> nodePath)
+		public bool AddNode(TreeNode<TNd, TLd> newNode, List<string> nodePath)
 		{
 			bool result;
-			TreeClassNode<TNd, TLd>? node;
+			TreeNode<TNd, TLd>? node;
 
 			if (!getNodeByPath(nodePath, out node)) return false;
 
@@ -1049,7 +1049,7 @@ namespace SharedCode.TreeClasses
 		public bool ContainsNode(string nodeKey)
 		{
 			FoundNode = null;
-			TreeClassNode<TNd, TLd> t;
+			TreeNode<TNd, TLd> t;
 			bool result = ContainsNode(nodeKey, out t);
 			return result;
 		}
@@ -1073,8 +1073,8 @@ namespace SharedCode.TreeClasses
 		/// Sets FoundNode to the node found, if any
 		/// </summary>
 		public bool ContainsNode(string findKey,
-			out TreeClassNode<TNd, TLd> node,
-			TreeClassNode<TNd, TLd>? startNode = null,
+			out TreeNode<TNd, TLd> node,
+			TreeNode<TNd, TLd>? startNode = null,
 			int nth = 1,
 			bool firstMatch = true)
 		{
@@ -1116,18 +1116,18 @@ namespace SharedCode.TreeClasses
 		/// deleted node also get deleted.<br/>
 		/// Returns: true -> worked / false -> failed
 		/// </summary>
-		public bool DeleteNode(TreeClassNode<TNd, TLd>? node)
+		public bool DeleteNode(TreeNode<TNd, TLd>? node)
 		{
 			// if (node == null) return false;
 			//
-			// TreeClassNode<TNd, TLd> parentNode = node.ParentNodeEx;
+			// TreeNode<TNd, TLd> parentNode = node.ParentNodeEx;
 			//
 			// if (parentNode == null) return false; 
 			//
 			// if (node?.ParentNode == null) return false;
 			//
-			// return ((TreeClassNode<TNd, TLd>) node.ParentNode).DeleteNode(node.NodeKey);
-			return ((TreeClassNode<TNd, TLd>) node?.ParentNode)?.DeleteNode(node.NodeKey) ?? false;
+			// return ((TreeNode<TNd, TLd>) node.ParentNode).DeleteNode(node.NodeKey);
+			return ((TreeNode<TNd, TLd>) node?.ParentNode)?.DeleteNode(node.NodeKey) ?? false;
 		}
 
 		/// <summary>
@@ -1137,7 +1137,7 @@ namespace SharedCode.TreeClasses
 		/// deleted node also get deleted.<br/>
 		/// Returns: true -> worked / false -> failed
 		/// </summary>
-		public bool DeleteNode(List<string> nodePath, out TreeClassNode<TNd, TLd>? node)
+		public bool DeleteNode(List<string> nodePath, out TreeNode<TNd, TLd>? node)
 		{
 			node = null;
 
@@ -1154,7 +1154,7 @@ namespace SharedCode.TreeClasses
 		/// Move a node (if possible) from one node to another node<br/>
 		/// Returns: true -> worked / false -> failed
 		/// </summary>
-		public bool MoveNode(TreeClassNode<TNd, TLd>? sourceNode, TreeClassNode<TNd, TLd>? destinationNode)
+		public bool MoveNode(TreeNode<TNd, TLd>? sourceNode, TreeNode<TNd, TLd>? destinationNode)
 		{
 			// steps:
 			// check with destination node that a node with the
@@ -1169,7 +1169,7 @@ namespace SharedCode.TreeClasses
 
 			bool result;
 
-			TreeClassNode<TNd, TLd>? parentNode = (TreeClassNode<TNd, TLd>) sourceNode.ParentNode;
+			TreeNode<TNd, TLd>? parentNode = (TreeNode<TNd, TLd>) sourceNode.ParentNode;
 
 			if (parentNode == null) return false;
 
@@ -1187,11 +1187,11 @@ namespace SharedCode.TreeClasses
 		/// <summary>
 		/// Changes the nodeKey
 		/// </summary>
-		public bool RenameNode(TreeClassNode<TNd, TLd> node, string newName)
+		public bool RenameNode(TreeNode<TNd, TLd> node, string newName)
 		{
 			if (node == null || newName.IsVoid()) return false;
 
-			TreeClassNode<TNd, TLd>? parentNode = node.ParentNodeEx;
+			TreeNode<TNd, TLd>? parentNode = node.ParentNodeEx;
 
 			if (parentNode == null) return false;
 
@@ -1208,17 +1208,17 @@ namespace SharedCode.TreeClasses
 		/// get the list of list of nodes that match <c>findKey</c>
 		/// </summary>
 		public int GetMatchingNodes(string findKey,
-			TreeClassNode<TNd, TLd>? startNode = null,
+			TreeNode<TNd, TLd>? startNode = null,
 			int nth = 1,
 			bool firstMatch = false)
 		{
-			foundNodes = new List<TreeClassNode<TNd, TLd>>();
+			foundNodes = new List<TreeNode<TNd, TLd>>();
 
 			if (findKey.IsVoid()) return -1;
 
 			startNode ??= rootNode;
 
-			foreach (TreeClassNode<TNd, TLd> node in startNode)
+			foreach (TreeNode<TNd, TLd> node in startNode)
 			{
 				if (node.NodeKey.Equals(findKey))
 				{
@@ -1236,7 +1236,7 @@ namespace SharedCode.TreeClasses
 		/// nodes has been found and saved
 		/// </summary>
 		private int nextFoundNode(string nodeKey,
-			out TreeClassNode<TNd, TLd> node, int nth)
+			out TreeNode<TNd, TLd> node, int nth)
 		{
 			node = null;
 			FoundNode = null;
@@ -1278,11 +1278,11 @@ namespace SharedCode.TreeClasses
 		/// return -1 if nodekey is null or empty;<br/>
 		/// 0 if none found; else the number found<br/>
 		/// </summary>
-		public int CountMatchingNodes(string nodeKey, TreeClassNode<TNd, TLd>? startPoint)
+		public int CountMatchingNodes(string nodeKey, TreeNode<TNd, TLd>? startPoint)
 		{
 			if (nodeKey == null) return -1;
 
-			TreeClassNode<TNd, TLd> node;
+			TreeNode<TNd, TLd> node;
 
 			bool result = ContainsNode(nodeKey, out node, startPoint, 1) ;
 
@@ -1297,11 +1297,11 @@ namespace SharedCode.TreeClasses
 		/// enumerate through the all of the nodes for every node starting
 		/// from startNode (if provided) or RootNode if not provided
 		/// </summary>
-		public IEnumerable<TreeClassNode<TNd, TLd>> GetNodes(TreeClassNode<TNd, TLd> startNode = null)
+		public IEnumerable<TreeNode<TNd, TLd>> GetNodes(TreeNode<TNd, TLd> startNode = null)
 		{
-			TreeClassNode<TNd, TLd> treeNode = startNode == null ? RootNode : startNode;
+			TreeNode<TNd, TLd> treeNode = startNode == null ? RootNode : startNode;
 
-			foreach (TreeClassNode<TNd, TLd> tn in treeNode)
+			foreach (TreeNode<TNd, TLd> tn in treeNode)
 			{
 				yield return tn;
 			}
@@ -1309,7 +1309,7 @@ namespace SharedCode.TreeClasses
 
 
 		// public bool ContainsNode(string findKey,
-		// 	TreeClassNode<TNd, TLd>? startNode = null,
+		// 	TreeNode<TNd, TLd>? startNode = null,
 		// 	int nth = 1,
 		// 	bool firstMatch = true)
 		// {
@@ -1366,7 +1366,7 @@ namespace SharedCode.TreeClasses
 		/// </summary>
 		/// <param name="leaf"></param>
 		/// <returns></returns>
-		public bool AddLeaf(TreeClassLeaf<TNd, TLd> leaf, TreeClassNode<TNd, TLd> node = null)
+		public bool AddLeaf(TreeLeaf<TNd, TLd> leaf, TreeNode<TNd, TLd> node = null)
 		{
 			if (node != null)
 			{
@@ -1386,7 +1386,7 @@ namespace SharedCode.TreeClasses
 
 		// delete
 
-		public bool DeleteLeaf(TreeClassNode<TNd, TLd>? node, TreeClassLeaf<TNd, TLd>? leaf)
+		public bool DeleteLeaf(TreeNode<TNd, TLd>? node, TreeLeaf<TNd, TLd>? leaf)
 		{
 			if (leaf == null || leaf.LeafKey.IsVoid()) return false;
 
@@ -1394,10 +1394,10 @@ namespace SharedCode.TreeClasses
 		}
 
 		// move
-		public bool MoveLeaf(TreeClassNode<TNd, TLd>? source, TreeClassNode<TNd, TLd>? destination, string leafKey)
+		public bool MoveLeaf(TreeNode<TNd, TLd>? source, TreeNode<TNd, TLd>? destination, string leafKey)
 		{
 			bool result;
-			TreeClassLeaf<TNd, TLd> leaf = null;
+			TreeLeaf<TNd, TLd> leaf = null;
 
 			if (source == null || destination == null) return false;
 
@@ -1442,7 +1442,7 @@ namespace SharedCode.TreeClasses
 
 		// rename
 
-		public bool RenameLeaf(TreeClassNode<TNd, TLd> node, string oldKey, string newKey)
+		public bool RenameLeaf(TreeNode<TNd, TLd> node, string oldKey, string newKey)
 		{
 			if (node == null) return false;
 
@@ -1466,8 +1466,8 @@ namespace SharedCode.TreeClasses
 		/// immediately. 
 		/// </summary>
 		public bool ContainsLeaf(string findKey,
-			out TreeClassLeaf<TNd, TLd> leaf,
-			TreeClassNode<TNd, TLd>? startNode = null,
+			out TreeLeaf<TNd, TLd> leaf,
+			TreeNode<TNd, TLd>? startNode = null,
 			int nth = 1,
 			bool firstMatch = true)
 		{
@@ -1506,17 +1506,17 @@ namespace SharedCode.TreeClasses
 		/// find all of the leaves that match <c>findKey</c>
 		/// </summary>
 		public int GetMatchingLeaves(string findKey,
-			TreeClassNode<TNd, TLd>? startNode = null,
+			TreeNode<TNd, TLd>? startNode = null,
 			int nth = 1,
 			bool firstMatch = false)
 		{
-			foundLeaves = new List<TreeClassLeaf<TNd, TLd>>();
+			foundLeaves = new List<TreeLeaf<TNd, TLd>>();
 
 			if (findKey.IsVoid()) return -1;
 
 			startNode ??= rootNode;
 
-			foreach (TreeClassLeaf<TNd, TLd> l in this.GetLeaves(startNode))
+			foreach (TreeLeaf<TNd, TLd> l in this.GetLeaves(startNode))
 			{
 				if (l.LeafKey.Equals(findKey))
 				{
@@ -1530,7 +1530,7 @@ namespace SharedCode.TreeClasses
 		}
 
 		private int nextFoundLeaf(string findKey,
-			out TreeClassLeaf<TNd, TLd> leaf, int nth)
+			out TreeLeaf<TNd, TLd> leaf, int nth)
 		{
 			leaf = null;
 
@@ -1566,11 +1566,11 @@ namespace SharedCode.TreeClasses
 		/// start at 'startPoint' if provided - start at rootNode if not<br/>
 		/// return -1 if leafkey is null or empty; 0 if none found; else the number found<br/>
 		/// </summary>
-		public int CountMatchingLeaves(string leafKey, TreeClassNode<TNd, TLd>? startPoint)
+		public int CountMatchingLeaves(string leafKey, TreeNode<TNd, TLd>? startPoint)
 		{
 			if (leafKey.IsVoid()) return -1;
 
-			TreeClassLeaf<TNd, TLd> leaf;
+			TreeLeaf<TNd, TLd> leaf;
 
 			bool result = ContainsLeaf(leafKey, out leaf, startPoint, 1);
 
@@ -1585,15 +1585,15 @@ namespace SharedCode.TreeClasses
 		/// enumerate through the all of the leaves for every node starting
 		/// from startNode (if provided) or RootNode if not provided
 		/// </summary>
-		public IEnumerable<TreeClassLeaf<TNd, TLd>> GetLeaves(TreeClassNode<TNd, TLd> startNode = null)
+		public IEnumerable<TreeLeaf<TNd, TLd>> GetLeaves(TreeNode<TNd, TLd> startNode = null)
 		{
-			TreeClassNode<TNd, TLd> treeNode = startNode == null ? RootNode : startNode;
+			TreeNode<TNd, TLd> treeNode = startNode == null ? RootNode : startNode;
 
-			foreach (TreeClassNode<TNd, TLd> tn in treeNode)
+			foreach (TreeNode<TNd, TLd> tn in treeNode)
 			{
 				if (!tn.HasLeaves) continue;
 
-				foreach (KeyValuePair<string, TreeClassLeaf<TNd, TLd>> kvp in tn.Leaves)
+				foreach (KeyValuePair<string, TreeLeaf<TNd, TLd>> kvp in tn.Leaves)
 				{
 					yield return kvp.Value;
 				}
@@ -1615,7 +1615,7 @@ namespace SharedCode.TreeClasses
 				/// Set nth to -1 to loop through all of the duplicate leaves
 				/// </summary>
 				public bool ContainsLeaf(string leafKey, 
-					TreeClassNode<TNd, TLd>? startPoint, out TreeClassLeaf<TNd, TLd> leaf, int nth = 1)
+					TreeNode<TNd, TLd>? startPoint, out TreeLeaf<TNd, TLd> leaf, int nth = 1)
 				{
 					Examples.M.WriteLineStatus("Enter Method");
 
@@ -1662,9 +1662,9 @@ namespace SharedCode.TreeClasses
 						}
 					}
 
-					foundLeaves = new List<TreeClassLeaf<TNd, TLd>>();
+					foundLeaves = new List<TreeLeaf<TNd, TLd>>();
 
-					foreach (TreeClassLeaf<TNd, TLd> l in this.GetLeaves(startPoint))
+					foreach (TreeLeaf<TNd, TLd> l in this.GetLeaves(startPoint))
 					{
 						if (l.LeafKey.Equals(leafKey))
 						{
@@ -1716,14 +1716,14 @@ namespace SharedCode.TreeClasses
 		private void makeRootNode(TNd? nodeData)
 		{
 			rootNode =
-				new TreeClassNode<TNd, TLd>("ROOT", this, null, nodeData);
+				new TreeNode<TNd, TLd>("ROOT", this, null, nodeData);
 			rootNode.InitNodes();
 
 			currentNode = rootNode;
 			// selectedNode = rootNode;
 		}
 
-		private bool OkToAddNode(TreeClassNode<TNd, TLd> node)
+		private bool OkToAddNode(TreeNode<TNd, TLd> node)
 		{
 			if (node == null || node.NodeKey.IsVoid()) return false;
 
@@ -1745,7 +1745,7 @@ namespace SharedCode.TreeClasses
 			Examples.M.WriteLineStatus("Enter Method");
 			currentNode = rootNode;
 
-			IEnumerator<TreeClassNode<TNd, TLd>> ie = GetEnumerator();
+			IEnumerator<TreeNode<TNd, TLd>> ie = GetEnumerator();
 
 			while (ie?.MoveNext() ?? false)
 			{
@@ -1764,7 +1764,7 @@ namespace SharedCode.TreeClasses
 		/// return false if not found; set currNode to null; set out node to null<br/>
 		/// return true if found; set currNode and out node to the node found
 		/// </summary>
-		private bool getNodeByPath(List<string>? nodePath, out TreeClassNode<TNd, TLd>? node)
+		private bool getNodeByPath(List<string>? nodePath, out TreeNode<TNd, TLd>? node)
 		{
 			node = null;
 			bool result;
@@ -1826,12 +1826,12 @@ namespace SharedCode.TreeClasses
 
 
 		// node selected
-		public delegate void NodeSelectedEventHandler(object sender, TreeClassNode<TNd, TLd> node);
+		public delegate void NodeSelectedEventHandler(object sender, TreeNode<TNd, TLd> node);
 
 		public event NodeSelectedEventHandler NodeSelected;
 
 		[DebuggerStepThrough]
-		protected virtual void RaiseNodeSelectedEvent(TreeClassNode<TNd, TLd> node)
+		protected virtual void RaiseNodeSelectedEvent(TreeNode<TNd, TLd> node)
 		{
 			NodeSelected?.Invoke(this, node);
 		}
@@ -1839,12 +1839,12 @@ namespace SharedCode.TreeClasses
 
 		// node deselected
 
-		public delegate void NodeDeSelectedEventHandler(object sender, TreeClassNode<TNd, TLd> node);
+		public delegate void NodeDeSelectedEventHandler(object sender, TreeNode<TNd, TLd> node);
 
 		public event NodeDeSelectedEventHandler NodeDeSelected;
 
 		[DebuggerStepThrough]
-		protected virtual void RaiseNodeDeSelectedEvent(TreeClassNode<TNd, TLd> node)
+		protected virtual void RaiseNodeDeSelectedEvent(TreeNode<TNd, TLd> node)
 		{
 			NodeDeSelected?.Invoke(this, node);
 		}
@@ -1852,36 +1852,36 @@ namespace SharedCode.TreeClasses
 
 		// node mixed 
 
-		public delegate void NodeMixedEventHandler(object sender, TreeClassNode<TNd, TLd> node);
+		public delegate void NodeMixedEventHandler(object sender, TreeNode<TNd, TLd> node);
 
 		public event NodeMixedEventHandler NodeMixed;
 
 		[DebuggerStepThrough]
-		protected virtual void RaiseNodeMixedEvent(TreeClassNode<TNd, TLd> node)
+		protected virtual void RaiseNodeMixedEvent(TreeNode<TNd, TLd> node)
 		{
 			NodeMixed?.Invoke(this, node);
 		}
 
 		// leaf selected
 
-		public delegate void LeafSelectedEventHandler(object sender, TreeClassLeaf<TNd, TLd> leaf);
+		public delegate void LeafSelectedEventHandler(object sender, TreeLeaf<TNd, TLd> leaf);
 
 		public event LeafSelectedEventHandler LeafSelected;
 
 		[DebuggerStepThrough]
-		protected virtual void RaiseLeafSelectedEvent(TreeClassLeaf<TNd, TLd> leaf)
+		protected virtual void RaiseLeafSelectedEvent(TreeLeaf<TNd, TLd> leaf)
 		{
 			LeafSelected?.Invoke(this, leaf);
 		}
 
 		// leaf deselected
 
-		public delegate void LeafDeSelectedEventHandler(object sender, TreeClassLeaf<TNd, TLd> leaf);
+		public delegate void LeafDeSelectedEventHandler(object sender, TreeLeaf<TNd, TLd> leaf);
 
 		public event LeafDeSelectedEventHandler LeafDeSelected;
 
 		[DebuggerStepThrough]
-		protected virtual void RaiseLeafDeSelectedEvent(TreeClassLeaf<TNd, TLd> leaf)
+		protected virtual void RaiseLeafDeSelectedEvent(TreeLeaf<TNd, TLd> leaf)
 		{
 			LeafDeSelected?.Invoke(this, leaf);
 		}
@@ -1892,17 +1892,17 @@ namespace SharedCode.TreeClasses
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return new TreeClassEnumerator<TNd, TLd>(this);
+			return new TreeEnumerator<TNd, TLd>(this);
 		}
 
-		public IEnumerator<TreeClassNode<TNd, TLd>> GetEnumerator()
+		public IEnumerator<TreeNode<TNd, TLd>> GetEnumerator()
 		{
-			return new TreeClassEnumerator<TNd, TLd>(this);
+			return new TreeEnumerator<TNd, TLd>(this);
 		}
 
 		public override string ToString()
 		{
-			return $"{nameof(TreeClass<TNd, TLd>)} | name| {TreeName}";
+			return $"{nameof(Tree<TNd, TLd>)} | name| {TreeName}";
 		}
 
 	#endregion
@@ -1983,7 +1983,7 @@ namespace SharedCode.SampleData
 	PropertyChanged	
 	
 
-	TreeClassNode<TNd, TLd>:
+	TreeNode<TNd, TLd>:
 
 
 
@@ -2124,12 +2124,12 @@ namespace SharedCode.SampleData
 		}
 
 		// support methods
-		public static string GetNodePath(TreeClassNode<TNd, TLd> node)
+		public static string GetNodePath(TreeNode<TNd, TLd> node)
 		{
 			StringBuilder sb = new StringBuilder();
-			TreeClassNode<TNd, TLd> parent = node.ParentNodeEx;
+			TreeNode<TNd, TLd> parent = node.ParentNodeEx;
 
-			List<TreeClassNode<TNd, TLd>> parentNodes = GetParentNodes(node);
+			List<TreeNode<TNd, TLd>> parentNodes = GetParentNodes(node);
 
 			for (var i = parentNodes.Count - 1; i >= 0; i--)
 			{
@@ -2141,11 +2141,11 @@ namespace SharedCode.SampleData
 			return sb.ToString();
 		}
 
-		public static List<TreeClassNode<TNd, TLd>> GetParentNodes(TreeClassNode<TNd, TLd> node)
+		public static List<TreeNode<TNd, TLd>> GetParentNodes(TreeNode<TNd, TLd> node)
 		{
-			List<TreeClassNode<TNd, TLd>> parents = new List<TreeClassNode<TNd, TLd>>();
+			List<TreeNode<TNd, TLd>> parents = new List<TreeNode<TNd, TLd>>();
 
-			TreeClassNode<TNd, TLd> parent = node.ParentNodeEx;
+			TreeNode<TNd, TLd> parent = node.ParentNodeEx;
 
 			while (parent != null)
 			{
@@ -2167,8 +2167,8 @@ namespace SharedCode.SampleData
 		where TLd : class
 	{
 		public string NodeKey { get; }
-		public TreeClassNode<TNd, TLd> ParentNode { get; }
-		public TreeClass<TNd, TLd> Tree { get; }
+		public TreeNode<TNd, TLd> ParentNode { get; }
+		public Tree<TNd, TLd> Tree { get; }
 	}
 
 	public interface ITreeNodeEx<TNd, TLd> : ITreeNode<TNd, TLd>
@@ -2186,18 +2186,18 @@ namespace SharedCode.SampleData
 
 #region enumerators
 
-	public class TreeClassEnumerator<TNd, TLd> : IEnumerator<TreeClassNode<TNd, TLd>>
+	public class TreeEnumerator<TNd, TLd> : IEnumerator<TreeNode<TNd, TLd>>
 		where TNd : class
 		where TLd : class
 	{
-		private readonly TreeClass<TNd, TLd> tree;
-		private List<TreeClassNode<TNd, TLd>>? currNodes;
+		private readonly Tree<TNd, TLd> tree;
+		private List<TreeNode<TNd, TLd>>? currNodes;
 
-		private List<IEnumerator<KeyValuePair<string, TreeClassNode<TNd, TLd>>>> ies;
+		private List<IEnumerator<KeyValuePair<string, TreeNode<TNd, TLd>>>> ies;
 
-		public TreeClassEnumerator() { }
+		public TreeEnumerator() { }
 
-		public TreeClassEnumerator(TreeClass<TNd, TLd> tree)
+		public TreeEnumerator(Tree<TNd, TLd> tree)
 		{
 			this.tree = tree;
 
@@ -2205,7 +2205,7 @@ namespace SharedCode.SampleData
 		}
 
 
-		public TreeClassNode<TNd, TLd> Current
+		public TreeNode<TNd, TLd> Current
 		{
 			get
 			{
@@ -2216,7 +2216,7 @@ namespace SharedCode.SampleData
 		}
 
 
-		public List<TreeClassNode<TNd, TLd>> CurrentPath
+		public List<TreeNode<TNd, TLd>> CurrentPath
 		{
 			get
 			{
@@ -2235,7 +2235,7 @@ namespace SharedCode.SampleData
 
 			if (result)
 			{
-				TreeClassNode<TNd, TLd> node = ies[^1].Current.Value;
+				TreeNode<TNd, TLd> node = ies[^1].Current.Value;
 
 				currNodes.Add(node);
 
@@ -2258,9 +2258,9 @@ namespace SharedCode.SampleData
 
 		public void Reset()
 		{
-			currNodes = new List<TreeClassNode<TNd, TLd>>();
+			currNodes = new List<TreeNode<TNd, TLd>>();
 
-			ies = new List<IEnumerator<KeyValuePair<string, TreeClassNode<TNd, TLd>>>>();
+			ies = new List<IEnumerator<KeyValuePair<string, TreeNode<TNd, TLd>>>>();
 
 			if (!tree.RootNode.IsNodesNull &&
 				tree.CountNodesRoot != 0)
@@ -2276,18 +2276,18 @@ namespace SharedCode.SampleData
 		public void Dispose() { }
 	}
 
-	public class TreeNodeEnumerator<TNd, TLd> : IEnumerator<TreeClassNode<TNd, TLd>>
+	public class TreeNodeEnumerator<TNd, TLd> : IEnumerator<TreeNode<TNd, TLd>>
 		where TNd : class
 		where TLd : class
 	{
-		private readonly TreeClassNode<TNd, TLd> node;
-		private List<TreeClassNode<TNd, TLd>>? currNodes;
+		private readonly TreeNode<TNd, TLd> node;
+		private List<TreeNode<TNd, TLd>>? currNodes;
 
-		private List<IEnumerator<KeyValuePair<string, TreeClassNode<TNd, TLd>>>> ies;
+		private List<IEnumerator<KeyValuePair<string, TreeNode<TNd, TLd>>>> ies;
 
 		public TreeNodeEnumerator() { }
 
-		public TreeNodeEnumerator(TreeClassNode<TNd, TLd> node)
+		public TreeNodeEnumerator(TreeNode<TNd, TLd> node)
 		{
 			this.node = node;
 
@@ -2295,7 +2295,7 @@ namespace SharedCode.SampleData
 		}
 
 
-		public TreeClassNode<TNd, TLd> Current
+		public TreeNode<TNd, TLd> Current
 		{
 			get
 			{
@@ -2306,7 +2306,7 @@ namespace SharedCode.SampleData
 		}
 
 
-		public List<TreeClassNode<TNd, TLd>> CurrentPath
+		public List<TreeNode<TNd, TLd>> CurrentPath
 		{
 			get
 			{
@@ -2325,7 +2325,7 @@ namespace SharedCode.SampleData
 
 			if (result)
 			{
-				TreeClassNode<TNd, TLd> node = ies[^1].Current.Value;
+				TreeNode<TNd, TLd> node = ies[^1].Current.Value;
 
 				currNodes.Add(node);
 
@@ -2354,8 +2354,8 @@ namespace SharedCode.SampleData
 			// }
 			// else
 			// {
-			currNodes = new List<TreeClassNode<TNd, TLd>>();
-			ies = new List<IEnumerator<KeyValuePair<string, TreeClassNode<TNd, TLd>>>>();
+			currNodes = new List<TreeNode<TNd, TLd>>();
+			ies = new List<IEnumerator<KeyValuePair<string, TreeNode<TNd, TLd>>>>();
 
 			if (!node.IsNodesNull &&
 				node.CountNodes != 0)

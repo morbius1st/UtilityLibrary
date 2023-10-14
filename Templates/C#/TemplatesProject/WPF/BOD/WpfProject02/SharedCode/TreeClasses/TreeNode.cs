@@ -12,22 +12,22 @@ using static SharedCode.SampleData.Selection.SelectMode;
 
 // Solution:     WpfProject02
 // Project:       WpfProject02
-// File:             TreeClassNode.cs
+// File:             TreeNode.cs
 // Created:      2023-10-07 (10:34 AM)
 
 
 namespace SharedCode.TreeClasses
 {
 	[WpfProject02.Annotations.NotNull]
-	public class TreeClassNode<TNd, TLd> : ITreeNodeEx<TNd, TLd>, INotifyPropertyChanged,
-		IComparer<TreeClassNode<TNd, TLd>>, ICloneable,  IEnumerable<TreeClassNode<TNd, TLd>>
+	public class TreeNode<TNd, TLd> : ITreeNodeEx<TNd, TLd>, INotifyPropertyChanged,
+		IComparer<TreeNode<TNd, TLd>>, ICloneable,  IEnumerable<TreeNode<TNd, TLd>>
 		where TNd : class
 		where TLd : class
 	{
 		private string? nodeKey;
 
-		private TreeClass<TNd, TLd>? tree;
-		private TreeClassNode<TNd, TLd>? parentNodeEx;
+		private Tree<TNd, TLd>? tree;
+		private TreeNode<TNd, TLd>? parentNodeEx;
 
 
 		private bool? isChecked = false;
@@ -36,7 +36,7 @@ namespace SharedCode.TreeClasses
 
 		private TNd nodeData = null;
 
-		private TreeClassNode<TNd, TLd>? tn;
+		private TreeNode<TNd, TLd>? tn;
 		private bool isExpanded;
 		private bool isChosen;
 
@@ -45,8 +45,8 @@ namespace SharedCode.TreeClasses
 		private int nodesChecked;
 		private int nodesMixed;
 
-		private TreeClassLeaf<TNd, TLd>? foundLeaf;
-		private TreeClassNode<TNd, TLd>? foundNode;
+		private TreeLeaf<TNd, TLd>? foundLeaf;
+		private TreeNode<TNd, TLd>? foundNode;
 
 		// private static TreeClass<TNd, TLd>? tree;
 
@@ -57,19 +57,19 @@ namespace SharedCode.TreeClasses
 	#region ctor
 
 		// ReSharper disable once UnusedMember.Global
-		public TreeClassNode() { }
+		public TreeNode() { }
 
-		public TreeClassNode(
+		public TreeNode(
 			string nodeKey,
-			TreeClass<TNd, TLd>? tree,
-			TreeClassNode<TNd, TLd>? parentNodeEx,
+			Tree<TNd, TLd>? tree,
+			TreeNode<TNd, TLd>? parentNodeEx,
 			TNd nodeData,
 			Selection.CheckedState isChecked = UNCHECKED)
 		{
 			this.nodeKey = nodeKey;
 			this.nodeData = nodeData;
 			this.parentNodeEx = parentNodeEx;
-			this.isChecked = TreeClass<TNd, TLd>.boolList[(int) isChecked];
+			this.isChecked = Tree<TNd, TLd>.boolList[(int) isChecked];
 			this.tree = tree;
 		}
 
@@ -78,9 +78,9 @@ namespace SharedCode.TreeClasses
 	#region public properties
 
 		// serializable properties
-		public ObservableDictionary<string, TreeClassNode<TNd, TLd>>? Nodes { get; set; }
+		public ObservableDictionary<string, TreeNode<TNd, TLd>>? Nodes { get; set; }
 
-		public ObservableDictionary<string, TreeClassLeaf<TNd, TLd>>? Leaves { get; set; }
+		public ObservableDictionary<string, TreeLeaf<TNd, TLd>>? Leaves { get; set; }
 
 		public string NodeKey
 		{
@@ -93,7 +93,7 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		public TreeClassNode<TNd, TLd> ParentNodeEx
+		public TreeNode<TNd, TLd> ParentNodeEx
 		{
 			get => parentNodeEx;
 			set
@@ -105,13 +105,13 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		public TreeClass<TNd, TLd> Tree
+		public Tree<TNd, TLd> Tree
 		{
 			get => tree;
 			set => tree = value;
 		}
 
-		public TreeClassLeaf<TNd, TLd> FoundLeaf
+		public TreeLeaf<TNd, TLd> FoundLeaf
 		{
 			get => foundLeaf;
 			set
@@ -122,7 +122,7 @@ namespace SharedCode.TreeClasses
 			}
 		}
 
-		public TreeClassNode<TNd, TLd> FoundNode
+		public TreeNode<TNd, TLd> FoundNode
 		{
 			get => foundNode;
 			set
@@ -134,13 +134,13 @@ namespace SharedCode.TreeClasses
 		}
 
 		// not serializable properties
-		public TreeClassNode<TNd, TLd> ParentNode
+		public TreeNode<TNd, TLd> ParentNode
 		{
 			get => parentNodeEx;
 			private set
 			{
 				if (Equals(value, parentNodeEx)) return;
-				parentNodeEx = (TreeClassNode<TNd, TLd>) value;
+				parentNodeEx = (TreeNode<TNd, TLd>) value;
 				OnPropertyChanged();
 				OnPropertyChanged(nameof(ParentNodeEx));
 			}
@@ -195,7 +195,7 @@ namespace SharedCode.TreeClasses
 					OnPropertyChanged(nameof(PriorIsChecked));
 					OnPropertyChanged(nameof(PriorIsCheckedState));
 
-					CheckedState temp = TreeClass<TNd, TLd>.StateFromBool(value);
+					CheckedState temp = Tree<TNd, TLd>.StateFromBool(value);
 
 					if (temp == CHECKED )
 					{
@@ -260,11 +260,11 @@ namespace SharedCode.TreeClasses
 
 		public CheckedState IsCheckedState
 		{
-			get => TreeClass<TNd, TLd>.StateFromBool(isChecked);
+			get => Tree<TNd, TLd>.StateFromBool(isChecked);
 
 			private set
 			{
-				isChecked = TreeClass<TNd, TLd>.boolList[(int) value];
+				isChecked = Tree<TNd, TLd>.boolList[(int) value];
 				OnPropertyChanged();
 				OnPropertyChanged(nameof(IsChecked));
 			}
@@ -272,11 +272,11 @@ namespace SharedCode.TreeClasses
 
 		public CheckedState PriorIsCheckedState
 		{
-			get => TreeClass<TNd, TLd>.StateFromBool(priorIsChecked);
+			get => Tree<TNd, TLd>.StateFromBool(priorIsChecked);
 
 			private set
 			{
-				priorIsChecked = TreeClass<TNd, TLd>.boolList[(int) value];
+				priorIsChecked = Tree<TNd, TLd>.boolList[(int) value];
 				OnPropertyChanged();
 				OnPropertyChanged(nameof(PriorIsChecked));
 			}
@@ -290,19 +290,19 @@ namespace SharedCode.TreeClasses
 
 		public void SelectNode()
 		{
-			isChecked = TreeClass<TNd, TLd>.boolList[(int) CHECKED];
+			isChecked = Tree<TNd, TLd>.boolList[(int) CHECKED];
 			OnPropertyChanged(nameof(IsChecked));
 		}
 
 		public void DeSelectNode()
 		{
-			isChecked = TreeClass<TNd, TLd>.boolList[(int) UNCHECKED];
+			isChecked = Tree<TNd, TLd>.boolList[(int) UNCHECKED];
 			OnPropertyChanged(nameof(IsChecked));
 		}
 
 		public void MixedSelectNode()
 		{
-			isChecked = TreeClass<TNd, TLd>.boolList[(int) MIXED];
+			isChecked = Tree<TNd, TLd>.boolList[(int) MIXED];
 			OnPropertyChanged(nameof(IsChecked));
 		}
 
@@ -431,12 +431,12 @@ namespace SharedCode.TreeClasses
 		{
 			if (Nodes == null)
 				Nodes
-					= new ObservableDictionary<string, TreeClassNode<TNd, TLd>>();
+					= new ObservableDictionary<string, TreeNode<TNd, TLd>>();
 		}
 
 		public void InitLeaves()
 		{
-			if (Leaves == null) Leaves = new ObservableDictionary<string, TreeClassLeaf<TNd, TLd>>();
+			if (Leaves == null) Leaves = new ObservableDictionary<string, TreeLeaf<TNd, TLd>>();
 		}
 
 		public void NodeCountSelection()
@@ -446,10 +446,10 @@ namespace SharedCode.TreeClasses
 
 			if ((Nodes?.Count ?? 0) == 0) return;
 
-			foreach (KeyValuePair<string, TreeClassNode<TNd, TLd>> kvp in Nodes)
+			foreach (KeyValuePair<string, TreeNode<TNd, TLd>> kvp in Nodes)
 			{
-				nodesChecked += kvp.Value.isChecked == TreeClass<TNd, TLd>.boolList[(int) CHECKED] ? 1 : 0;
-				nodesMixed += kvp.Value.isChecked == TreeClass<TNd, TLd>.boolList[(int) MIXED] ? 1 : 0;
+				nodesChecked += kvp.Value.isChecked == Tree<TNd, TLd>.boolList[(int) CHECKED] ? 1 : 0;
+				nodesMixed += kvp.Value.isChecked == Tree<TNd, TLd>.boolList[(int) MIXED] ? 1 : 0;
 			}
 		}
 
@@ -459,7 +459,7 @@ namespace SharedCode.TreeClasses
 
 			int result = Nodes.Count;
 
-			foreach (KeyValuePair<string, TreeClassNode<TNd, TLd>> kvp in Nodes)
+			foreach (KeyValuePair<string, TreeNode<TNd, TLd>> kvp in Nodes)
 			{
 				result += kvp.Value.NodeCountBranch();
 			}
@@ -485,14 +485,14 @@ namespace SharedCode.TreeClasses
 
 		// node methods
 
-		public void AddNode(string key, TreeClassNode<TNd, TLd> node)
+		public void AddNode(string key, TreeNode<TNd, TLd> node)
 		{
 			Nodes.Add(key, node);
 
 			OnPropertyChanged(nameof(Nodes));
 		}
 
-		public bool TryAddNode(string key, TreeClassNode<TNd, TLd> node)
+		public bool TryAddNode(string key, TreeNode<TNd, TLd> node)
 		{
 			if (!Nodes.TryAdd(key, node)) return false;
 
@@ -512,7 +512,7 @@ namespace SharedCode.TreeClasses
 			return result;
 		}
 
-		public bool ContainsNode(string findKey, out TreeClassNode<TNd, TLd> node)
+		public bool ContainsNode(string findKey, out TreeNode<TNd, TLd> node)
 		{
 			node = null;
 
@@ -570,14 +570,14 @@ namespace SharedCode.TreeClasses
 			OnPropertyChanged(nameof(Leaves));
 		}
 
-		public void AddLeaf(string key, TreeClassLeaf<TNd, TLd> leaf)
+		public void AddLeaf(string key, TreeLeaf<TNd, TLd> leaf)
 		{
 			Leaves.Add(key, leaf);
 
 			OnPropertyChanged(nameof(Leaves));
 		}
 
-		public bool TryAddLeaf(string key, TreeClassLeaf<TNd, TLd> leaf)
+		public bool TryAddLeaf(string key, TreeLeaf<TNd, TLd> leaf)
 		{
 			if (!Leaves.TryAdd(key, leaf)) return false;
 
@@ -655,12 +655,12 @@ namespace SharedCode.TreeClasses
 			return new TreeNodeEnumerator<TNd, TLd>(this);
 		}
 
-		public IEnumerator<TreeClassNode<TNd, TLd>> GetEnumerator()
+		public IEnumerator<TreeNode<TNd, TLd>> GetEnumerator()
 		{
 			return new TreeNodeEnumerator<TNd, TLd>(this);
 		}
 
-		public int Compare(TreeClassNode<TNd, TLd>? x, TreeClassNode<TNd, TLd>? y)
+		public int Compare(TreeNode<TNd, TLd>? x, TreeNode<TNd, TLd>? y)
 		{
 			return 0;
 		}
@@ -680,7 +680,7 @@ namespace SharedCode.TreeClasses
 
 		public override string ToString()
 		{
-			return $"{nameof(TreeClassNode<TNd, TLd>)} | name| {nodeKey} | parent| {parentNodeEx?.NodeKey ?? "no parent"}";
+			return $"{nameof(TreeNode<TNd, TLd>)} | name| {nodeKey} | parent| {parentNodeEx?.NodeKey ?? "no parent"}";
 		}
 
 	#endregion

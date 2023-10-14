@@ -14,10 +14,10 @@
 	// 		base(treeName, mode, nodeData) { }
 	// }
 	//
-	// public class TreeNode : TreeClassNode<TreeNodeData, TreeLeafData> //, IEnumerable<TreeNode>
+	// public class TreeNode : TreeNode<TreeNodeData, TreeLeafData> //, IEnumerable<TreeNode>
 	// {
 	// 	public TreeNode( string nodeKey,
-	// 		TreeClassNode<TreeNodeData, TreeLeafData>? parentNode,
+	// 		TreeNode<TreeNodeData, TreeLeafData>? parentNode,
 	// 		Tree? tree, TreeNodeData? nodeData) :
 	// 		base(nodeKey, tree, (TreeNode) parentNode, nodeData) { }
 	//
@@ -33,10 +33,10 @@
 	// }
 	//
 	//
-	// public class TreeLeaf : TreeClassLeaf<TreeNodeData, TreeLeafData>
+	// public class TreeLeaf : TreeLeaf<TreeNodeData, TreeLeafData>
 	// {
 	// 	public TreeLeaf(string leafKey, TreeLeafData leafData,
-	// 		TreeClassNode<TreeNodeData, TreeLeafData> parentNode = null) : base(leafKey, leafData, parentNode) { }
+	// 		TreeNode<TreeNodeData, TreeLeafData> parentNode = null) : base(leafKey, leafData, parentNode) { }
 	// }
 
 // }

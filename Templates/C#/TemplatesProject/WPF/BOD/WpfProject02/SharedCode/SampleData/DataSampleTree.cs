@@ -27,8 +27,8 @@ using static SharedCode.SampleData.Selection.SelectFirstClass;
 namespace SharedCode.SampleData;
 
 
-public class TreeNode : TreeClassNode<TreeNodeData, TreeLeafData> { }
-public class TreeLeaf : TreeClassLeaf<TreeNodeData, TreeLeafData> { }
+public class TreeNode : TreeNode<TreeNodeData, TreeLeafData> { }
+public class TreeLeaf : TreeLeaf<TreeNodeData, TreeLeafData> { }
 
 public class DataSampleTree : INotifyPropertyChanged
 {
@@ -37,9 +37,9 @@ public class DataSampleTree : INotifyPropertyChanged
 
 #region private fields
 
-	private TreeClass<TreeNodeData, TreeLeafData> tree;
+	private Tree<TreeNodeData, TreeLeafData> tree;
 
-	// private TreeClassNode<TreeNodeData, TreeLeafData> treeNode;
+	// private TreeNode<TreeNodeData, TreeLeafData> treeNode;
 
 	private int nodeIdx = 0;
 
@@ -58,7 +58,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	private KeyValuePair<SelectMode, SelModeData> selectedMode;
 
 
-	// private List<TreeClassLeaf<TreeLeafData>> searchLeaf= new List<TreeClassLeaf<TreeLeafData>>();
+	// private List<TreeLeaf<TreeLeafData>> searchLeaf= new List<TreeLeaf<TreeLeafData>>();
 	private int leafSearchCounter = 0;
 	private int leafSearchCount = 0;
 	private string selectedNodeKey;
@@ -80,7 +80,7 @@ public class DataSampleTree : INotifyPropertyChanged
 
 #region public properties
 
-	public TreeClass<TreeNodeData, TreeLeafData> Tree => tree;
+	public Tree<TreeNodeData, TreeLeafData> Tree => tree;
 
 	public Examples E
 	{
@@ -247,10 +247,10 @@ public class DataSampleTree : INotifyPropertyChanged
 
 		nodeIdx = 0;
 
-		TreeClassNode<TreeNodeData, TreeLeafData>? priorNode;
+		TreeNode<TreeNodeData, TreeLeafData>? priorNode;
 
-		TreeClassNode<TreeNodeData, TreeLeafData>? node = null;
-		TreeClassLeaf<TreeNodeData, TreeLeafData>? leaf;
+		TreeNode<TreeNodeData, TreeLeafData>? node = null;
+		TreeLeaf<TreeNodeData, TreeLeafData>? leaf;
 
 		List<string> nodePath;
 
@@ -284,7 +284,7 @@ public class DataSampleTree : INotifyPropertyChanged
 
 				// bool result = tree.GetMatchingNodes(kvp.Key, priorNode) > 0;
 
-				// TreeClassNode<TreeNodeData, TreeLeafData> t;
+				// TreeNode<TreeNodeData, TreeLeafData> t;
 				bool result = tree.ContainsNode(kvp.Key, out  priorNode, priorNode);
 				// bool result3 = tree.ContainsNode(kvp.Key, out  t, null, 1, true);
 
@@ -294,7 +294,7 @@ public class DataSampleTree : INotifyPropertyChanged
 				if (!result)
 				{
 					// yep - not found
-					// node = new TreeClassNode<TreeNodeData, TreeLeafData>(kvp.Key, null);
+					// node = new TreeNode<TreeNodeData, TreeLeafData>(kvp.Key, null);
 					node = makeTempTreeNode(kvp.Key);
 					node.IsExpanded = true;
 
@@ -334,13 +334,13 @@ public class DataSampleTree : INotifyPropertyChanged
 				{
 					foreach (string leafName in kvp.Value)
 					{
-						leaf = new TreeClassLeaf<TreeNodeData, TreeLeafData>(leafName, null, node);
+						leaf = new TreeLeaf<TreeNodeData, TreeLeafData>(leafName, null, node);
 
 						Tree.AddLeaf(leaf);
 
 						if (leafSearchCounter++ == 7)
 						{
-							leaf = new TreeClassLeaf<TreeNodeData, TreeLeafData>(leafSearchString, null, node);
+							leaf = new TreeLeaf<TreeNodeData, TreeLeafData>(leafSearchString, null, node);
 							Tree.AddLeaf(leaf);
 							leafSearchCounter = 0;
 							leafSearchCount++;
@@ -373,7 +373,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	
 	public void CreateTree()
 	{
-		tree = new TreeClass<TreeNodeData, TreeLeafData>("Test Tree", selectedMode.Key, new TreeNodeData("Test Node Data"));
+		tree = new Tree<TreeNodeData, TreeLeafData>("Test Tree", selectedMode.Key, new TreeNodeData("Test Node Data"));
 
 		SelectMode sm = selectedMode.Key;
 		
@@ -450,7 +450,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	public void TestFindNodesAlt()
 	{
 		bool result;
-		TreeClassNode<TreeNodeData, TreeLeafData> node;
+		TreeNode<TreeNodeData, TreeLeafData> node;
 
 		M.WriteLineCodeMap("Enter Method");
 
@@ -545,7 +545,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	public void TestFindNodes()
 	{
 		bool result;
-		TreeClassNode<TreeNodeData, TreeLeafData> node;
+		TreeNode<TreeNodeData, TreeLeafData> node;
 		string bogusNode = "Bogus Node Name";
 
 		M.WriteLineCodeMap("Enter Method");
@@ -680,8 +680,8 @@ public class DataSampleTree : INotifyPropertyChanged
 	public void TestMoveNode()
 	{
 		bool result;
-		TreeClassNode<TreeNodeData, TreeLeafData> sourceNode;
-		TreeClassNode<TreeNodeData, TreeLeafData> destinationNode;
+		TreeNode<TreeNodeData, TreeLeafData> sourceNode;
+		TreeNode<TreeNodeData, TreeLeafData> destinationNode;
 
 		M.WriteLineCodeMap("Enter Method");
 
@@ -726,7 +726,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	public void TestDeleteNode()
 	{
 		bool result;
-		TreeClassNode<TreeNodeData, TreeLeafData> node;
+		TreeNode<TreeNodeData, TreeLeafData> node;
 
 
 		M.WriteLineCodeMap("Enter Method");
@@ -819,7 +819,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		}
 
 
-		TreeClassNode<TreeNodeData, TreeLeafData>[] tn = new TreeClassNode<TreeNodeData, TreeLeafData>[3];
+		TreeNode<TreeNodeData, TreeLeafData>[] tn = new TreeNode<TreeNodeData, TreeLeafData>[3];
 
 		if (!tree.ContainsNode(data[0])) return;
 
@@ -844,8 +844,8 @@ public class DataSampleTree : INotifyPropertyChanged
 	public void TestDeleteLeaf()
 	{
 		bool result;
-		TreeClassNode<TreeNodeData, TreeLeafData> node;
-		TreeClassLeaf<TreeNodeData, TreeLeafData> found;
+		TreeNode<TreeNodeData, TreeLeafData> node;
+		TreeLeaf<TreeNodeData, TreeLeafData> found;
 
 		M.WriteLineCodeMap("Entering Method");
 
@@ -862,7 +862,7 @@ public class DataSampleTree : INotifyPropertyChanged
 
 		M.Write($"*** FOUND ***");
 
-		node = (TreeClassNode<TreeNodeData, TreeLeafData>) found.ParentNode;
+		node = (TreeNode<TreeNodeData, TreeLeafData>) found.ParentNode;
 
 		M.WriteLine($"node path | {ShowNodeParents(node)}");
 
@@ -884,7 +884,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	public void TestFindLeaf()
 	{
 		bool result;
-		TreeClassLeaf<TreeNodeData, TreeLeafData> found;
+		TreeLeaf<TreeNodeData, TreeLeafData> found;
 
 		M.WriteLineCodeMap("Enter Method");
 
@@ -1047,8 +1047,8 @@ public class DataSampleTree : INotifyPropertyChanged
 	public void TestMoveLeaf()
 	{
 		bool result;
-		TreeClassNode<TreeNodeData, TreeLeafData> sourceNode;
-		TreeClassNode<TreeNodeData, TreeLeafData> destinationNode;
+		TreeNode<TreeNodeData, TreeLeafData> sourceNode;
+		TreeNode<TreeNodeData, TreeLeafData> destinationNode;
 
 		M.WriteLineCodeMap("Enter Method");
 
@@ -1057,7 +1057,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		M.WriteLineMargin($"finding leaf| {leafSearchString} ");
 
 		result = true;
-		TreeClassLeaf<TreeNodeData, TreeLeafData> found;
+		TreeLeaf<TreeNodeData, TreeLeafData> found;
 
 		result = tree.ContainsLeaf(leafSearchString, out found, null, -1);
 
@@ -1067,7 +1067,7 @@ public class DataSampleTree : INotifyPropertyChanged
 			return;
 		}
 
-		sourceNode = (TreeClassNode<TreeNodeData, TreeLeafData>) found.ParentNode;
+		sourceNode = (TreeNode<TreeNodeData, TreeLeafData>) found.ParentNode;
 
 		// source node: Nu
 		M.WriteLineMargin($"from node| {sourceNode.NodeKey}");
@@ -1147,8 +1147,8 @@ public class DataSampleTree : INotifyPropertyChanged
 
 		M.WriteLineMargin("Show Nodes and Leaves");
 
-		foreach (TreeClassNode<TreeNodeData, TreeLeafData> tcn in tree)
-			// foreach (TreeClassNode<TreeNodeData, TreeClassLeaf<TreeLeafData>Data> tcn in tree)
+		foreach (TreeNode<TreeNodeData, TreeLeafData> tcn in tree)
+			// foreach (TreeNode<TreeNodeData, TreeLeaf<TreeLeafData>Data> tcn in tree)
 		{
 			result++;
 			showNodesAndMaybeLeaves(tcn, showLeaves);
@@ -1159,14 +1159,14 @@ public class DataSampleTree : INotifyPropertyChanged
 		return result;
 	}
 
-	public int ShowNodesAndMaybeLeaves(TreeClassNode<TreeNodeData, TreeLeafData> start, bool showLeaves = true)
+	public int ShowNodesAndMaybeLeaves(TreeNode<TreeNodeData, TreeLeafData> start, bool showLeaves = true)
 	{
 		int result = 0;
 
 		M.WriteLineMargin($"Show Nodes and Leaves| start at| {start.NodeKey}");
 
-		foreach (TreeClassNode<TreeNodeData, TreeLeafData> tcn in start)
-			// foreach (TreeClassNode<TreeNodeData, TreeClassLeaf<TreeLeafData>Data> tcn in tree)
+		foreach (TreeNode<TreeNodeData, TreeLeafData> tcn in start)
+			// foreach (TreeNode<TreeNodeData, TreeLeaf<TreeLeafData>Data> tcn in tree)
 		{
 			result++;
 			showNodesAndMaybeLeaves(tcn, showLeaves);
@@ -1179,7 +1179,7 @@ public class DataSampleTree : INotifyPropertyChanged
 
 	public void ShowAllLeaves()
 	{
-		foreach (TreeClassLeaf<TreeNodeData, TreeLeafData> leaf in tree.GetLeaves())
+		foreach (TreeLeaf<TreeNodeData, TreeLeafData> leaf in tree.GetLeaves())
 		{
 			M.WriteLine("Leaf|", $"parent| {leaf.ParentNode.NodeKey} | leaf| {leaf.LeafKey}");
 		}
@@ -1306,7 +1306,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		nodeStatus(tree.RootNode);
 	}
 
-	private void nodeStatus(TreeClassNode<TreeNodeData, TreeLeafData> tn)
+	private void nodeStatus(TreeNode<TreeNodeData, TreeLeafData> tn)
 	{
 		M.WriteLineMargin($"NodeStat| node key", $"{tn.NodeKey}");
 		M.WriteLineMargin($"NodeStat| is node null", $"{tn.IsNodesNull}");
@@ -1813,20 +1813,20 @@ public class DataSampleTree : INotifyPropertyChanged
 	}
 
 
-	private TreeClassNode<TreeNodeData, TreeLeafData> makeTempTreeNode(string? name = null)
+	private TreeNode<TreeNodeData, TreeLeafData> makeTempTreeNode(string? name = null)
 	{
 		if (name == null)
 		{
 			name = $"Tree Node {nodeIdx:D5}";
 		}
 
-		return new TreeClassNode<TreeNodeData, TreeLeafData>(name, tree, null,
+		return new TreeNode<TreeNodeData, TreeLeafData>(name, tree, null,
 			new TreeNodeData($"Node Data {nodeIdx++:D5}"));
 	}
 
 	private bool testAddNode(List<string> nodePath, string name)
 	{
-		TreeClassNode<TreeNodeData, TreeLeafData> treeNode = makeTempTreeNode(name);
+		TreeNode<TreeNodeData, TreeLeafData> treeNode = makeTempTreeNode(name);
 
 		return tree.AddNode(treeNode, nodePath);
 	}
@@ -1835,7 +1835,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	{
 		int result = 0;
 
-		foreach (TreeClassNode<TreeNodeData, TreeLeafData> tcn in tree)
+		foreach (TreeNode<TreeNodeData, TreeLeafData> tcn in tree)
 		{
 			result++;
 
@@ -1845,7 +1845,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		return result;
 	}
 
-	private void ShowNodeLeaves(TreeClassNode<TreeNodeData, TreeLeafData> node)
+	private void ShowNodeLeaves(TreeNode<TreeNodeData, TreeLeafData> node)
 	{
 		if (node == null || !node.HasLeaves)
 		{
@@ -1854,7 +1854,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		}
 
 
-		foreach (KeyValuePair<string, TreeClassLeaf<TreeNodeData, TreeLeafData>> kvp
+		foreach (KeyValuePair<string, TreeLeaf<TreeNodeData, TreeLeafData>> kvp
 				in node.Leaves)
 		{
 			M.WriteLineMargin($"\t{kvp.Value.LeafKey}");
@@ -1862,11 +1862,11 @@ public class DataSampleTree : INotifyPropertyChanged
 		}
 	}
 
-	private string ShowNodeParents(TreeClassNode<TreeNodeData, TreeLeafData> tcn)
+	private string ShowNodeParents(TreeNode<TreeNodeData, TreeLeafData> tcn)
 	{
 		List<string> parents = new List<string>();
 
-		TreeClassNode<TreeNodeData, TreeLeafData> node = tcn;
+		TreeNode<TreeNodeData, TreeLeafData> node = tcn;
 		while (node.ParentNodeEx  != null)
 		{
 			parents.Add(node.NodeKey);
@@ -1924,7 +1924,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		// set a node
 		// phi
 		tree.ContainsNode(data[17]);
-		TreeClassNode<TreeNodeData, TreeLeafData>? node = tree.FoundNode;
+		TreeNode<TreeNodeData, TreeLeafData>? node = tree.FoundNode;
 
 		M.WriteLineMargin("\nNode Counts");
 
@@ -1957,7 +1957,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		// set a node
 		// phi
 		tree.ContainsNode(data[17]);
-		TreeClassNode<TreeNodeData, TreeLeafData>? node = tree.FoundNode;
+		TreeNode<TreeNodeData, TreeLeafData>? node = tree.FoundNode;
 
 		M.WriteLineMargin("\nLeaf Counts");
 
@@ -1977,7 +1977,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		M.WriteLineMargin("Count Leaves ex| Found", node.CountLeavesEx.ToString());
 	}
 
-	private void showFindNodeResults(bool result, TreeClassNode<TreeNodeData, TreeLeafData>? node)
+	private void showFindNodeResults(bool result, TreeNode<TreeNodeData, TreeLeafData>? node)
 	{
 		if (!result)
 		{
@@ -1990,7 +1990,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		}
 	}
 
-	private void testCountLeafMatches(TreeClassNode<TreeNodeData, TreeLeafData> node)
+	private void testCountLeafMatches(TreeNode<TreeNodeData, TreeLeafData> node)
 	{
 		M.WriteLineMargin($"search for leaf with name| {leafSearchString}| starting at| {node.NodeKey}");
 
@@ -2006,7 +2006,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		}
 	}
 
-	private void showFindResults(TreeClassLeaf<TreeNodeData, TreeLeafData> found, bool result, string foundMsg)
+	private void showFindResults(TreeLeaf<TreeNodeData, TreeLeafData> found, bool result, string foundMsg)
 	{
 		if (result)
 		{
@@ -2019,7 +2019,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		}
 	}
 
-	private void showNodesAndMaybeLeaves(TreeClassNode<TreeNodeData, TreeLeafData> tcn, bool showLeaves)
+	private void showNodesAndMaybeLeaves(TreeNode<TreeNodeData, TreeLeafData> tcn, bool showLeaves)
 	{
 		M.WriteLineMargin(ShowNodeParents(tcn));
 		if (showLeaves) ShowNodeLeaves(tcn);
@@ -2030,20 +2030,20 @@ public class DataSampleTree : INotifyPropertyChanged
 #region event consuming
 
 	
-	private void Tree_NodeMixed(object sender, TreeClassNode<TreeNodeData, TreeLeafData> node)
+	private void Tree_NodeMixed(object sender, TreeNode<TreeNodeData, TreeLeafData> node)
 	{
 		mixedNodeKey = node.NodeKey;
 		UpdatedNodeKeys();
 	}
 
-	private void TreeOnNodeSelected(object sender, TreeClassNode<TreeNodeData, TreeLeafData> node)
+	private void TreeOnNodeSelected(object sender, TreeNode<TreeNodeData, TreeLeafData> node)
 	{
 		selectedNodeKey = node.NodeKey;
 		UpdatedNodeKeys();
 
 	}
 
-	private void TreeOnNodeDeSelected(object sender, TreeClassNode<TreeNodeData, TreeLeafData> node)
+	private void TreeOnNodeDeSelected(object sender, TreeNode<TreeNodeData, TreeLeafData> node)
 	{
 		deSelectedNodeKey = node.NodeKey;
 		UpdatedNodeKeys();
@@ -2082,7 +2082,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		if (tree != null && Tree.SelectedNodes != null && Tree.SelectedNodes.Count > 0)
 		{
 
-			foreach (TreeClassNode<TreeNodeData, TreeLeafData> node in tree.SelectedNodes)
+			foreach (TreeNode<TreeNodeData, TreeLeafData> node in tree.SelectedNodes)
 			{
 				Debug.WriteLine($"{idx++}|   {node.NodeKey}");
 			}
@@ -2100,7 +2100,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		if (tree != null && Tree.PriorSelectedNodes != null && Tree.PriorSelectedNodes.Count > 0)
 		{
 
-			foreach (TreeClassNode<TreeNodeData, TreeLeafData> node in tree.PriorSelectedNodes)
+			foreach (TreeNode<TreeNodeData, TreeLeafData> node in tree.PriorSelectedNodes)
 			{
 				Debug.WriteLine($"{idx++}|   {node.NodeKey}");
 			}

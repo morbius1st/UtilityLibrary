@@ -56,13 +56,13 @@
 			</x:Array>
 
 			<cs:GenericType x:Key="TreeNode"
-					BaseType="{x:Type TypeName=treeClasses:TreeClassNode`2}"
+					BaseType="{x:Type TypeName=treeClasses:TreeNode`2}"
 					InnerTypes="{StaticResource DataTypes}"
 					/>
 
 
 			<cs:GenericType x:Key="TreeLeaf"
-					BaseType="{x:Type TypeName=treeClasses:TreeClassLeaf`2}"
+					BaseType="{x:Type TypeName=treeClasses:TreeLeaf`2}"
 					InnerTypes="{StaticResource DataTypes}"
 					/>
 

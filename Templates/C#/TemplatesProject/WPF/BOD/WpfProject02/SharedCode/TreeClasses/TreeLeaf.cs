@@ -1,6 +1,6 @@
 ﻿// Solution:     WpfProject02
 // Project:       WpfProject02
-// File:             TreeClassLeaf.cs
+// File:             TreeLeaf.cs
 // Created:      2023-10-07 (10:33 AM)
 
 using System;
@@ -12,15 +12,15 @@ using WpfProject02.Annotations;
 
 namespace SharedCode.TreeClasses;
 
-public class TreeClassLeaf<TNd, TLd> : INotifyPropertyChanged, 
-	IComparer<TreeClassLeaf<TNd, TLd>>, ICloneable
+public class TreeLeaf<TNd, TLd> : INotifyPropertyChanged, 
+	IComparer<TreeLeaf<TNd, TLd>>, ICloneable
 	where TNd : class
 	where TLd : class
 {
 #region private fields
 
 	private string leafKey;
-	private TreeClassNode<TNd, TLd> parentNode;
+	private TreeNode<TNd, TLd> parentNode;
 	private TLd leafData;
 	private bool isSelected;
 	private bool isChosen;
@@ -29,10 +29,10 @@ public class TreeClassLeaf<TNd, TLd> : INotifyPropertyChanged,
 
 #region ctor
 
-	public TreeClassLeaf() { }
+	public TreeLeaf() { }
 
-	public TreeClassLeaf(string leafKey, TLd leafData,
-		TreeClassNode<TNd, TLd> parentNode = null)
+	public TreeLeaf(string leafKey, TLd leafData,
+		TreeNode<TNd, TLd> parentNode = null)
 	{
 		LeafKey = leafKey;
 		LeafData = leafData;
@@ -54,7 +54,7 @@ public class TreeClassLeaf<TNd, TLd> : INotifyPropertyChanged,
 		}
 	}
 
-	public TreeClassNode<TNd, TLd> ParentNode
+	public TreeNode<TNd, TLd> ParentNode
 	{
 		get => parentNode;
 		private set
@@ -100,7 +100,7 @@ public class TreeClassLeaf<TNd, TLd> : INotifyPropertyChanged,
 
 #region public methods
 
-	public bool MoveParent(TreeClassNode<TNd, TLd> node)
+	public bool MoveParent(TreeNode<TNd, TLd> node)
 	{
 		if (node == null || !node.ContainsLeaf(leafKey)) return false;
 
@@ -125,7 +125,7 @@ public class TreeClassLeaf<TNd, TLd> : INotifyPropertyChanged,
 
 #region system overrides
 
-	public int Compare(TreeClassLeaf<TNd, TLd>? x, TreeClassLeaf<TNd, TLd>? y)
+	public int Compare(TreeLeaf<TNd, TLd>? x, TreeLeaf<TNd, TLd>? y)
 	{
 		return 0;
 	}
@@ -145,7 +145,7 @@ public class TreeClassLeaf<TNd, TLd> : INotifyPropertyChanged,
 
 	public override string ToString()
 	{
-		return $"{nameof(TreeClassLeaf<TNd, TLd>)} | name| {LeafKey} | parent| {parentNode?.NodeKey ?? "is null"}";
+		return $"{nameof(TreeLeaf<TNd, TLd>)} | name| {LeafKey} | parent| {parentNode?.NodeKey ?? "is null"}";
 	}
 
 #endregion

@@ -177,9 +177,9 @@ namespace SharedWPF.ShWin
 		public string Title { get; set; } = "Examples";
 
 		// T Observable Tree
-		public TreeClass<TreeNodeData, TreeLeafData> ObservTree => dst?.Tree;
+		public Tree<TreeNodeData, TreeLeafData> ObservTree => dst?.Tree;
 
-		public TreeClassNode<TreeNodeData, TreeLeafData> ObservTreeNode => dst?.Tree?.RootNode;
+		public TreeNode<TreeNodeData, TreeLeafData> ObservTreeNode => dst?.Tree?.RootNode;
 
 		public string TestString
 		{
@@ -355,7 +355,7 @@ namespace SharedWPF.ShWin
 
 		private void BtnDebug_OnClick(object sender, RoutedEventArgs e)
 		{
-			TreeClass<TreeNodeData, TreeLeafData> t = dst.Tree;
+			Tree<TreeNodeData, TreeLeafData> t = dst.Tree;
 
 			string sel = (t?.SelectedNodes?.Count ?? 0) > 0 ? t.SelectedNodes[0].NodeKey : "none";
 			string psel = (t?.PriorSelectedNodes?.Count ?? 0) > 0 ? t.PriorSelectedNodes[0].NodeKey : "none";
