@@ -27,7 +27,7 @@ namespace SharedCode.SampleData
 
 		public TreeNodeG(string nodeName,
 			TreeNodeDataG nodeData,
-			ITreeNode<TreeNodeDataG, TreeLeafDictG<TreeLeafG>, TreeLeafG> parent = null)
+			ITreeNodeG<TreeNodeDataG, TreeLeafDictG<TreeLeafG>, TreeLeafG> parent = null)
 			: base(nodeName, nodeData, parent) { }
 	}
 
@@ -45,8 +45,8 @@ namespace SharedCode.SampleData
 		IEnumerable<KeyValuePair<string, TN>>
 		where TNd : class, new()                          // tree node data
 		where TLc : class, ITreeLeafCollection<TL>, new() // tree leaf collection
-		where TN : class, ITreeNode<TNd, TLc, TL>, new()  // a tree node
-		where TL : class, ITreeLeaf, new()                // a tree leaf
+		where TN : class, ITreeNodeG<TNd, TLc, TL>, new()  // a tree node
+		where TL : class, ITreeLeafG, new()                // a tree leaf
 	{
 		// the actual tree class
 
@@ -124,16 +124,16 @@ namespace SharedCode.SampleData
 	}
 
 
-	public interface ITreeNode<TNd, TLc, TL> : ITreeNodeRoot,
-		IEnumerable<KeyValuePair<string, ITreeNode<TNd, TLc, TL>>>
+	public interface ITreeNodeG<TNd, TLc, TL> : ITreeNodeRoot,
+		IEnumerable<KeyValuePair<string, ITreeNodeG<TNd, TLc, TL>>>
 		where TLc : class, ITreeLeafCollection<TL>, new()
-		where TL : class, ITreeLeaf, new()
+		where TL : class, ITreeLeafG, new()
 	{
 		public TNd NodeData { get; }
 
 		public TLc Leaves { get; }
 
-		public ITreeNode<TNd, TLc, TL> ParentNode { get; }
+		public ITreeNodeG<TNd, TLc, TL> ParentNode { get; }
 
 		// public bool AddNode(string[] nodePath, int idx, ITreeNode<TNd, TLc, TL> node);
 		// public bool RemoveNode(string[] nodePath, int idx);
@@ -156,28 +156,28 @@ namespace SharedCode.SampleData
 	}
 
 	public class TreeNodeG<TNd, TLc, TL> : INotifyPropertyChanged,
-		ITreeNode<TNd, TLc, TL>
+		ITreeNodeG<TNd, TLc, TL>
 		where TLc : class, ITreeLeafCollection<TL>, new()
-		where TL : class, ITreeLeaf, new()
+		where TL : class, ITreeLeafG, new()
 	{
 		// private Dictionary<string, ITreeNode<TNd, TLc, TL>> nodes =
 		// 	new Dictionary<string, ITreeNode<TNd, TLc, TL>>();
 
 
-		private Dictionary<string, ITreeNode<TNd, TLc, TL>> nodes =
-			new Dictionary<string, ITreeNode<TNd, TLc, TL>>();
+		private Dictionary<string, ITreeNodeG<TNd, TLc, TL>> nodes =
+			new Dictionary<string, ITreeNodeG<TNd, TLc, TL>>();
 
 		private TLc leaves;
 
 		private string nodeName;
-		private ITreeNode<TNd, TLc, TL> parentNode;
+		private ITreeNodeG<TNd, TLc, TL> parentNode;
 		private bool? isSelected;
 		private TNd nodeData;
-		private ITreeNode<TNd, TLc, TL> parentNode1;
+		private ITreeNodeG<TNd, TLc, TL> parentNode1;
 
 		public TreeNodeG() { }
 
-		public TreeNodeG(string nodeName, TNd nodeData, ITreeNode<TNd, TLc, TL> parent = null)
+		public TreeNodeG(string nodeName, TNd nodeData, ITreeNodeG<TNd, TLc, TL> parent = null)
 		{
 			this.nodeData = nodeData;
 			this.nodeName = nodeName;
@@ -213,7 +213,7 @@ namespace SharedCode.SampleData
 		}
 
 		// done
-		public ITreeNode<TNd, TLc, TL> ParentNode
+		public ITreeNodeG<TNd, TLc, TL> ParentNode
 		{
 			get => parentNode;
 			private set
@@ -231,7 +231,7 @@ namespace SharedCode.SampleData
 			private set
 			{
 				if (Equals(value, parentNode)) return;
-				parentNode = (ITreeNode<TNd, TLc, TL>) value;
+				parentNode = (ITreeNodeG<TNd, TLc, TL>) value;
 				OnPropertyChanged();
 			}
 		}
@@ -328,11 +328,11 @@ namespace SharedCode.SampleData
 		{
 			if (nodes != null) return;
 
-			nodes = new Dictionary<string, ITreeNode<TNd, TLc, TL>>();
+			nodes = new Dictionary<string, ITreeNodeG<TNd, TLc, TL>>();
 		}
 
 
-		public IEnumerator<KeyValuePair<string, ITreeNode<TNd, TLc, TL>>> GetEnumerator()
+		public IEnumerator<KeyValuePair<string, ITreeNodeG<TNd, TLc, TL>>> GetEnumerator()
 		{
 			return nodes.GetEnumerator();
 		}
@@ -360,7 +360,7 @@ namespace SharedCode.SampleData
 
 #region TreeLeaf
 
-	public interface ITreeLeaf
+	public interface ITreeLeafG
 	{
 		public string LeafName { get; }
 		public ITreeNodeRoot ParentNodeRoot { get; }
@@ -368,7 +368,7 @@ namespace SharedCode.SampleData
 	}
 
 	// H.5 - tree leaf data
-	public class TreeLeafG : INotifyPropertyChanged, ITreeLeaf
+	public class TreeLeafG : INotifyPropertyChanged, ITreeLeafG
 	{
 		private string leafName;
 		private string value;
@@ -453,7 +453,7 @@ namespace SharedCode.SampleData
 
 	public interface ITreeLeafCollection<TL> :
 		IEnumerable<KeyValuePair<string, TL>>
-		where TL : class, ITreeLeaf, new()
+		where TL : class, ITreeLeafG, new()
 	{
 		// public bool Add(TL leaf);
 		// public bool Remove(string leafName);
@@ -465,7 +465,7 @@ namespace SharedCode.SampleData
 	// done
 	// H.6 - tree leaf collection
 	public class TreeLeafDictG<TL> : INotifyPropertyChanged, ITreeLeafCollection<TL>
-		where TL : class, ITreeLeaf, new()
+		where TL : class, ITreeLeafG, new()
 	{
 		// manages the collection of tree leaves - done as a  separate class to 
 		// allow this to be done in different ways e.g. as a List<> or Dictionary<>

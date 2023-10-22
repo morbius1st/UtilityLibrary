@@ -22,10 +22,10 @@ using SharedCode.TreeClasses;
 using SharedWPF.ShWin;
 using ShCode.SampleData;
 using WpfProject02.Annotations;
-
-using static SharedCode.SampleData.Selection;
-using static SharedCode.SampleData.Selection.SelectMode;
-using static SharedCode.SampleData.Selection.SelectFirstClass;
+using static SharedCode.TreeClasses.Selection;
+using static SharedCode.TreeClasses.Selection.SelectMode;
+using static SharedCode.TreeClasses.Selection.SelectFirstClass;
+using System.Xml.Linq;
 
 /*
  notes:
@@ -46,8 +46,6 @@ namespace SharedWPF.ShWin
 	/// </summary>
 	public partial class Examples : Window, INotifyPropertyChanged, IWinMsg
 	{
-		
-
 		private TreeClassSampleData tcsd;
 		private SampleData sd;
 		private SampleDataShow show;
@@ -89,7 +87,7 @@ namespace SharedWPF.ShWin
 		private bool? isSelected = false;
 
 
-		#region message boxes
+	#region message boxes
 
 		public string MessageBoxText
 		{
@@ -282,21 +280,22 @@ namespace SharedWPF.ShWin
 
 		public bool? IsSelected
 		{
-			get => isSelected; 
+			get => isSelected;
 			set
-			{ 
+			{
 				isSelected = value;
 				if (M != null)
 				{
-					M.WriteLine($"Example.IsSelected| value| {(value.HasValue ? value :"null")}");
+					M.WriteLine($"Example.IsSelected| value| {(value.HasValue ? value : "null")}");
 				}
+
 				OnPropertyChanged();
 			}
 		}
 
-		#endregion
+	#endregion
 
-		#region methods
+	#region methods
 
 		private void init()
 		{
@@ -343,28 +342,92 @@ namespace SharedWPF.ShWin
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
-		
+
 	#endregion
 
 	#region buttons
-
-		private void BtnExit_OnClick(object sender, RoutedEventArgs e)
-		{
-			this.Close();
-		}
 
 		private void BtnDebug_OnClick(object sender, RoutedEventArgs e)
 		{
 			Tree<TreeNodeData, TreeLeafData> t = dst.Tree;
 
-			string sel = (t?.SelectedNodes?.Count ?? 0) > 0 ? t.SelectedNodes[0].NodeKey : "none";
-			string psel = (t?.PriorSelectedNodes?.Count ?? 0) > 0 ? t.PriorSelectedNodes[0].NodeKey : "none";
+			TreeNode<TreeNodeData, TreeLeafData> rn1 = dst.Tree.RootNode;
+			
+			// ITreeNode<TreeNodeData, TreeLeafData> it1 = dst.Tree.RootNode;
+			// ITreeNode<TreeNodeData, TreeLeafData> it2 =
+			// 	(ITreeNode<TreeNodeData, TreeLeafData>) dst.Tree.IRootNode;
+			//
+			// ITreeNode<TreeNodeData, TreeLeafData> it3 = null;
+			//
+			//
+			// ITreeNode2 rn2 = dst.Tree.RootNode;
+			// ITreeNode2 tn2 = null;
+
+
+			// string sel = (t?.SelectedNodes?.Count ?? 0) > 0 ? t.SelectedNodes[0].NodeKey : "none";
+			// string psel = (t?.PriorSelectedNodes?.Count ?? 0) > 0 ? t.PriorSelectedNodes[0].NodeKey : "none";
+
+
+			// foreach (ITreeNode<TreeNodeData, TreeLeafData> node in it1.EnumNodes())
+			// {
+			// 	Debug.WriteLine($"{node.NodeKey}");
+			//
+			// 	if (node.HasLeaves)
+			// 	{
+			// 		it3 = node;
+			// 		break;
+			// 	}
+			// }
+
+			// foreach (ITreeLeaf<TreeNodeData, TreeLeafData> leaf in it3.EnumLeaves())
+			// {
+			// 	Debug.WriteLine($"{leaf.LeafKey}");
+			// }
+
+
+			// foreach (ITreeNode2 node in rn2.EnumNodes2())
+			// {
+			// 	Debug.WriteLine($"{node.NodeKey}");
+			//
+			// 	if (node.HasLeaves)
+			// 	{
+			// 		tn2 = node;
+			// 		break;
+			// 	}
+			// }
+			//
+			// foreach (ITreeLeaf2 leaf in tn2.EnumLeaves2())
+			// {
+			// 	Debug.WriteLine($"{leaf.LeafKey}");
+			// 	Debug.WriteLine($"{((TreeLeaf<TreeNodeData, TreeLeafData>) leaf).LeafKey}");
+			// }
+
+			// foreach (ITreeNode<TreeNodeData, TreeLeafData> node in dst.Tree.EnumAllNodes())
+			// {
+			// 	Debug.WriteLine($"{node.NodeKey}");
+			// }
+			//
+			// foreach (ITreeLeaf<TreeNodeData, TreeLeafData> leaf in dst.Tree.EnumAllLeaves())
+			// {
+			// 	Debug.WriteLine($"{leaf.LeafKey}");
+			//
+			// }
+
+			int s = t.NodeSelector.SelectedCount;
+			int p = t.NodeSelector.PriorSelectedCount;
+
+			ATreeSelector<ITreeNode> selector = t.NodeSelector;
 
 			int a = 1 + 1;
 
-			Debug.WriteLine($"selected| {sel}");
-			Debug.WriteLine($"prior selected| {psel}");
+			// Debug.WriteLine($"selected| {sel}");
+			// Debug.WriteLine($"prior selected| {psel}");
+		}
 
+
+		private void BtnExit_OnClick(object sender, RoutedEventArgs e)
+		{
+			this.Close();
 		}
 
 		private void BtnTestAll_OnClick(object sender, RoutedEventArgs e)
@@ -425,8 +488,6 @@ namespace SharedWPF.ShWin
 
 			UpdateObservTree();
 			// OnPropertyChanged(nameof(ObservTreeNode));
-
-
 		}
 
 		private void BtnEnumTreeAndLeaves_OnClick(object sender, RoutedEventArgs e)
@@ -440,13 +501,13 @@ namespace SharedWPF.ShWin
 			M.WriteLine($"\nenumerator1");
 
 			a = dst.TestEnumerator1();
-			
+
 			M.WriteLine($"count from enumerator1| {a}");
-			
+
 			M.WriteLine($"\nenumerator2");
 
 			a = dst.TestEnumerator2();
-			
+
 			M.WriteLine($"count from enumerator2| {a}");
 		}
 
@@ -480,10 +541,9 @@ namespace SharedWPF.ShWin
 
 			bool result = dst.TestAddNode();
 
-			string answer = result ? "*** WORKED ***": "*** FAIL ***";
+			string answer = result ? "*** WORKED ***" : "*** FAIL ***";
 
 			M.WriteLine(answer);
-
 		}
 
 		private void BtnTestMoveNode_OnClick(object sender, RoutedEventArgs e)
@@ -495,7 +555,6 @@ namespace SharedWPF.ShWin
 			// OnPropertyChanged(nameof(ObservTree));
 			// OnPropertyChanged(nameof(ObservTree.RootNode));
 			// OnPropertyChanged(nameof(ObservTree.RootNode.Nodes));
-
 		}
 
 		private void BtnTestDeleteNode_OnClick(object sender, RoutedEventArgs e)
@@ -503,7 +562,6 @@ namespace SharedWPF.ShWin
 			M.WriteLineCodeMap("Enter Method");
 
 			dst.TestDeleteNode();
-
 		}
 
 		private void BtnTestFindNode_OnClick(object sender, RoutedEventArgs e)
@@ -575,53 +633,30 @@ namespace SharedWPF.ShWin
 			dst.DeSelectTree();
 		}
 
-
-
-	#endregion
-		
-
-
-		// // e is treeviewitem
-		// private void TreeView_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-		// {
-		// 	TreeNode tn = (TreeNode) e.NewValue;
-		//
-		// 	dst.Tree.SelectedNode = tn;
-		//
-		// 	// dst.Tree.SelectedNodePathSwitch = false;
-		// }
-
-		// private void TreeViewItem_OnSelected(object sender, RoutedEventArgs e)
-		// {
-		// 	TreeViewItem tvi = (TreeViewItem) sender;
-		//
-		// 	if (!dst.Tree.SelectedNodePathSwitch)
-		// 	{
-		// 		dst.Tree.SelectedNodePathSwitch = true;
-		// 	}
-		//
-		// 	dst.Tree.SelectedNodePathTemp = ((TreeNode) tvi.DataContext).NodeKey;
-		//
-		// }
-
-
 		private void BtnShowSelDeSelLists_OnClick(object sender, RoutedEventArgs e)
 		{
 			dst.ShowSelDeselLists();
 		}
+
+	#endregion
+
+		private void BtMNed_OnClick(object sender, RoutedEventArgs e)
+		{
+			dst.TestEnableDisable();
+		}
 	}
 
-	
+
 	public class ListBoxContentTemplateSelector : DataTemplateSelector
 	{
 		public DataTemplate Empty { get; set; }
 		public DataTemplate ListBox { get; set; }
-	
+
 		public override DataTemplate SelectTemplate(object item, DependencyObject container)
 		{
-			if (item == null) { return null;}
+			if (item == null) { return null; }
 
-	
+
 			return (bool) item ? ListBox : Empty;
 		}
 	}

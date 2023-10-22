@@ -10,13 +10,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Data;
 using System.Xml.Linq;
-using SharedCode.ShDebugAssist;
-using SharedCode.TreeClasses;
+
+
 using SharedWPF.ShWin;
 
-using static SharedCode.SampleData.Selection;
-using static SharedCode.SampleData.Selection.SelectMode;
-using static SharedCode.SampleData.Selection.SelectFirstClass;
+using SharedCode.ShDebugAssist;
+using SharedCode.TreeClasses;
+
+using static SharedCode.TreeClasses.Selection;
+using static SharedCode.TreeClasses.Selection.SelectMode;
+using static SharedCode.TreeClasses.Selection.SelectFirstClass;
 
 // Solution:     WpfProject02
 // Project:       WpfProject02
@@ -80,7 +83,7 @@ public class DataSampleTree : INotifyPropertyChanged
 
 #region public properties
 
-	public Tree<TreeNodeData, TreeLeafData> Tree => tree;
+	public Tree<TreeNodeData, TreeLeafData>? Tree => tree;
 
 	public Examples E
 	{
@@ -122,7 +125,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	// }
 
 
-	public string TreeTitle => $"{TREETITLE} ({Tree?.SelectMode ?? SelectMode.INDIVIDUAL})";
+	public string TreeTitle => $"{TREETITLE} ({Tree?.NodeSelector.SelectionMode ?? SelectMode.INDIVIDUAL})";
 
 	public string SelectedNodeKey
 	{
@@ -158,11 +161,9 @@ public class DataSampleTree : INotifyPropertyChanged
 	{
 		get
 		{
-			if (Tree?.SelectedNodes == null ||
-				Tree.SelectedNodes.Count == 0
-				) return "not selected";
+			if ((Tree?.NodeSelector?.HasSelection ?? false)) return "not selected";
 
-			return Tree.SelectedNodes[0].NodeKey;
+			return Tree?.NodeSelector?.CurrentSelected?.NodeKey ?? "not selected";
 		}
 	}
 
@@ -170,11 +171,9 @@ public class DataSampleTree : INotifyPropertyChanged
 	{
 		get
 		{
-			if (Tree?.PriorSelectedNodes == null ||
-				Tree.PriorSelectedNodes.Count == 0
-				) return "not selected";
+			if ((Tree?.NodeSelector?.HasPriorSelection ?? false)) return "not selected";
 
-			return Tree.PriorSelectedNodes[0].NodeKey;
+			return Tree?.NodeSelector?.CurrentPriorSelected?.NodeKey ?? "not selected";
 		}
 	}
 
@@ -186,13 +185,13 @@ public class DataSampleTree : INotifyPropertyChanged
 		{
 			SelectMode idx;
 
-			if (Tree == null || Tree.SelectMode == UNDEFINED)
+			if (Tree == null || (Tree?.NodeSelector?.SelectionMode ?? UNDEFINED) == UNDEFINED)
 			{
 				idx = SelectMode.INDIVIDUAL;
 			}
 			else
 			{
-				idx = Tree.SelectMode;
+				idx = Tree.NodeSelector.SelectionMode;
 			}
 
 			return Selection.SelModes[idx].Description;
@@ -201,16 +200,15 @@ public class DataSampleTree : INotifyPropertyChanged
 
 	public string TreeName => (Tree?.TreeName) ?? "no name";
 
-	public string SelectModeName => (Tree?.SelectMode.ToString()) ?? "not selected";
-	public string SelectedFirstClass => (Tree?.SelectFirstClass.ToString()) ?? "not selected";
-	public string SelectedSecondClass => (Tree?.SelectSecondClass.ToString()) ?? "not selected";
-	public string SelectTreeAllowed => (Tree?.SelectTreeAllowed.ToString())?? "not selected";
-	public string CanSelectTree => (Tree?.CanSelectTree.ToString())?? "not selected";
+	public string SelectModeName => (Tree?.NodeSelector.SelectionMode.ToString()) ?? "not selected";
+	public string SelectedFirstClass => (Tree?.NodeSelector.SelectionFirstClass.ToString()) ?? "not selected";
+	public string SelectedSecondClass => (Tree?.NodeSelector.SelectionSecondClass.ToString()) ?? "not selected";
+	public string SelectTreeAllowed => (Tree?.NodeSelector.CanSelectTree.ToString())?? "not selected";
+	public string CanSelectTree => (Tree?.NodeSelector.CanSelectTree.ToString())?? "not selected";
 
 	public string WillSelectLeaves => 
-		((Tree?.SelectLeaves ?? false) ||
-		(Tree?.SelectSecondClass ?? SelectSecondClass.UNSET) == SelectSecondClass.LEAVES_ONLY ).ToString();
-
+		((Tree?.NodeSelector == null) == false ||
+		(Tree?.NodeSelector.SelectionSecondClass ?? SelectSecondClass.UNSET) == SelectSecondClass.LEAVES_ONLY ).ToString();
 
 	#endregion
 
@@ -226,18 +224,66 @@ public class DataSampleTree : INotifyPropertyChanged
 	{
 		M.WriteLineCodeMap("Enter Method");
 		M.WriteLineMargin($"select tree");
-		Tree.SelectNodeTree();
+		Tree.NodeSelector.TreeSelect();
 	}
 
 	public void DeSelectTree()
 	{
 		M.WriteLineCodeMap("Enter Method");
 		M.WriteLineMargin($"deselect tree");
-		Tree.DeSelectNodeTree();
+		Tree.NodeSelector.TreeDeSelect();
 	}
 
 
 	// common
+
+	public void CreateTree()
+	{
+
+		SelectedList<ITreeNode> selListNode = new ();
+		SelectedList<ITreeLeaf> selListLeaf = new ();
+
+		TreeSelectorIndividual<ITreeNode> selNode = new (selListNode);
+		TreeSelectorIndividual<ITreeLeaf> selLeaf = new (selListLeaf);
+
+		tree = new Tree<TreeNodeData, TreeLeafData>("Test Tree", 
+			selNode, selLeaf, new TreeNodeData("Test Node Data"));
+
+		// SelectMode sm = selectedMode.Key;
+		//
+		// int sc = (int) tree.SelectFirstClass;
+
+		// if (tree.SelectFirstClass == TRI_STATE)
+		// {
+		// 	UseThreeState = true;
+		// }
+		// else
+		// {
+		// 	UseThreeState = false;
+		// }
+
+		
+
+		// tree.NodeSelected += TreeOnNodeSelected;
+		// tree.NodeDeSelected += TreeOnNodeDeSelected;
+		// tree.NodeMixed += Tree_NodeMixed;
+
+
+
+		UpdateTreeProps();
+
+		// tree.SelectionIndividualNodes = new TreeSelectionIndividual(tree);
+
+		// tree.SelectedNodes2.ElementAddedToSelected += SelectedNodes2_ElementAddedToSelected;
+		// tree.SelectedNodes2.ElementAddedToPriorSelected += SelectedNodes2_ElementAddedToPriorSelected;
+
+		tree.NodeSelector!.ElementAddedToSelected += Dst_ElementAddedToSelected;
+		tree.NodeSelector!.ElementAddedToPriorSelected += Dst_ElementAddedToPriorSelected;
+		tree.NodeSelector!.SelectedCleared += Dst_SelectedCleared;
+		
+
+
+	}
 
 	public void AddNodesAndLeaves()
 	{
@@ -370,35 +416,6 @@ public class DataSampleTree : INotifyPropertyChanged
 		testCountNodes();
 	}
 
-	
-	public void CreateTree()
-	{
-		tree = new Tree<TreeNodeData, TreeLeafData>("Test Tree", selectedMode.Key, new TreeNodeData("Test Node Data"));
-
-		SelectMode sm = selectedMode.Key;
-		
-		int sc = (int) tree.SelectFirstClass;
-
-		// if (tree.SelectFirstClass == TRI_STATE)
-		// {
-		// 	UseThreeState = true;
-		// }
-		// else
-		// {
-		// 	UseThreeState = false;
-		// }
-
-		
-
-		tree.NodeSelected += TreeOnNodeSelected;
-		tree.NodeDeSelected += TreeOnNodeDeSelected;
-		tree.NodeMixed += Tree_NodeMixed;
-
-
-
-		UpdateTreeProps();
-	}
-
 
 	public void TreeClear()
 	{
@@ -407,6 +424,18 @@ public class DataSampleTree : INotifyPropertyChanged
 	}
 
 	// node
+
+
+
+	public void TestEnableDisable()
+	{
+		NodeEnableDisable ned = new NodeEnableDisable(tree, node2 => node2.NodeKey[0] != 'A');
+
+		tree.NodeEnableDisable = ned;
+
+		bool result = tree.NodeEnableDisable.Apply();
+		M.WriteLine("Enable disable test|", $"status| {result}");
+	}
 
 	public bool TestAddNode()
 	{
@@ -520,7 +549,7 @@ public class DataSampleTree : INotifyPropertyChanged
 			M.WriteLine($"\t** WORKED ** | nodeData/Value {node.NodeData.Value}");
 
 			M.WriteLine("\nnode path");
-			M.WriteLine(TreeClassEx<TreeNodeData, TreeLeafData>.GetNodePath(node));
+			M.WriteLine(TreeSupport<TreeNodeData, TreeLeafData>.GetNodePath(node));
 		}
 
 
@@ -538,7 +567,7 @@ public class DataSampleTree : INotifyPropertyChanged
 			M.WriteLine($"\t** WORKED ** | nodeData/Value {node.NodeData.Value}");
 
 			M.WriteLine("\nnode path");
-			M.WriteLine(TreeClassEx<TreeNodeData, TreeLeafData>.GetNodePath(node));
+			M.WriteLine(TreeSupport<TreeNodeData, TreeLeafData>.GetNodePath(node));
 		}
 	}
 
@@ -1295,10 +1324,10 @@ public class DataSampleTree : INotifyPropertyChanged
 		M.WriteLineMargin($"TreeStat| current node| key", $"{tree.CurrentNode.NodeKey}");
 
 		M.WriteLineMargin($"TreeStat| require unique keys?", $"{tree.RequireUniqueKeys}");
-		M.WriteLineMargin($"TreeStat| tree selection mode", $"{tree.SelectMode}");
-		M.WriteLineMargin($"TreeStat| tree sel first class", $"{tree.SelectFirstClass}");
-		M.WriteLineMargin($"TreeStat| tree sel second class", $"{tree.SelectSecondClass}");
-		M.WriteLineMargin($"TreeStat| tree sel tree allowed", $"{tree.SelectTreeAllowed}");
+		M.WriteLineMargin($"TreeStat| tree selection mode", $"{tree.NodeSelector.SelectionMode}");
+		M.WriteLineMargin($"TreeStat| tree sel first class", $"{tree.NodeSelector.SelectionFirstClass}");
+		M.WriteLineMargin($"TreeStat| tree sel second class", $"{tree.NodeSelector.SelectionSecondClass}");
+		M.WriteLineMargin($"TreeStat| tree sel tree allowed", $"{tree.NodeSelector.CanSelectTree}");
 		
 
 		M.WriteLine($"TreeStat| NODE specific | ");
@@ -1986,7 +2015,7 @@ public class DataSampleTree : INotifyPropertyChanged
 		}
 		else
 		{
-			M.WriteLine($"\t** WORKED ** | node path| {TreeClassEx<TreeNodeData, TreeLeafData>.GetNodePath(node)}");
+			M.WriteLine($"\t** WORKED ** | node path| {TreeSupport<TreeNodeData, TreeLeafData>.GetNodePath(node)}");
 		}
 	}
 
@@ -2025,27 +2054,36 @@ public class DataSampleTree : INotifyPropertyChanged
 		if (showLeaves) ShowNodeLeaves(tcn);
 	}
 
+
+
 #endregion
 
 #region event consuming
 
 	
+	private void Dst_ElementAddedToPriorSelected(object sender, ITreeNode node)
+	{
+		deSelectedNodeKey = node.NodeKey;
+		OnPropertyChanged(nameof(DeSelectedNodeKey));
+		OnPropertyChanged(nameof(PriorSelNodeKey));
+	}
+
+	private void Dst_ElementAddedToSelected(object sender, ITreeNode node)
+	{
+		selectedNodeKey = node.NodeKey;
+		OnPropertyChanged(nameof(SelectedNodeKey));
+		OnPropertyChanged(nameof(SelNodeKey));
+	}
+
+	private void Dst_SelectedCleared(object sender)
+	{
+		SelectedNodeKey = null;
+		DeSelectedNodeKey = null;
+	}
+	
 	private void Tree_NodeMixed(object sender, TreeNode<TreeNodeData, TreeLeafData> node)
 	{
 		mixedNodeKey = node.NodeKey;
-		UpdatedNodeKeys();
-	}
-
-	private void TreeOnNodeSelected(object sender, TreeNode<TreeNodeData, TreeLeafData> node)
-	{
-		selectedNodeKey = node.NodeKey;
-		UpdatedNodeKeys();
-
-	}
-
-	private void TreeOnNodeDeSelected(object sender, TreeNode<TreeNodeData, TreeLeafData> node)
-	{
-		deSelectedNodeKey = node.NodeKey;
 		UpdatedNodeKeys();
 	}
 
@@ -2063,8 +2101,8 @@ public class DataSampleTree : INotifyPropertyChanged
 
 	private void showSelDeselInfo()
 	{
-		Debug.WriteLine($"selected node count      | {(tree?.SelectedNodes?.Count.ToString() ?? "null" )}");
-		Debug.WriteLine($"prior selected node count| {(tree?.PriorSelectedNodes?.Count.ToString() ?? "null" )}");
+		Debug.WriteLine($"selected node count      | {(tree?.NodeSelector!.SelectedCount.ToString() ?? "null" )}");
+		Debug.WriteLine($"prior selected node count| {(tree?.NodeSelector!.PriorSelectedCount.ToString() ?? "null" )}");
 	}
 
 	public void ShowSelDeselLists()
@@ -2072,17 +2110,17 @@ public class DataSampleTree : INotifyPropertyChanged
 		Debug.WriteLine($"\nselected node & priorselected node lists");
 
 		Debug.Write("\n");
-		Debug.WriteLine($"selected node count      | {(tree?.SelectedNodes?.Count.ToString() ?? "null" )}");
-		Debug.WriteLine($"prior selected node count| {(tree?.PriorSelectedNodes?.Count.ToString() ?? "null" )}");
+		Debug.WriteLine($"selected node count      | {(tree?.NodeSelector!.SelectedCount.ToString() ?? "null" )}");
+		Debug.WriteLine($"prior selected node count| {(tree?.NodeSelector!.PriorSelectedCount.ToString() ?? "null" )}");
 
 		Debug.WriteLine("selected node list");
 
 		int idx = 0;
 
-		if (tree != null && Tree.SelectedNodes != null && Tree.SelectedNodes.Count > 0)
+		if (tree != null && tree.NodeSelector != null && tree.NodeSelector.SelectedCount > 0)
 		{
 
-			foreach (TreeNode<TreeNodeData, TreeLeafData> node in tree.SelectedNodes)
+			foreach (ITreeNode node in tree.NodeSelector.EnumSelected())
 			{
 				Debug.WriteLine($"{idx++}|   {node.NodeKey}");
 			}
@@ -2097,10 +2135,10 @@ public class DataSampleTree : INotifyPropertyChanged
 
 		idx = 0;
 
-		if (tree != null && Tree.PriorSelectedNodes != null && Tree.PriorSelectedNodes.Count > 0)
+		if (tree != null && Tree.NodeSelector != null && Tree.NodeSelector.PriorSelectedCount > 0)
 		{
 
-			foreach (TreeNode<TreeNodeData, TreeLeafData> node in tree.PriorSelectedNodes)
+			foreach (ITreeNode node in tree.NodeSelector.EnumPriorSelected())
 			{
 				Debug.WriteLine($"{idx++}|   {node.NodeKey}");
 			}
@@ -2111,6 +2149,21 @@ public class DataSampleTree : INotifyPropertyChanged
 			Debug.WriteLine("nothing to show");
 		}
 	}
+
+
+
+	private void TreeOnNodeSelected(object sender, TreeNode<TreeNodeData, TreeLeafData> node)
+	{
+
+
+	}
+
+	private void TreeOnNodeDeSelected(object sender, TreeNode<TreeNodeData, TreeLeafData> node)
+	{
+
+	}
+
+
 
 #endregion
 

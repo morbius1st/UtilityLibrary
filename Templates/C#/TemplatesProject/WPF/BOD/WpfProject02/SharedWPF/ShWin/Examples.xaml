@@ -383,7 +383,7 @@
 
 			<DataTemplate x:Key="CC_ListBox"
 					DataType="dst:TreeLeaf"
-			>
+					>
 
 				<ListBox Margin="5,0,0,0"
 						DataContext="{Binding DataContext,
@@ -396,10 +396,13 @@
 						<DataTemplate DataType="dst:TreeLeaf">
 							<DockPanel HorizontalAlignment="Stretch">
 
-								<CheckBox Foreground="White"
+								<CheckBox Margin="0,0,10,0"
+										Foreground="White"
+										IsChecked="{Binding IsChecked,
+																				Mode=TwoWay,
+																				TargetNullValue=false,
+																				FallbackValue=false}"
 										DockPanel.Dock="Left"
-										Margin="0,0,10,0"
-										IsChecked="{Binding IsSelected, Mode=TwoWay, TargetNullValue=false, FallbackValue=false}"
 										/>
 
 
@@ -783,10 +786,10 @@
 			<!-- <cs:GenericType x:Key="TreeLeaf1" BaseType="{x:Type dst:TreeClassLeaf}" InnerTypes="{StaticResource DataTypes1}"/> -->
 
 			<!-- <DataTemplate x:Key="CC_Expander"> -->
-			<!-- 	<Expander IsExpanded="false" -->
-			<!-- 			ExpandDirection="Right" -->
-			<!-- 			ContentTemplate="{StaticResource CC_ListBox}" -->
-			<!-- 			/> -->
+			<!--  <Expander IsExpanded="false"  -->
+			<!--  ExpandDirection="Right"  -->
+			<!--  ContentTemplate="{StaticResource CC_ListBox}"  -->
+			<!--  />  -->
 			<!-- </DataTemplate> -->
 
 
@@ -796,8 +799,10 @@
 					DataType="dst:TreeNode"
 					ItemsSource="{Binding Nodes.Values}"
 					>
-				<!-- DataType="{StaticResource TreeNode}" -->
-				<DockPanel HorizontalAlignment="Stretch">
+				<!--  DataType="{StaticResource TreeNode}"  -->
+				<DockPanel HorizontalAlignment="Stretch"
+						IsEnabled="{Binding IsEnabled}"
+						>
 					<Grid HorizontalAlignment="Stretch"
 							DockPanel.Dock="Top"
 							>
@@ -870,7 +875,7 @@
 									VerticalAlignment="Top"
 									Background="White"
 									Foreground="Blue"
-									Text="{Binding PriorIsCheckedState}"
+									Text="{Binding PriorIsSelectedState}"
 									/>
 						</StackPanel>
 						<ContentControl Grid.Column="0"
@@ -1100,6 +1105,14 @@
 					DockPanel.Dock="Bottom"
 					Orientation="Vertical"
 					>
+
+				<Button x:Name="BtMNed"
+						Content="Enab/Disab Test"
+						Margin="0,0,0,5"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtMNed_OnClick"
+						/>
 
 				<Button x:Name="BtMoveLeaf"
 						Content="Move Leaf"
@@ -1715,12 +1728,14 @@
 			<TextBlock Width="150"
 					Foreground="Aqua"
 					LineHeight="10"
-					><Run Text="this is text"/><LineBreak /><Run Text="Line 2"/></TextBlock>
+					><Run Text="this is text" /><LineBreak /><Run Text="Line 2" /></TextBlock>
 
 			<TextBlock Foreground="Aqua"
 					LineHeight="4"
-					><Span><Run Text="this is text"/><Run Text=" "/><Run Text="with a button"/><LineBreak /><Run Text="{Binding ObservTree.RootNode.NodeKey}"/><Run Text=" "/><InlineUIContainer>
-						<Button Click="InLineButton_OnClick" Content="Press Me"/>
+					><Span><Run Text="this is text" /><Run Text=" " /><Run Text="with a button" /><LineBreak /><Run Text="{Binding ObservTree.RootNode.NodeKey}" /><Run Text=" " /><InlineUIContainer>
+						<Button Content="Press Me"
+								Click="InLineButton_OnClick"
+								/>
 					</InlineUIContainer></Span></TextBlock>
 
 		</StackPanel>
@@ -1734,7 +1749,9 @@
 			<TextBlock FontSize="16"
 					Foreground="White"
 					DockPanel.Dock="Top"
-					Text="{Binding Data.TreeTitle, FallbackValue=Tree, Mode=OneWay}"
+					Text="{Binding Data.TreeTitle,
+												 FallbackValue=Tree,
+												 Mode=OneWay}"
 					/>
 
 
@@ -1837,8 +1854,7 @@
 					</Grid.ColumnDefinitions>
 
 					<Grid.RowDefinitions>
-						<RowDefinition Height="*" />
-						<!--  11  -->
+
 						<!--  0  -->
 						<RowDefinition Height="*" />
 						<!--  1  -->
@@ -1861,6 +1877,16 @@
 						<RowDefinition Height="*" />
 						<!--  10  -->
 						<RowDefinition Height="*" />
+						<!--  11  -->
+						<RowDefinition Height="*" />
+						<!--  12  -->
+						<RowDefinition Height="*" />
+						<!--  13  -->
+						<RowDefinition Height="*" />
+						<!--  14  -->
+						<RowDefinition Height="*" />
+
+
 					</Grid.RowDefinitions>
 
 
@@ -1870,7 +1896,8 @@
 							SelectedIndex="0"
 							SelectedItem="{Binding Data.SelectedMode}"
 							DisplayMemberPath="Value.Description"
-							ItemsSource="{Binding Data.SelectionModeView, Mode=OneWay}"
+							ItemsSource="{Binding Data.SelectionModeView,
+																		Mode=OneWay}"
 							Style="{StaticResource CbxBase}"
 							/>
 
@@ -1894,7 +1921,8 @@
 							Margin="5,0,3,0"
 							VerticalAlignment="Center"
 							Foreground="White"
-							Text="{Binding Data.SelectModeDesc, FallbackValue=IND}"
+							Text="{Binding Data.SelectModeDesc,
+														 FallbackValue=IND}"
 							/>
 
 
@@ -1917,7 +1945,10 @@
 							Grid.Row="2"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelectedNodeKey, FallbackValue=none, Mode=OneWay}"
+							Text="{Binding Data.SelectedNodeKey,
+							TargetNullValue='null',
+														 FallbackValue=none,
+														 Mode=OneWay}"
 							/>
 
 
@@ -1932,7 +1963,10 @@
 							Grid.Row="3"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.DeSelectedNodeKey, FallbackValue=none, Mode=OneWay}"
+							Text="{Binding Data.DeSelectedNodeKey,
+							TargetNullValue='null',
+														 FallbackValue=none,
+														 Mode=OneWay}"
 							/>
 
 
@@ -1947,7 +1981,9 @@
 							Grid.Row="4"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.MixedNodeKey, FallbackValue=none, Mode=OneWay}"
+							Text="{Binding Data.MixedNodeKey,
+														 FallbackValue=none,
+														 Mode=OneWay}"
 							/>
 
 
@@ -1973,7 +2009,10 @@
 							Grid.Row="2"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelNodeKey, FallbackValue=none, Mode=OneWay}"
+							Text="{Binding Data.Tree.NodeSelector.CurrentSelected.NodeKey,
+							TargetNullValue='null',
+														 FallbackValue='none',
+														 Mode=OneWay}"
 							/>
 
 
@@ -1989,7 +2028,9 @@
 							Grid.Row="3"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.PriorSelNodeKey, FallbackValue=none, Mode=OneWay}"
+							Text="{Binding Data.Tree.NodeSelector.CurrentPriorSelected.NodeKey,
+														 FallbackValue='none',
+														 Mode=OneWay}"
 							/>
 
 
@@ -2006,9 +2047,12 @@
 							Grid.Row="6"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.SelectedNodes.Count, FallbackValue=0, Mode=OneWay}"
+							Text="{Binding Data.Tree.NodeSelector.SelectedCount,
+														 TargetNullValue='null',
+														 FallbackValue=0,
+														 Mode=OneWay}"
 							/>
-
+	
 
 					<TextBlock Grid.Column="2"
 							Grid.Row="6"
@@ -2022,11 +2066,53 @@
 							Grid.Row="6"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.PriorSelectedNodes.Count, FallbackValue=0, Mode=OneWay}"
+							Text="{Binding Data.Tree.NodeSelector.PriorSelectedCount,
+														 TargetNullValue='null',
+														 FallbackValue=0,
+														 Mode=OneWay}"
 							/>
+
 
 					<TextBlock Grid.Column="0"
 							Grid.Row="7"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="has selection"
+					/>
+
+
+					<TextBlock Grid.Column="1"
+							Grid.Row="7"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.Tree.NodeSelector.HasSelection,
+														 TargetNullValue='null',
+														 FallbackValue='no',
+														 Mode=OneWay}"
+					/>
+
+
+					<TextBlock Grid.Column="2"
+							Grid.Row="7"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="has priorselection"
+					/>
+
+
+					<TextBlock Grid.Column="3"
+							Grid.Row="7"
+							Margin="5,2,0,2"
+							Foreground="White"
+							Text="{Binding Data.Tree.NodeSelector.HasPriorSelection,
+														 TargetNullValue='null',
+														 FallbackValue='no',
+														 Mode=OneWay}"
+					/>
+
+
+					<TextBlock Grid.Column="0"
+							Grid.Row="8"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="tree settings"
@@ -2035,7 +2121,7 @@
 
 
 					<TextBlock Grid.Column="2"
-							Grid.Row="7"
+							Grid.Row="8"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="tree name"
@@ -2043,15 +2129,18 @@
 
 
 					<TextBlock Grid.Column="3"
-							Grid.Row="7"
+							Grid.Row="8"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.TreeName, FallbackValue=no name, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.TreeName,
+														 FallbackValue=no name,
+														 Mode=OneWay,
+														 TargetNullValue=null}"
 							/>
 
 
 					<TextBlock Grid.Column="0"
-							Grid.Row="8"
+							Grid.Row="9"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="sel mode"
@@ -2059,15 +2148,18 @@
 
 
 					<TextBlock Grid.Column="1"
-							Grid.Row="8"
+							Grid.Row="9"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelectModeName, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.SelectModeName,
+														 FallbackValue=not set,
+														 Mode=OneWay,
+														 TargetNullValue=null}"
 							/>
 
 
 					<TextBlock Grid.Column="2"
-							Grid.Row="8"
+							Grid.Row="9"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="sel mode desc"
@@ -2075,10 +2167,13 @@
 
 
 					<TextBlock Grid.Column="3"
-							Grid.Row="8"
+							Grid.Row="9"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelectModeDesc, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.SelectModeDesc,
+														 FallbackValue=not set,
+														 Mode=OneWay,
+														 TargetNullValue=null}"
 							/>
 
 
@@ -2086,7 +2181,7 @@
 
 
 					<TextBlock Grid.Column="0"
-							Grid.Row="9"
+							Grid.Row="10"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="sel first class"
@@ -2094,17 +2189,20 @@
 
 
 					<TextBlock Grid.Column="1"
-							Grid.Row="9"
+							Grid.Row="10"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelectedFirstClass, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.SelectedFirstClass,
+														 FallbackValue=not set,
+														 Mode=OneWay,
+														 TargetNullValue=null}"
 							/>
 
 
 
 
 					<TextBlock Grid.Column="2"
-							Grid.Row="9"
+							Grid.Row="10"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="is tri state"
@@ -2112,16 +2210,19 @@
 
 
 					<TextBlock Grid.Column="3"
-							Grid.Row="9"
+							Grid.Row="10"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.UseThreeState, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.UseThreeState,
+														 FallbackValue=not set,
+														 Mode=OneWay,
+														 TargetNullValue=null}"
 							/>
 
 
 
 					<TextBlock Grid.Column="0"
-							Grid.Row="10"
+							Grid.Row="11"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="sel second class"
@@ -2129,15 +2230,18 @@
 
 
 					<TextBlock Grid.Column="1"
-							Grid.Row="10"
+							Grid.Row="11"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelectedSecondClass, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.SelectedSecondClass,
+														 FallbackValue=not set,
+														 Mode=OneWay,
+														 TargetNullValue='null'}"
 							/>
 
 
 					<TextBlock Grid.Column="2"
-							Grid.Row="10"
+							Grid.Row="11"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="will sel leaves"
@@ -2145,32 +2249,38 @@
 
 
 					<TextBlock Grid.Column="3"
-							Grid.Row="10"
+							Grid.Row="11"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.WillSelectLeaves, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.WillSelectLeaves,
+														 FallbackValue=not set,
+														 Mode=OneWay,
+														 TargetNullValue='null'}"
 							/>
 
 
 
 					<TextBlock Grid.Column="0"
-							Grid.Row="11"
+							Grid.Row="12"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="sel tree name"
+							Text="sel tree allowed"
 							/>
 
 
 					<TextBlock Grid.Column="1"
-							Grid.Row="11"
+							Grid.Row="12"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.SelectTreeAllowed, FallbackValue=not set, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.SelectTreeAllowed,
+														 FallbackValue=not set,
+														 Mode=OneWay,
+														 TargetNullValue=null}"
 							/>
 
 
 					<TextBlock Grid.Column="2"
-							Grid.Row="11"
+							Grid.Row="12"
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="sel tree bool"
@@ -2178,11 +2288,44 @@
 
 
 					<TextBlock Grid.Column="3"
-							Grid.Row="11"
+							Grid.Row="12"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.CanSelectTree, FallbackValue=not sel, Mode=OneWay, TargetNullValue=null}"
+							Text="{Binding Data.CanSelectTree,
+														 FallbackValue=not sel,
+														 Mode=OneWay,
+														 TargetNullValue=null}"
 							/>
+
+					<!-- -->
+					<!-- <TextBlock Grid.Column="0" -->
+					<!-- 		Grid.Row="12" -->
+					<!-- 		Margin="5,2,0,2" -->
+					<!-- 		Foreground="White" -->
+					<!-- 		Text="{Binding Data.Test0, -->
+					<!-- 									 FallbackValue=not set, -->
+					<!-- 									 Mode=OneWay, -->
+					<!-- 									 TargetNullValue='null'}" -->
+					<!-- 		/> -->
+					<!-- -->
+					<!-- <TextBlock Grid.Column="1" -->
+					<!-- 		Grid.Row="12" -->
+					<!-- 		Margin="5,2,0,2" -->
+					<!-- 		Foreground="White" -->
+					<!-- 		Text="{Binding Data.Tree.Test1, -->
+					<!-- 									 FallbackValue=not set, -->
+					<!-- 									 Mode=OneWay, -->
+					<!-- 									 TargetNullValue='null'}" -->
+					<!-- 		/> -->
+					<!-- <TextBlock Grid.Column="2" -->
+					<!-- 		Grid.Row="12" -->
+					<!-- 		Margin="5,2,0,2" -->
+					<!-- 		Foreground="White" -->
+					<!-- 		Text="{Binding Data.Tree.NodeSelector.TestSelector, -->
+					<!-- 									 FallbackValue=not set, -->
+					<!-- 									 Mode=OneWay, -->
+					<!-- 									 TargetNullValue='null'}" -->
+					<!-- 		/> -->
 
 
 				</Grid>
@@ -2191,7 +2334,8 @@
 			<TreeView VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					VerticalContentAlignment="Stretch"
-					DataContext="{Binding ObservTree, ElementName=ExWin}"
+					DataContext="{Binding ObservTree,
+																ElementName=ExWin}"
 					FontFamily="Hack"
 					Background="#222222"
 					Foreground="White"

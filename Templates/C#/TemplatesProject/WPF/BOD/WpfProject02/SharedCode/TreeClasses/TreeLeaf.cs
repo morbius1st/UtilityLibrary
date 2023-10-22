@@ -10,10 +10,15 @@ using System.Runtime.CompilerServices;
 using SharedCode.SampleData;
 using WpfProject02.Annotations;
 
+using static SharedCode.TreeClasses.Selection;
+
 namespace SharedCode.TreeClasses;
 
 public class TreeLeaf<TNd, TLd> : INotifyPropertyChanged, 
-	IComparer<TreeLeaf<TNd, TLd>>, ICloneable
+	IComparer<TreeLeaf<TNd, TLd>>, 
+	ICloneable, 
+	ITreeLeaf
+	// ITreeLeaf<TNd, TLd>,
 	where TNd : class
 	where TLd : class
 {
@@ -22,8 +27,10 @@ public class TreeLeaf<TNd, TLd> : INotifyPropertyChanged,
 	private string leafKey;
 	private TreeNode<TNd, TLd> parentNode;
 	private TLd leafData;
-	private bool isSelected;
+	private bool? isChecked;
 	private bool isChosen;
+
+	private SelectedState state;
 
 #endregion
 
@@ -65,6 +72,9 @@ public class TreeLeaf<TNd, TLd> : INotifyPropertyChanged,
 		}
 	}
 
+	// public ITreeNode<TNd, TLd> HostNode => (ITreeNode<TNd, TLd>) ParentNode;
+	public ITreeNode HostNode => (ITreeNode) ParentNode;
+
 	public TLd LeafData
 	{
 		get => leafData;
@@ -76,12 +86,12 @@ public class TreeLeaf<TNd, TLd> : INotifyPropertyChanged,
 		}
 	}
 
-	public bool IsSelected
+	public bool? IsChecked
 	{
-		get => isSelected;
+		get => isChecked;
 		set
 		{
-			isSelected = value;
+			isChecked = value;
 			OnPropertyChanged();
 		}
 	}
@@ -96,6 +106,25 @@ public class TreeLeaf<TNd, TLd> : INotifyPropertyChanged,
 		}
 	}
 
+	public SelectedState State
+	{
+		get => state; 
+		set
+		{
+			if (state == value) return;
+			state = value;
+
+			if (state!= SelectedState.UNSET)
+			{
+				isChecked = Tree<TNd, TLd>.boolList[(int) state];
+				OnPropertyChanged(nameof(IsChecked));
+			}
+
+			OnPropertyChanged();
+		}
+	}
+
+
 #endregion
 
 #region public methods
@@ -109,16 +138,16 @@ public class TreeLeaf<TNd, TLd> : INotifyPropertyChanged,
 		return true;
 	}
 
-	public void SelectLeaf()
+	public void Select()
 	{
-		isSelected = true;
-		OnPropertyChanged(nameof(IsSelected));
+		isChecked = true;
+		OnPropertyChanged(nameof(IsChecked));
 	}
 
-	public void DeSelectLeaf()
+	public void DeSelect()
 	{
-		isSelected = false;
-		OnPropertyChanged(nameof(IsSelected));
+		isChecked = false;
+		OnPropertyChanged(nameof(IsChecked));
 	}
 
 #endregion
