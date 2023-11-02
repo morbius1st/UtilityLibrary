@@ -41,6 +41,9 @@ namespace SharedCode.TreeClasses
 		public TreeSelectorExtended(SelectedListExtended selected) : base(selected)
 		{
 			OnPropertyChanged(Name);
+
+			M.WriteLine("\nExtended Selection: can select nodes / selecting a branch node");
+			M.WriteLine("selects/deselects the branch\n");
 		}
 
 	#endregion

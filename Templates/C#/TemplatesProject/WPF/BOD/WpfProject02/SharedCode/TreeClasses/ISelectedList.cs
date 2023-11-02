@@ -38,34 +38,4 @@ public interface ISelectedList : INotifyPropertyChanged, IEnumerable<ITreeNode>
 
 	public void Clear();
 
-
-	// public delegate void SelectedClearedEventHandler(object sender);
-	//
-	// public event SelectedClearedEventHandler SelectedCleared;
-	//
-	// public delegate void PriorSelectedClearedEventHandler(object sender);
-	//
-	// public event PriorSelectedClearedEventHandler PriorSelectedCleared;
-	//
-	//
-	//
-	// public delegate void ElementAddedToSelectedEventHandler(object sender, ITreeNode node);
-	//
-	// public event ElementAddedToSelectedEventHandler ElementAddedToSelected;
-	//
-	//
-	// public delegate void ElementAddedToPriorSelectedEventHandler(object sender, ITreeNode node);
-	//
-	// public event ElementAddedToPriorSelectedEventHandler ElementAddedToPriorSelected;
-	//
-	// public delegate void ElementRemovedFromSelectedEventHandler(object sender, ITreeNode element);
-	//
-	// public event ElementRemovedFromSelectedEventHandler ElementRemovedFromSelected;
-	//
-	// public delegate void ElementRemovedFromPriorSelectedEventHandler(object sender, ITreeNode node);
-	//
-	// public event ElementRemovedFromPriorSelectedEventHandler ElementRemovedFromPriorSelected;
-	//
-	// public event PropertyChangedEventHandler PropertyChanged;
-
 }

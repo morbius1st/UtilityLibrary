@@ -39,6 +39,9 @@ namespace SharedCode.TreeClasses
 		public TreeSelectorMultiple(SelectedListMultiple selected) : base(selected)
 		{
 			OnPropertyChanged(Name);
+
+			M.WriteLine("\nMultiple Selection: can select random nodes / selecting a branch node");
+			M.WriteLine("does NOT selects/deselects the branch\n");
 		}
 
 	#endregion

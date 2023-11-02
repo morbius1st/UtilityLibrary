@@ -17,6 +17,8 @@ namespace SharedCode.TreeClasses;
 /// </summary>
 public class SelectedListTriState : ASelectedList
 {
+	// double checked - working
+
 	public override bool Select(ITreeNode? element)
 	{
 		if (element == null
@@ -26,16 +28,24 @@ public class SelectedListTriState : ASelectedList
 
 		if (selected.Count == 0) ClearPriorSelectedList();
 
-		return addElementToSelected(element);
+		bool result = addElementToSelected(element);
+
+		updateSelectedProperties();
+
+		return result;
 	}
 
 	public override bool Deselect(ITreeNode element)
 	{
-		if (element == null) return false;
+		if (element == null || element.IamRoot) return false;
 
 		removeElementFromSelected(element);
 
-		return addElementToPriorSelected(element);
+		bool result = addElementToPriorSelected(element);
+
+		updatePriorSelectedProperties();
+
+		return result;
 	}
 
 	public override string Name => "tri-state select list";
@@ -54,6 +64,8 @@ public class SelectedListTriState : ASelectedList
 /// </summary>
 public class SelectedListExtended : ASelectedList
 {
+	// double checked - working
+
 	public override bool Select(ITreeNode element)
 	{
 		if (element == null) return false;
@@ -62,7 +74,11 @@ public class SelectedListExtended : ASelectedList
 			
 		if (selected.Count == 0) ClearPriorSelectedList();
 
-		return addElementToSelected(element);
+		bool result = addElementToSelected(element);
+
+		updateSelectedProperties();
+
+		return result;
 	}
 
 	public override bool Deselect(ITreeNode element)
@@ -71,10 +87,12 @@ public class SelectedListExtended : ASelectedList
 
 		removeElementFromSelected(element);
 
-		return addElementToPriorSelected(element);
-	}
+		bool result = addElementToPriorSelected(element);
 
-	// protected override void updateSelectedProperties() { }
+		updatePriorSelectedProperties();
+
+		return result;
+	}
 
 	public override string Name => "name";
 
@@ -89,6 +107,8 @@ public class SelectedListExtended : ASelectedList
 /// </summary>
 public class SelectedListMultiple : ASelectedList
 {
+	// double checked - working
+
 	public override bool Select(ITreeNode element)
 	{
 		if (element == null) return false;
@@ -97,9 +117,11 @@ public class SelectedListMultiple : ASelectedList
 
 		if (selected.Count == 0) ClearPriorSelectedList();
 
-		// ClearPriorSelectedList(true);
+		bool result = addElementToSelected(element);
 
-		return addElementToSelected(element);
+		updateSelectedProperties();
+
+		return result;
 	}
 
 	public override bool Deselect(ITreeNode element)
@@ -108,10 +130,12 @@ public class SelectedListMultiple : ASelectedList
 
 		removeElementFromSelected(element);
 
-		return addElementToPriorSelected(element);
-	}
+		bool result = addElementToPriorSelected(element);
 
-	// protected override void updateSelectedProperties() { }
+		updatePriorSelectedProperties();
+
+		return result;
+	}
 
 	public override string Name => "name";
 }
@@ -123,27 +147,29 @@ public class SelectedListMultiple : ASelectedList
 /// </summary>
 public class SelectedListIndividual : ASelectedList
 {
+	// double checked - working
+
 	public override bool Select(ITreeNode element)
 	{
 		if (element == null) return false;
 
-		removeElementFromPriorSelected(element);
+		bool result =addElementToSelected(element);
 
-		MoveSelectedToPrior();
+		updateSelectedProperties();
 
-		return addElementToSelected(element);
+		return result;
 	}
 
 	public override bool Deselect(ITreeNode element)
 	{
 		if (element == null) return false;
 
-		removeElementFromSelected(element);
+		MoveSelectedListToPrior();
 
-		return addElementToPriorSelected(element);
+		updatePriorSelectedProperties();
+		
+		return true;
 	}
-
-	// protected override void updateSelectedProperties() { }
 
 	public override string Name => "name";
 }

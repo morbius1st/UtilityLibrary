@@ -34,7 +34,7 @@ public struct STreeSelection
 
 public abstract class ATreeSelector : INotifyPropertyChanged
 {
-	private  ShDebugMessages M = Examples.M;
+	protected  ShDebugMessages M = Examples.M;
 
 	protected ASelectedList? selected;
 
@@ -167,6 +167,7 @@ public abstract class ATreeSelector : INotifyPropertyChanged
 
 		if (value.HasValue && value==true)
 		{
+			M.Write("got select | ");
 			// get here when unchecked is selected
 			if (!select(node)) return false;
 			// update properties at the end
@@ -174,6 +175,7 @@ public abstract class ATreeSelector : INotifyPropertyChanged
 		}
 		else if (value.HasValue && value==false)
 		{
+			M.Write("got deselect | ");
 			// get here when checked is selected
 			if (!deselect(node)) return false;
 			// update properties at the end
@@ -181,6 +183,7 @@ public abstract class ATreeSelector : INotifyPropertyChanged
 		}
 		else
 		{
+			M.Write("got mixed | ");
 			// mixed is considered as selected
 			// get here when a mixed selected
 			if (!mixed(node)) return false;

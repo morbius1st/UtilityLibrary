@@ -60,59 +60,15 @@ namespace SharedCode.TreeClasses
 
 
 		public abstract bool Select(ITreeNode element);
-		// {
-		// 	if (element == null) return false;
-		//
-		// 	removeElementFromPriorSelected(element);
-		//
-		// 	MoveSelectedToPrior();
-		//
-		// 	return addElementToSelected(element);
-		// }
 
 		public abstract bool Deselect(ITreeNode element);
 
-
-
-		// move all of the selected items to
-		// the prior list and make a new, blank list
-		// when the selection process automatically 
-		// selects items, use this to reset the lists
-		// upon a selection
-		public void MoveSelectedListToPrior()
-		{
-			if (selected.Count < 1) return;
-
-			priorSelected = new ObservableCollection<ITreeNode>();
-
-			foreach (ITreeNode e in selected)
-			{
-				addElementToPriorSelected(e);
-			}
-
-			selected = new ObservableCollection<ITreeNode>();
-		}
-
-		// take the top item in the selected list
-		// and move to the prior list
-		public void MoveSelectedToPrior()
-		{
-			if (selected.Count < 1) return;
-
-			ITreeNode node = selected[0];
-
-			priorSelected.Add(node);
-
-			selected.Remove(node);
-
-		}
 
 		public void Clear()
 		{
 			ClearSelectedList();
 			ClearPriorSelectedList();
 		}
-
 
 		protected void ClearSelectedList()
 		{
@@ -128,6 +84,42 @@ namespace SharedCode.TreeClasses
 			updatePriorSelectedProperties();
 		}
 
+		/// <summary>
+		/// move all of the selected items to
+		///	the prior list and make a new, blank list
+		///	when the selection process automatically 
+		///	selects items, use this to reset the lists
+		/// upon a selection
+		/// </summary>
+		public void MoveSelectedListToPrior()
+		{
+			if (selected.Count < 1) return;
+
+			priorSelected = new ObservableCollection<ITreeNode>(selected);
+
+			selected = new ObservableCollection<ITreeNode>();
+		}
+
+		/// <summary>
+		/// take the top item in the selected list
+		/// and move to the prior list
+		/// </summary>
+		public void MoveSelectedToPrior()
+		{
+			if (selected.Count < 1) return;
+
+			ITreeNode node = selected[0];
+
+			priorSelected.Add(node);
+
+			selected.Remove(node);
+
+		}
+
+		/// <summary>
+		/// adds an element to the selected list as
+		/// long as it is not already in the list
+		/// </summary>
 		protected bool addElementToSelected(ITreeNode element)
 		{
 			if (element == null) return false;
@@ -136,11 +128,15 @@ namespace SharedCode.TreeClasses
 			selected.Add(element);
 
 			// RaiseElementAddedToSelectedEvent(element);
-			updateSelectedProperties();
+			// updateSelectedProperties();
 
 			return true;
 		}
 
+		/// <summary>
+		/// adds an element to the prior selected list as
+		/// long as it is not already in the list
+		/// </summary>
 		protected bool addElementToPriorSelected(ITreeNode element)
 		{
 			if (element == null) return false;
@@ -149,11 +145,15 @@ namespace SharedCode.TreeClasses
 			priorSelected.Add(element);
 
 			// RaiseElementAddedToPriorSelectedEvent(element);
-			updatePriorSelectedProperties();
+			// updatePriorSelectedProperties();
 
 			return true;
 		}
 
+		/// <summary>
+		/// removes an element to the selected list as
+		/// long as it is in the list
+		/// </summary>
 		protected void removeElementFromSelected(ITreeNode element)
 		{
 			if (element == null) return;
@@ -162,9 +162,13 @@ namespace SharedCode.TreeClasses
 			selected.Remove(element);
 
 			// RaiseElementRemovedFromSelectedEvent(element);
-			updateSelectedProperties();
+			// updateSelectedProperties();
 		}
 
+		/// <summary>
+		/// removes an element to the prior selected list as
+		/// long as it is in the list
+		/// </summary>
 		protected void removeElementFromPriorSelected(ITreeNode element)
 		{
 			if (element == null) return;
@@ -173,10 +177,8 @@ namespace SharedCode.TreeClasses
 			priorSelected.Remove(element);
 
 			// RaiseElementRemovedFromPriorSelectedEvent(element);
-			updatePriorSelectedProperties();
+			// updatePriorSelectedProperties();
 		}
-
-
 
 		protected void updateSelectedProperties()
 		{

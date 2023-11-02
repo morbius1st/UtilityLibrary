@@ -906,7 +906,7 @@ For current or child,
    ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
  F        t[x]-    F   | F        t[x]-    F   | F        t[x]x    F   | F        t[u]x      F | F        t[x]-    F   | F        t[x]x    F   |
    ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
- G        t[x]-    G   | G        t[m]-      G | G        t[x]m    G   | G        t[u]m      G | G        t[m]-      G | G        t[x]m    G   |
+ G        t[x]-    G   | G        t[m]-      G | G        t[x]m    G   | G        t[u]m      G | G        t[m]-    G   | G        t[x]m    G   |
    ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
  H          t[x]-  H   | H d        t[u]-    H | H          t[x]u  H   | H          t[u]u    H | H          t[u]-    H | H          t[x]u  H   |
    ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
@@ -1082,28 +1082,54 @@ case 4:
 
 // individual
 
-case 1:
-	* via updateselected
-	* nothing else selected
-	* that is, current list count <=0
-	# Select Event
-	> add to list
-	> prior list stays empty
+case 1: node is selected
+	* nothing else selected - that is, current list count == 0
+	* via select
+	> select the current node
+		> addElementToSelected()  [add node to current list]
+		> node.select
+		# Select event
+	> prior list is empty
 
-case 2:
-	* via updateselected
-	* select a node != current list node[0]
-	# Select Event
-	# DeSelect Event
-	> current list node[0] is deselected
-	> current list becomes prior list
-	> current list = new
-	> add node to list
-
-case 3:
-	* via updateDeSelect
-	# DeSelect Event
-	> remove from selection list
-	> prior list stays as is
+case 2: node is selected
+	* prior selected exists - that is current list count > 0
+	* via selected
+	> deselect the prior node
+		> MoveSelectedToPrior()  [move current list to prior list & current list = new()]
+		> node.deselect
+		# Deselect event
+	> select the current node
+		> addElementToSelected()  [add node to current list]
+		> node.select
+		# Select event
 
 
+case 3: node is deselected
+	* via Deselect
+	> deselect the prior node
+		> MoveSelectedToPrior()  [move current list to prior list & current list = new()]
+		> node.deselect
+		# Deselect event
+
+
+
+removeElementFromPriorSelected
+	> removes a node to the prior selected list - issue updated properties
+
+removeElementFromSelected
+	> removes a node to the selected list - issue updated properties
+
+addElementToPriorSelected
+	> adds a node to the prior selected list - issue updated properties
+
+addElementToSelected
+	> adds a node to the selected list - issue updated properties
+
+
+MoveSelectedToPrior
+	> move the top node in the selecte list to the prior selected list (add then remove)
+
+MoveSelectedListToPrior
+	> moves the whole selected list to the prior list
+	> selected list = new()
+	

@@ -39,6 +39,9 @@ namespace SharedCode.TreeClasses
 		public TreeSelectorIndividual(SelectedListIndividual selected) : base(selected)
 		{
 			OnPropertyChanged(Name);
+
+			M.WriteLine("\nIndividual Selection: can select random nodes / selecting one node");
+			M.WriteLine("will deselect the prior node\n");
 		}
 
 	#endregion
@@ -64,26 +67,37 @@ namespace SharedCode.TreeClasses
 		// select the node
 		protected override bool select(ITreeNode node)
 		{
-			if (!Selected!.Select(node)) return false;
+			// M.WriteLine("@ select");
+			// M.Write($"in selected| {selected.Selected.Contains(node)} | ");
+			// M.WriteLine($"in prior| {selected.PriorSelected.Contains(node)}");
 
-			if (Selected!.PriorSelectedCount > 0)
+			if (SelectedCount > 0)
 			{
-				Selected.CurrentPriorSelected?.Deselect();
+				if (!deselect(CurrentSelected)) return false;
 			}
+
+			if (!selected.Select(node)) return false;
 
 			node.Select();
 
 			RaiseNodeSelectedEvent(node);
+
 			return true;
 		}
 
 		// deselect the node
 		protected override bool deselect(ITreeNode node)
 		{
+			// M.WriteLine("@ deselect");
+			// M.Write($"in selected| {selected.Selected.Contains(node)} | ");
+			// M.WriteLine($"in prior| {selected.PriorSelected.Contains(node)}");
+
 			if (!Selected!.Deselect(node)) return false;
 
 			node.Deselect();
+
 			RaiseNodeDeselectedEvent(node);
+
 			return true;
 		}
 		

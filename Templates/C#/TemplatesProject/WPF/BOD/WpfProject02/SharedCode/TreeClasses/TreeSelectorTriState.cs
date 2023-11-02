@@ -34,7 +34,7 @@ namespace SharedCode.TreeClasses
 	{
 	#region private fields
 
-		private  ShDebugMessages M = Examples.M;
+		// private  ShDebugMessages M = Examples.M;
 
 	#endregion
 
@@ -45,8 +45,11 @@ namespace SharedCode.TreeClasses
 			selList = selected;
 
 			OnPropertyChanged(nameof(Name));
-			OnPropertyChanged(nameof(Selected));
-			OnPropertyChanged(nameof(selList));
+			// OnPropertyChanged(nameof(Selected));
+			// OnPropertyChanged(nameof(selList));
+
+			M.WriteLine("\nTriState Selection: Can select multiple nodes / Selecting a branch node");
+			M.WriteLine("selects/deselects the branch / remembers last selection states\n");
 		}
 
 	#endregion
