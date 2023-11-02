@@ -182,7 +182,7 @@ namespace SharedCode.TreeClasses
 	{
 	#region private fields
 
-		private TreeNode<TNd, TLd> rootNode;
+		private TreeRootNode<TNd, TLd>? rootNode;
 
 		// represents the last selected (or deselected) node - since
 		// multiple nodes / leaves can be selected
@@ -210,16 +210,15 @@ namespace SharedCode.TreeClasses
 		// private bool isTriState;
 		private bool requireUniqueKeys;
 
-		private string leafToFind;
-		private List<TreeLeaf<TNd, TLd>> foundLeaves;
+		private string? leafToFind = null;
+		private List<TreeLeaf<TNd, TLd>>? foundLeaves = null;
 		private int foundLeafIdx = -1;
 
-		private string nodeToFind;
-		private List<TreeNode<TNd, TLd>> foundNodes;
+		private string? nodeToFind = null;
+		private List<TreeNode<TNd, TLd>>? foundNodes = null;
 		private int foundNodeIdx = -1;
 
-
-		private NodeEnableDisable nodeEnableDisable;
+		private NodeEnableDisable? nodeEnableDisable = null;
 
 		/*
 		// selection
@@ -246,16 +245,16 @@ namespace SharedCode.TreeClasses
 		*/
 
 
-		private ATreeSelector<ITreeNode> nodeSelector;
-		private ATreeSelector<ITreeLeaf>? leafSelector;
+		private ATreeSelector? selector = null;
 
 		// .................................check state		  mixed >	checked >	unchecked >	mixed
 		//														0			1			2			3 (0)
 		public static readonly bool?[] boolList = new bool?[] { null,		true,		false,		null };
+		
 
-	#endregion
+		#endregion
 
-	#region ctor
+		#region ctor
 
 		public Tree()
 		{
@@ -263,15 +262,12 @@ namespace SharedCode.TreeClasses
 		}
 
 		public Tree(string treeName,
-			ATreeSelector<ITreeNode> nodeSelector,
-			ATreeSelector<ITreeLeaf> leafSelector,
+			ATreeSelector selector,
 			TNd nodeData = null)
 		{
 			TreeName = treeName;
 
-			NodeSelector = nodeSelector;
-
-			LeafSelector = leafSelector;
+			Selector = selector;
 
 			makeRootNode(nodeData);
 		}
@@ -284,9 +280,9 @@ namespace SharedCode.TreeClasses
 
 		public string TreeName { get; set; }
 
-		public TreeNode<TNd, TLd> RootNode => rootNode;
+		public TreeNode<TNd, TLd>? RootNode => rootNode;
 
-		public ITreeNode  IRootNode => (ITreeNode ) rootNode;
+		public ITreeNode  IRootNode => (ITreeNode) rootNode!;
 
 		public TreeNode<TNd, TLd> CurrentNode
 		{
@@ -324,9 +320,9 @@ namespace SharedCode.TreeClasses
 		public List<TreeNode<TNd, TLd>> FoundNodes => foundNodes;
 		public List<TreeLeaf<TNd, TLd>> FoundLeaves => foundLeaves;
 
-		public ATreeSelector<ITreeNode> NodeSelector
+		public ATreeSelector Selector
 		{
-			get => nodeSelector;
+			get => selector!;
 			private set
 			{
 				if (value == null)
@@ -334,28 +330,15 @@ namespace SharedCode.TreeClasses
 					throw new NullReferenceException();
 				}
 
-				nodeSelector = value;
-				nodeSelector.Tree = this;
-				OnPropertyChanged();
-			}
-		}
-
-		public ATreeSelector<ITreeLeaf>? LeafSelector
-		{
-			get => leafSelector;
-			private set
-			{
-				if (value == null) return;
-
-				leafSelector = value;
-				leafSelector.Tree = this;
+				selector = value;
+				selector.Tree = this;
 				OnPropertyChanged();
 			}
 		}
 
 		// selection
 
-	#region settings
+		#region settings
 
 		// public bool CanSelectTree =>	true;	//SelectTreeAllowed == SelectTreeAllowed.YES;
 		// public bool SelectLeaves =>		true;	//SelectSecondClass == NODES_AND_LEAVES;
@@ -381,8 +364,7 @@ namespace SharedCode.TreeClasses
 		*/
 
 
-		public bool IsTriState => true;
-
+		public bool IsTriState => selector!.IsTriState;
 		// enable-disable
 
 		public NodeEnableDisable NodeEnableDisable
@@ -499,9 +481,7 @@ namespace SharedCode.TreeClasses
 			RequireUniqueKeys = false;
 			TreeName = null;
 
-			if (nodeSelector!=null) nodeSelector.Clear();
-			if (leafSelector!=null) leafSelector.Clear();
-
+			if (selector!=null) selector.Clear();
 		}
 
 	#endregion
@@ -1160,11 +1140,10 @@ namespace SharedCode.TreeClasses
 		private void makeRootNode(TNd? nodeData)
 		{
 			rootNode =
-				new TreeNode<TNd, TLd>("ROOT", this, null, nodeData);
+				new TreeRootNode<TNd, TLd>("ROOT", this, null, nodeData);
 			rootNode.InitNodes();
 
 			currentNode = rootNode;
-			// selectedNode = rootNode;
 		}
 
 		private bool OkToAddNode(TreeNode<TNd, TLd> node)

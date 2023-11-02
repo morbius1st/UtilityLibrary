@@ -138,16 +138,20 @@ public class TreeLeaf<TNd, TLd> : INotifyPropertyChanged,
 		return true;
 	}
 
-	public void Select()
+	public bool Select()
 	{
 		isChecked = true;
 		OnPropertyChanged(nameof(IsChecked));
+
+		return true;
 	}
 
-	public void DeSelect()
+	public bool Deselect()
 	{
 		isChecked = false;
 		OnPropertyChanged(nameof(IsChecked));
+
+		return true;
 	}
 
 #endregion

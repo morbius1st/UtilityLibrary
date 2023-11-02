@@ -1,15 +1,12 @@
 ﻿#region using
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media;
-
 using static SharedCode.TreeClasses.Selection;
 using static SharedCode.TreeClasses.Selection.SelectMode;
 using static SharedCode.TreeClasses.Selection.SelectFirstClass;
@@ -19,16 +16,21 @@ using static SharedCode.TreeClasses.Selection.SelectTreeAllowed;
 #endregion
 
 // username: jeffs
-// created:  10/14/2023 5:02:16 PM
+// created:  10/21/2023 9:40:53 PM
 
 namespace SharedCode.TreeClasses
 {
 	/// <summary>
-	/// can select only one Te at a time<br/>
-	/// that is, selecting a node deselects the prior node<br/>
+	/// can select multiple Te at a time 
+	/// that is, can continue to select notes as 
+	/// often as needed.  however, if a branch is 
+	/// selected, the whole branch at and below 
+	/// the selected node is selected 
+	/// selecting a selected node 
+	/// deselects that one node
 	/// Te is ITreeNode or ITreeLeaf
 	/// </summary>
-	public class TreeSelectorIndividual : ATreeSelector
+	public class TreeSelectorExtended : ATreeSelector
 	{
 	#region private fields
 
@@ -36,7 +38,7 @@ namespace SharedCode.TreeClasses
 
 	#region ctor
 
-		public TreeSelectorIndividual(SelectedListIndividual selected) : base(selected)
+		public TreeSelectorExtended(SelectedListExtended selected) : base(selected)
 		{
 			OnPropertyChanged(Name);
 		}
@@ -45,13 +47,13 @@ namespace SharedCode.TreeClasses
 
 	#region public properties
 
-		public override string Name => "Individual Selector";
+		public override string Name => "Extended Selector";
 
 		// fixed settings for this selector
-		public override SelectMode SelectionMode => INDIVIDUAL;
-		public override SelectFirstClass SelectionFirstClass => NODE_ONLY;
+		public override SelectMode SelectionMode => EXTENDED;
+		public override SelectFirstClass SelectionFirstClass => NODE_EXTENDED;
 		public override SelectSecondClass SelectionSecondClass => NODES_ONLY;
-		public override SelectTreeAllowed CanSelectTree => NO;
+		public override SelectTreeAllowed CanSelectTree => YES;
 
 	#endregion
 
@@ -61,32 +63,65 @@ namespace SharedCode.TreeClasses
 
 	#region public methods
 
-		// select the node
-		protected override bool select(ITreeNode node)
+		// select the provided node and any associated
+		// noted (extended)
+		protected override bool select(ITreeNode? node)
 		{
 			if (!Selected!.Select(node)) return false;
 
-			if (Selected!.PriorSelectedCount > 0)
-			{
-				Selected.CurrentPriorSelected?.Deselect();
-			}
+			selectChildNodes(node);
 
 			node.Select();
-
 			RaiseNodeSelectedEvent(node);
+
 			return true;
 		}
 
-		// deselect the node
+		private void selectChildNodes(ITreeNode? node)
+		{
+			if (node == null || !node.HasNodes) return;
+
+			foreach (ITreeNode n in node.EnumNodes())
+			{
+				selectChildNodes(n);
+
+				if (!Selected.Select(n)) continue;
+
+				n.Select();
+				RaiseNodeSelectedEvent(n);
+			}
+		}
+
+
+		// deselect the provided node and any associated
+		// noted (extended)
 		protected override bool deselect(ITreeNode node)
 		{
 			if (!Selected!.Deselect(node)) return false;
 
+			deselectChildNodes(node);
+
 			node.Deselect();
-			RaiseNodeDeselectedEvent(node);
+			RaiseNodeSelectedEvent(node);
+
 			return true;
 		}
-		
+
+		private void deselectChildNodes(ITreeNode node)
+		{
+			if (node == null || !node.HasNodes) return;
+
+			foreach (ITreeNode n in node.EnumNodes())
+			{
+				deselectChildNodes(n);
+
+				if (!Selected.Deselect(n)) continue;
+
+				n.Deselect();
+				RaiseNodeSelectedEvent(n);
+			}
+		}
+
 		// only applies when tri state
 		protected override bool mixed(ITreeNode? node)
 		{
@@ -105,7 +140,7 @@ namespace SharedCode.TreeClasses
 			throw new NotImplementedException();
 		}
 
-		// only applies when tree selection is allowed
+		// select the whole tree??
 		protected override bool treeSelect()
 		{
 			throw new NotImplementedException();
@@ -117,10 +152,9 @@ namespace SharedCode.TreeClasses
 
 		public override string ToString()
 		{
-			return $"this is {nameof( TreeSelectorIndividual) }";
+			return $"this is {nameof(TreeSelectorExtended)}";
 		}
 
 	#endregion
 	}
-
 }

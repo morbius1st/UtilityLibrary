@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\ISelectedList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\ITreeSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\NodeEnableDisable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\ASelectedList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\SelectedList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\Tree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeEnumerators.cs" />
@@ -24,7 +25,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeLeaf.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeLeafData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeNodeData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorExtended.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorTriState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorIndividual.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorMultiple.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSupport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeVoid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SampleData\DictionaryDataSample.cs" />

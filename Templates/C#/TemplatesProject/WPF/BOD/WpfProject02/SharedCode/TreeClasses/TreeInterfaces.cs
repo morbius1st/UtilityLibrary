@@ -5,6 +5,10 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using WpfProject02.Annotations;
+
+using static SharedCode.TreeClasses.Selection;
 
 namespace SharedCode.TreeClasses;
 
@@ -12,8 +16,8 @@ public interface ITreeElement
 {
 	public bool? IsChecked { get;}
 
-	public void Select();
-	public void DeSelect();
+	public bool Select();
+	public bool Deselect();
 
 	public Selection.SelectedState State { get; set; }
 }
@@ -24,18 +28,21 @@ public interface ITreeLeaf : ITreeElement
 	public string LeafKey { get; }
 	public ITreeNode  HostNode { get; }
 
-	public void Select();
-	public void DeSelect();
+	public bool Select();
+	public bool Deselect();
 }
 
+
+[NotNull]
 public interface ITreeNode : IEnumerable, ITreeElement
 
 {
 	public string NodeKey { get; }
 	public ITree ITree { get; }
-	public ITreeNode IParentNode { get; }
+	public ITreeNode? IParentNode { get; }
 
-	public bool? PriorIsChecked { get; set; }
+	public bool IamRoot {get; }
+
 	public bool IsTriState { get; }
 	public bool IsChosen { get; set; }
 	public bool IsExpanded { get; set; }
@@ -43,8 +50,28 @@ public interface ITreeNode : IEnumerable, ITreeElement
 	public bool HasNodes { get; }
 	public bool HasLeaves { get; }
 
-	public void Select();
-	public void DeSelect();
+	public int CountNodes {get; }
+
+	public SelectedState State { get; }
+	public SelectedState PriorState { get; }
+
+	public new bool Select();
+	public new bool Deselect();
+	public new void SetMixed();
+
+	public void NodeCountSelection();
+	public bool allChildrenNodesSelected();
+	public bool allChildrenNodesDeselected();
+	// public void SavePriorChecked();
+	// public void RestorerPriorChecked();
+	// public void ClearPriorChecked();
+
+
+
+	public void SavePriorState();
+	public void RestoreState();
+	public void UnsetPriorState();
+	public bool PriorStateHasValue();
 
 	public IEnumerable<ITreeNode>
 		EnumNodes();

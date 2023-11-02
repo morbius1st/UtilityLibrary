@@ -26,6 +26,7 @@ using static SharedCode.TreeClasses.Selection;
 using static SharedCode.TreeClasses.Selection.SelectMode;
 using static SharedCode.TreeClasses.Selection.SelectFirstClass;
 using System.Xml.Linq;
+using System.Collections.ObjectModel;
 
 /*
  notes:
@@ -179,6 +180,8 @@ namespace SharedWPF.ShWin
 
 		public TreeNode<TreeNodeData, TreeLeafData> ObservTreeNode => dst?.Tree?.RootNode;
 
+		public ObservableCollection<ITreeNode> SelectedList => ObservTree?.Selector?.Selected?.Selected ?? null;
+
 		public string TestString
 		{
 			get => testString;
@@ -329,6 +332,7 @@ namespace SharedWPF.ShWin
 		public void UpdateObservTree()
 		{
 			OnPropertyChanged(nameof(ObservTree));
+			OnPropertyChanged(nameof(SelectedList));
 		}
 
 	#endregion
@@ -413,10 +417,10 @@ namespace SharedWPF.ShWin
 			//
 			// }
 
-			int s = t.NodeSelector.SelectedCount;
-			int p = t.NodeSelector.PriorSelectedCount;
+			int s = t.Selector.SelectedCount;
+			int p = t.Selector.PriorSelectedCount;
 
-			ATreeSelector<ITreeNode> selector = t.NodeSelector;
+			ATreeSelector selector = t.Selector;
 
 			int a = 1 + 1;
 
@@ -638,11 +642,35 @@ namespace SharedWPF.ShWin
 			dst.ShowSelDeselLists();
 		}
 
-	#endregion
 
 		private void BtMNed_OnClick(object sender, RoutedEventArgs e)
 		{
 			dst.TestEnableDisable();
+		}
+
+		private void BtnEnum_OnClick(object sender, RoutedEventArgs e)
+		{
+			dst.testEnumerate();
+		}
+
+		private void BtnEnum3_OnClick(object sender, RoutedEventArgs e)
+		{
+			dst.TestEnumerator3();
+		}
+
+	#endregion
+
+
+		private void BtnListTest_OnClick(object sender, RoutedEventArgs e)
+		{
+			if (dst.TestList == null)
+			{
+				dst.ListTest01();
+			}
+
+			dst.AddNodeToTestList01();
+
+			OnPropertyChanged(nameof(Data));
 		}
 	}
 

@@ -2,9 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using SharedCode.SampleData;
+using SharedWPF.ShWin;
+using SharedCode.ShDebugAssist;
 using UtilityLibrary;
 using WpfProject02.Annotations;
 using static SharedCode.TreeClasses.Selection;
@@ -19,14 +22,27 @@ using static SharedCode.TreeClasses.Selection.SelectMode;
 
 namespace SharedCode.TreeClasses
 {
+	public class TreeRootNode<TNd, TLd> : TreeNode<TNd, TLd>
+		where TNd : class
+		where TLd : class
+	{
+		public TreeRootNode(string nodeKey,
+			Tree<TNd, TLd>? tree,
+			TreeNode<TNd, TLd>? parentNodeEx,
+			TNd nodeData, SelectedState isSelected = DESELECTED)
+			: base(nodeKey, tree, parentNodeEx, nodeData, isSelected)
+		{
+			iamRoot = true;
+		}
+	}
+
 	[WpfProject02.Annotations.NotNull]
-	public class TreeNode<TNd, TLd> : 
+	public class TreeNode<TNd, TLd> :
 		ITreeNode,
 		INotifyPropertyChanged,
-		IComparer<TreeNode<TNd, TLd>>, 
-		ICloneable,  
+		IComparer<TreeNode<TNd, TLd>>,
+		ICloneable,
 		IEnumerable<TreeNode<TNd, TLd>>
-
 		where TNd : class
 		where TLd : class
 	{
@@ -39,9 +55,10 @@ namespace SharedCode.TreeClasses
 
 		private TreeNode<TNd, TLd>? tn;
 
-
+		protected bool iamRoot = false;
 		private bool? isChecked = false;
-		private bool? priorIsChecked = false;
+		private bool? priorIsChecked = null;
+		private bool isEnabled = true;
 		private bool isExpanded;
 		private bool isChosen;
 		private bool isTriState = false;
@@ -51,22 +68,21 @@ namespace SharedCode.TreeClasses
 
 		private TreeLeaf<TNd, TLd>? foundLeaf;
 		private TreeNode<TNd, TLd>? foundNode;
-		private bool isEnabled = true;
+
 		private SelectedState state = DESELECTED;
+		private SelectedState priorState = UNSET;
 
-		// private static TreeClass<TNd, TLd>? tree;
+		private  ShDebugMessages M = Examples.M;
+		
 
-		#region private fields
+	#region private fields
 
-		#endregion
+	#endregion
 
-		#region ctor
+	#region ctor
 
 		// ReSharper disable once UnusedMember.Global
-		public TreeNode()
-		{
-			
-		}
+		public TreeNode() { }
 
 		public TreeNode(
 			string nodeKey,
@@ -80,18 +96,17 @@ namespace SharedCode.TreeClasses
 			this.parentNodeEx = parentNodeEx;
 			this.isChecked = Tree<TNd, TLd>.boolList[(int) isSelected];
 			this.tree = tree;
-			// 
 		}
 
 	#endregion
 
 	#region public properties
-		
+
 		// serializable properties
-		public ObservableDictionary<string, TreeNode<TNd, TLd>>? 
+		public ObservableDictionary<string, TreeNode<TNd, TLd>>?
 			Nodes { get; set; }
 
-		public ObservableDictionary<string, TreeLeaf<TNd, TLd>>? 
+		public ObservableDictionary<string, TreeLeaf<TNd, TLd>>?
 			Leaves { get; set; }
 
 		public string NodeKey
@@ -116,6 +131,7 @@ namespace SharedCode.TreeClasses
 				OnPropertyChanged(nameof(ParentNode));
 			}
 		}
+
 		// public ITreeNode<TNd, TLd> IParentNode => (ITreeNode<TNd, TLd>) ParentNode;
 		public ITreeNode IParentNode => (ITreeNode) ParentNode;
 
@@ -124,6 +140,7 @@ namespace SharedCode.TreeClasses
 			get => tree;
 			set => tree = value;
 		}
+
 		// public ITree<TNd, TLd> ITree => (ITree<TNd, TLd>) Tree;
 		public ITree ITree => (ITree) Tree;
 
@@ -184,19 +201,53 @@ namespace SharedCode.TreeClasses
 		public bool IsNodesNull => Nodes == null;
 		public bool IsLeavesNull => Leaves == null;
 
-		//
-		
-		// selection 
+		public bool IamRoot
+		{
+			get => iamRoot;
+			private set => iamRoot = value;
+		}
+
+		/* selection */
 
 		// when the check box "ischecked" is checked
+		// tri-state selection sequence
+		// checkbox-tri-state / inverted
+		// deselected -> mixed -> selected -> deselected
 		public bool? IsChecked
 		{
 			get => Tree<TNd, TLd>.boolList[(int) state];
 			set
 			{
-				state = Tree<TNd, TLd>.StateFromBool(value);
+				if (!tree.IsTriState)
+				{
+					tree.Selector.SelectDeselect(this, value);
+				}
+				else
+				{
+					// need to compensate for a possible
+					// tri-state checkbox
+					// when all children are desclected
+					// treat as a dual state checkbox
+					if (!isChecked.HasValue)
+					{
+						tree.Selector.SelectDeselect(this, null);
+					}
+					else if (allChildrenNodesDeselected()
+							&& !value.HasValue)
+					{
+						// no children & flipped to mixed - 
+						// this means that it was deselected
+						// change this to checked
+						tree.Selector.SelectDeselect(this, true);
+					}
+					else
+					{
+						// pass along as is
+						tree.Selector.SelectDeselect(this, value);
+					}
+				}
 
-				tree.NodeSelector.SelectDeselect(this);
+				// state = Tree<TNd, TLd>.StateFromBool(value);
 			}
 		}
 
@@ -213,7 +264,7 @@ namespace SharedCode.TreeClasses
 
 		public bool IsEnabled
 		{
-			get => isEnabled; 
+			get => isEnabled;
 			set
 			{
 				if (isEnabled == value) return;
@@ -256,17 +307,29 @@ namespace SharedCode.TreeClasses
 
 		public SelectedState State
 		{
-			get => state; 
+			get => state;
 			set
 			{
 				if (state == value) return;
 				state = value;
 
-				if (state!= UNSET)
+				if (state != UNSET)
 				{
 					isChecked = Tree<TNd, TLd>.boolList[(int) state];
 					OnPropertyChanged(nameof(IsChecked));
 				}
+
+				OnPropertyChanged();
+			}
+		}
+
+		public SelectedState PriorState
+		{
+			get => priorState;
+			set
+			{
+				if (priorState == value) return;
+				priorState = value;
 
 				OnPropertyChanged();
 			}
@@ -300,28 +363,193 @@ namespace SharedCode.TreeClasses
 
 		*/
 
-		#endregion
+	#endregion
 
-		#region public methods
+	#region public methods
 
 		// selection
 
-		public void Select()
+		public bool Select()
 		{
 			State = SELECTED;
+			return true;
 		}
 
-		public void DeSelect()
+		public bool Deselect()
 		{
 			State = DESELECTED;
+			return true;
 		}
 
-		public void MixedSelectNode()
+		public void SavePriorChecked()
 		{
-			isChecked = Tree<TNd, TLd>.boolList[(int) MIXED];
-			OnPropertyChanged(nameof(IsChecked));
+			PriorIsChecked = Tree<TNd, TLd>.boolList[(int) State];
 		}
-		
+
+		public void RestorerPriorChecked()
+		{
+			State = Tree<TNd, TLd>.StateFromBool(priorIsChecked);
+		}
+
+		public void ClearPriorChecked()
+		{
+			PriorIsChecked = null;
+		}
+
+
+		public void SavePriorState()
+		{
+			PriorState = state;
+		}
+
+		public void RestoreState()
+		{
+			State = priorState;
+		}
+
+		public void UnsetPriorState()
+		{
+			PriorState = UNSET;
+		}
+
+		public bool PriorStateHasValue()
+		{
+			return priorState != UNSET;
+		}
+
+/*
+		public bool Select()
+		{
+			Debug.WriteLine($"\tis tristate| {tree.IsTriState} | i am| {nodeKey}");
+
+			if (!Tree.IsTriState)
+			{
+				Debug.WriteLine($"\tSTATE to Selected");
+
+				if (State == SELECTED) return false;
+				State = SELECTED;
+			}
+			else
+			{
+				Debug.Write($"\tall nodes selected| ");
+				// is tri-state
+				if (allChildrenNodesSelected())
+				{
+					Debug.WriteLine($"YES");
+					Debug.WriteLine($"\tSTATE to Selected");
+					if (State == SELECTED) return false;
+					State = SELECTED;
+				}
+				else
+				{
+					Debug.Write($"NO");
+					Debug.WriteLine($"\tSTATE to Mixed");
+					if (State == MIXED) return false;
+					State = MIXED;
+				}
+			}
+
+			return true;
+		}
+
+		public bool Deselect()
+		{
+			if (!Tree.IsTriState)
+			{
+				if (State == DESELECTED) return false;
+				State = DESELECTED;
+			}
+			else
+			{
+				// is tri state
+				if (allChildrenNodesDeselected())
+				{
+					if (State == DESELECTED) return false;
+					State = DESELECTED;
+				}
+				else
+				{
+					if (State == MIXED) return false;
+					State = MIXED;
+				}
+			}
+
+			return true;
+		}
+
+		*/
+
+		public void SetMixed()
+		{
+			State = MIXED;
+		}
+
+		/// <summary>
+		/// determine if all children nodes are selected<br/>
+		///  true = all selected | false one or more are deselected
+		/// </summary>
+		public bool allChildrenNodesSelected()
+		{
+			if (!HasNodes) return true;
+
+			bool result = true;
+
+			// check for a node that is not selected and return false
+			// none found, return true;
+			foreach (ITreeNode childNode in EnumNodes())
+			{
+				if (!childNode.IsChecked.HasValue ||
+					(childNode.IsChecked.HasValue && childNode.IsChecked == false))
+				{
+					result = false;
+					break;
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// determine if all children nodes are deselected<br/>
+		///  true = all deselected | false one or more are selected
+		/// </summary>
+		public bool allChildrenNodesDeselected()
+		{
+			if (!HasNodes) return true;
+
+			bool result = true;
+
+			// check for a node that is selected and return false
+			// none found, return true;
+			foreach (ITreeNode childNode in EnumNodes())
+			{
+				// M.Write($"\t\tchild | {childNode.NodeKey} | is desel? |");
+
+				// treat mixed as checked
+				if (childNode.State == MIXED || childNode.State == SELECTED)
+				{
+					// M.WriteLine("NO");
+					result = false;
+					break;
+				}
+				else
+				{
+					// M.WriteLine("YES");
+				}
+			}
+
+			// M.WriteLine($"\t\tfinal answer| {result}");
+
+			return result;
+		}
+
+
+		// public void MixedSelectNode()
+		// {
+		// 	isChecked = Tree<TNd, TLd>.boolList[(int) MIXED];
+		// 	OnPropertyChanged(nameof(IsChecked));
+		// }
+		//
 		/*
 		public void CheckedChangedFromChild(SelectedState newChildSelectedState) //  , CheckedState oldChildCheckedState )
 		{
@@ -507,12 +735,16 @@ namespace SharedCode.TreeClasses
 		{
 			Nodes.Add(key, node);
 
+			updateTriState();
+
 			OnPropertyChanged(nameof(Nodes));
 		}
 
 		public bool TryAddNode(string key, TreeNode<TNd, TLd> node)
 		{
 			if (!Nodes.TryAdd(key, node)) return false;
+
+			updateTriState();
 
 			OnPropertyChanged(nameof(Nodes));
 
@@ -545,9 +777,9 @@ namespace SharedCode.TreeClasses
 
 		public bool DeleteNode(string nodeKey)
 		{
-			bool result = Nodes?.Remove(nodeKey) ?? false;
+			if (!Nodes?.Remove(nodeKey) ?? false) return false;
 
-			if (!result) return false;
+			updateTriState();
 
 			OnPropertyChanged(nameof(Nodes));
 
@@ -556,11 +788,12 @@ namespace SharedCode.TreeClasses
 
 		public bool TryDeleteNode(string nodeKey)
 		{
-			bool result = ContainsNode(nodeKey);
+			if (!ContainsNode(nodeKey)) return false;
+			if (!Nodes.Remove(nodeKey)) return false;
 
-			if (!result) return false;
+			updateTriState();
 
-			return Nodes.Remove(nodeKey);
+			return true;
 		}
 
 		public bool ReplaceKeyNode(string oldkey, string newKey)
@@ -648,8 +881,6 @@ namespace SharedCode.TreeClasses
 
 	#endregion
 
-	#region selection
-
 		/*
 		ui []
 		+-> bool? Ischecked 
@@ -667,29 +898,20 @@ namespace SharedCode.TreeClasses
 					> state = value (adjus for tristate
 					> onprop(ischecked)
 					> onprop (state)
-
-
-
 		*/
 
-		public void SelectMatchingNodeTree() { }
+	#region private methods
 
-		public void SelectMatchingNodeBranch() { }
-
-
-		public void DeSelectMatchingNodeTree() { }
-
-		public void DeSelectMatchingNodeBranch()
+		private void updateTriState()
 		{
-			Predicate<string> toupper =  s => s.Equals(s.ToUpper());
-
-			Predicate<string> a = toupper;
+			IsTriState = (Nodes != null &&
+				Nodes.Count > 0 && Tree.IsTriState);
 		}
 
 	#endregion
 
 	#region system overrides
-		
+
 		/*
 		public IEnumerable<ITreeNode<TNd, TLd>> EnumNodes()
 		{
@@ -725,10 +947,15 @@ namespace SharedCode.TreeClasses
 
 			if (HasNodes)
 			{
-				foreach (ITreeNode tn in this)
+				foreach (KeyValuePair<string, TreeNode<TNd, TLd>> kvp in Nodes)
 				{
-					yield return tn;
+					yield return kvp.Value;
 				}
+
+				// foreach (ITreeNode tn in Nodes)
+				// {
+				// 	yield return tn;
+				// }
 			}
 		}
 
@@ -781,6 +1008,7 @@ namespace SharedCode.TreeClasses
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
+		[DebuggerStepThrough]
 		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

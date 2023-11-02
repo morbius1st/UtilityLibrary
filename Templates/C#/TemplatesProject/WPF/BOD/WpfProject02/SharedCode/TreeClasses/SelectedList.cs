@@ -1,73 +1,35 @@
 ﻿// Solution:     WpfProject02
 // Project:       WpfProject02
-// File:             SelectionList.cs
-// Created:      2023-10-17 (9:20 PM)
-
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Markup;
+// File:             SelectedList.cs
+// Created:      2023-10-23 (11:19 PM)
 
 namespace SharedCode.TreeClasses;
 
-public class SelectedList<Te> : ISelectedList<Te>
-	where Te : class, ITreeElement
+
+/// <summary>
+/// select items using a tri-state system. that is
+/// the node can be selected, deselected, or mixed
+/// mixed means that some, but not all, of its children
+/// are selected.  the tri state system also
+/// cycles selected state of children and parents
+/// selection cycle is
+/// not selected -> selected -> mixed -> not selected
+/// </summary>
+public class SelectedListTriState : ASelectedList
 {
-	private List<Te> selected;
-	private List<Te> priorSelected;
-
-	public SelectedList(/*Selection.SelectMode mode */)
+	public override bool Select(ITreeNode? element)
 	{
-		ClearSelectedList();
-		ClearPriorSelectedList();
-
-		updateSelectedProperties();
-	}
-
-	// public Selection.SelectMode SelectionMode { get; }
-
-	private List<Te> Selected
-	{
-		get => selected;
-		set
-		{
-			selected = value;
-			OnPropertyChanged();
-		}
-	}
-
-	private List<Te> PriorSelected
-	{
-		get => priorSelected;
-		set
-		{
-			priorSelected = value;
-			OnPropertyChanged();
-		}
-	}
-
-	public int SelectedCount => Selected.Count;
-	public int PriorSelectedCount => PriorSelected.Count;
-
-
-	public Te? CurrentSelected => Selected != null && Selected.Count > 0 ? Selected?[0] : null;
-	public Te? CurrentPriorSelected => PriorSelected != null && PriorSelected.Count > 0 ? PriorSelected?[0] : null;
-
-
-	public bool Select(Te element, bool resetPriorSelected = false)
-	{
-		if (element == null) return false;
+		if (element == null
+			|| element.IamRoot) return false;
 
 		removeElementFromPriorSelected(element);
 
-		if (resetPriorSelected) MoveSelectedToPrior();
+		if (selected.Count == 0) ClearPriorSelectedList();
 
 		return addElementToSelected(element);
 	}
 
-	public bool DeSelect(Te element)
+	public override bool Deselect(ITreeNode element)
 	{
 		if (element == null) return false;
 
@@ -76,213 +38,112 @@ public class SelectedList<Te> : ISelectedList<Te>
 		return addElementToPriorSelected(element);
 	}
 
-	public void MoveSelectedToPrior()
-	{
-		if (selected.Count < 1) return;
+	public override string Name => "tri-state select list";
 
-		priorSelected = new List<Te>();
-
-		foreach (Te e in selected)
-		{
-			addElementToPriorSelected(e);
-		}
-
-		selected = new List<Te>();
-	}
-
-	public void Clear()
-	{
-		ClearSelectedList();
-		ClearPriorSelectedList();
-
-		updateSelectedProperties();
-	}
+}
 
 
-	private void ClearSelectedList()
-	{
-		selected = new List<Te>();
-
-		RaiseSelectedClearedEvent();
-	}
-
-	private void ClearPriorSelectedList()
-	{
-		priorSelected = new List<Te>();
-
-		RaisePriorSelectedClearedEvent();
-	}
-
-	private bool addElementToSelected(Te element)
+/// <summary>
+/// can select multiple items.  however, selecting
+/// a node in a branch, selects the branch from that point
+/// down.  can only deselect an item by deselecting
+/// a node.  however, deselecting a branch node
+/// deselects the branch from that point down.
+/// when the selected list returns to no items, the
+/// next selection clears the prior selection list
+/// </summary>
+public class SelectedListExtended : ASelectedList
+{
+	public override bool Select(ITreeNode element)
 	{
 		if (element == null) return false;
-		if (selected.Contains(element)) return false;
 
-		selected.Add(element);
+		removeElementFromPriorSelected(element);
+			
+		if (selected.Count == 0) ClearPriorSelectedList();
 
-		RaiseElementAddedToSelectedEvent(element);
-
-		return true;
+		return addElementToSelected(element);
 	}
 
-	private bool addElementToPriorSelected(Te element)
+	public override bool Deselect(ITreeNode element)
 	{
 		if (element == null) return false;
-		if (priorSelected.Contains(element)) return false;
 
-		priorSelected.Add(element);
+		removeElementFromSelected(element);
 
-		RaiseElementAddedToPriorSelectedEvent(element);
-
-		return true;
+		return addElementToPriorSelected(element);
 	}
 
-	private void removeElementFromSelected(Te element)
+	// protected override void updateSelectedProperties() { }
+
+	public override string Name => "name";
+
+}
+
+/// <summary>
+/// select multiple items - selecting an unselected
+/// item leaves all other items selected.  only deselecting
+/// an item can deselect that item.  when the selected
+/// list returns to no items, the next selection clears
+/// the prior selection list
+/// </summary>
+public class SelectedListMultiple : ASelectedList
+{
+	public override bool Select(ITreeNode element)
 	{
-		if (element == null) return;
-		if (!selected.Contains(element)) return;
+		if (element == null) return false;
 
-		selected.Remove(element);
+		removeElementFromPriorSelected(element);
 
-		RaiseElementRemovedFromSelectedEvent(element);
+		if (selected.Count == 0) ClearPriorSelectedList();
+
+		// ClearPriorSelectedList(true);
+
+		return addElementToSelected(element);
 	}
 
-	private void removeElementFromPriorSelected(Te element)
+	public override bool Deselect(ITreeNode element)
 	{
-		if (element == null) return;
-		if (!priorSelected.Contains(element)) return;
+		if (element == null) return false;
 
-		priorSelected.Remove(element);
+		removeElementFromSelected(element);
 
-		RaiseElementRemovedFromPriorSelectedEvent(element);
+		return addElementToPriorSelected(element);
 	}
 
+	// protected override void updateSelectedProperties() { }
 
-	private void updateSelectedProperties()
+	public override string Name => "name";
+}
+
+/// <summary>
+/// select individual items - only one at a time
+/// selecting an item, deselects the current selection (if any)
+/// and move this to the prior list
+/// </summary>
+public class SelectedListIndividual : ASelectedList
+{
+	public override bool Select(ITreeNode element)
 	{
-		OnPropertyChanged(nameof(Selected));
+		if (element == null) return false;
 
-		OnPropertyChanged(nameof(SelectedCount));
-		OnPropertyChanged(nameof(PriorSelectedCount));
+		removeElementFromPriorSelected(element);
 
-		OnPropertyChanged(nameof(CurrentSelected));
-		OnPropertyChanged(nameof(CurrentPriorSelected));
+		MoveSelectedToPrior();
+
+		return addElementToSelected(element);
 	}
 
-
-	private void updatePriorSelectedProperties()
+	public override bool Deselect(ITreeNode element)
 	{
-		OnPropertyChanged(nameof(PriorSelected));
-		OnPropertyChanged(nameof(PriorSelectedCount));
-		OnPropertyChanged(nameof(CurrentPriorSelected));
+		if (element == null) return false;
+
+		removeElementFromSelected(element);
+
+		return addElementToPriorSelected(element);
 	}
 
+	// protected override void updateSelectedProperties() { }
 
-	public IEnumerable<Te> EnumSelected()
-	{
-		if (selected != null && selected.Count > 0)
-		{
-			foreach (Te e in selected)
-			{
-				yield return e;
-			}
-		}
-	}
-
-	public IEnumerable<Te> EnumPriorSelected()
-	{
-		if (priorSelected != null && priorSelected.Count > 0)
-		{
-			foreach (Te e in priorSelected)
-			{
-				yield return e;
-			}
-		}
-	}
-
-	IEnumerator IEnumerable.GetEnumerator()
-	{
-		return GetEnumerator();
-	}
-
-	public IEnumerator<Te> GetEnumerator()
-	{
-		yield break;
-	}
-
-
-	public delegate void SelectedClearedEventHandler(object sender);
-
-	public event ISelectedList<Te>.SelectedClearedEventHandler SelectedCleared;
-
-	protected virtual void RaiseSelectedClearedEvent()
-	{
-		SelectedCleared?.Invoke(this);
-	}
-
-
-	public delegate void PriorSelectedClearedEventHandler(object sender);
-
-	public event ISelectedList<Te>.PriorSelectedClearedEventHandler PriorSelectedCleared;
-
-	protected virtual void RaisePriorSelectedClearedEvent()
-	{
-		PriorSelectedCleared?.Invoke(this);
-	}
-
-
-	public delegate void ElementAddedToSelectedEventHandler(object sender, Te element);
-
-	public event ISelectedList<Te>.ElementAddedToSelectedEventHandler ElementAddedToSelected;
-
-	[DebuggerStepThrough]
-	private void RaiseElementAddedToSelectedEvent(Te element)
-	{
-		updateSelectedProperties();
-		ElementAddedToSelected?.Invoke(this, element);
-	}
-
-
-	public delegate void ElementAddedToPriorSelectedEventHandler(object sender, Te element);
-
-	public event ISelectedList<Te>.ElementAddedToPriorSelectedEventHandler ElementAddedToPriorSelected;
-
-	[DebuggerStepThrough]
-	private void RaiseElementAddedToPriorSelectedEvent(Te element)
-	{
-		updatePriorSelectedProperties();
-		ElementAddedToPriorSelected?.Invoke(this, element);
-	}
-
-
-	public delegate void ElementRemovedFromSelectedEventHandler(object sender, Te element);
-
-	public event ISelectedList<Te>.ElementRemovedFromSelectedEventHandler ElementRemovedFromSelected;
-
-	[DebuggerStepThrough]
-	private void RaiseElementRemovedFromSelectedEvent(Te element)
-	{
-		updateSelectedProperties();
-		ElementRemovedFromSelected?.Invoke(this, element);
-	}
-
-
-	public delegate void ElementRemovedFromPriorSelectedEventHandler(object sender, Te element);
-
-	public event ISelectedList<Te>.ElementRemovedFromPriorSelectedEventHandler? ElementRemovedFromPriorSelected;
-
-	[DebuggerStepThrough]
-	private void RaiseElementRemovedFromPriorSelectedEvent(Te element)
-	{
-		updatePriorSelectedProperties();
-		ElementRemovedFromPriorSelected?.Invoke(this, element);
-	}
-
-	public event PropertyChangedEventHandler PropertyChanged;
-
-	[DebuggerStepThrough]
-	private void OnPropertyChanged([CallerMemberName] string memberName = "" )
-	{
-		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(memberName));
-	}
+	public override string Name => "name";
 }

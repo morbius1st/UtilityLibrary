@@ -266,8 +266,8 @@
 				<Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
 				<Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=Foreground}" />
 				<Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=Background}" />
-				<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-				<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+				<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, FallbackValue='Left'}" />
+				<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, FallbackValue='Center'}" />
 				<Setter Property="Padding" Value="1,0,0,0" />
 				<Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
 				<Setter Property="Template">
@@ -465,8 +465,8 @@
 										<ColumnDefinition Width="26" />
 										<ColumnDefinition Width="26" />
 										<ColumnDefinition Width="21" />
-										<ColumnDefinition Width="21" />
-										<ColumnDefinition Width="21" />
+										<ColumnDefinition Width="31" />
+										<ColumnDefinition Width="71" />
 										<ColumnDefinition Width="21" />
 										<ColumnDefinition Width="21" />
 										<ColumnDefinition Width="*" />
@@ -529,7 +529,6 @@
 									</TextBlock>
 
 
-
 									<TextBlock Grid.Column="4"
 											Grid.Row="1"
 											Grid.ColumnSpan="3"
@@ -563,13 +562,31 @@
 									<TextBlock Grid.Column="6"
 											Grid.Row="1"
 											Grid.ColumnSpan="3"
-											Margin="-8,0,-10,0"
+											Margin="0,0,0,0"
+											HorizontalAlignment="Left"
 											VerticalAlignment="Bottom"
 											FontSize="12"
 											Foreground="White"
 											RenderTransformOrigin="0.0,1.0"
 											>
-										<Run>Leaves List</Run>
+										<Run>State</Run>
+										<TextBlock.RenderTransform>
+											<RotateTransform Angle="-45" />
+										</TextBlock.RenderTransform>
+									</TextBlock>
+
+									<TextBlock Grid.Column="7"
+											Grid.Row="1"
+											Grid.ColumnSpan="3"
+											Margin="0,0,0,0"
+											Padding="0"
+											HorizontalAlignment="Left"
+											VerticalAlignment="bottom"
+											FontSize="12"
+											Foreground="White"
+											RenderTransformOrigin="0.0,1.0"
+											>
+										<Run>Prior State</Run>
 										<TextBlock.RenderTransform>
 											<RotateTransform Angle="-45" />
 										</TextBlock.RenderTransform>
@@ -846,6 +863,7 @@
 																				 Mode=OneWay}"
 									InvertCheckStateOrder="True"
 									/>
+
 							<CheckBox Margin="0,4,10,0"
 									Width="15"
 									Height="15"
@@ -853,6 +871,18 @@
 									IsChecked="{Binding IsTriState,
 																			FallbackValue=false}"
 									/>
+
+							<!--  <CheckBox Margin="0,4,10,0"  -->
+							<!--  Width="15"  -->
+							<!--  Height="15"  -->
+							<!--  IsThreeState="True"  -->
+							<!--  VerticalAlignment="Top"  -->
+							<!--  IsChecked="{Binding PriorIsChecked,  -->
+							<!--  FallbackValue='false',  -->
+							<!--  Mode=OneWay}"  -->
+							<!--  IsEnabled="False"  -->
+							<!--  />  -->
+
 							<CheckBox Margin="0,4,10,0"
 									Width="15"
 									Height="15"
@@ -871,12 +901,24 @@
 																			Mode=TwoWay}"
 									/>
 							<TextBlock Margin="0,4,10,0"
+									Width="70"
 									Height="15"
 									VerticalAlignment="Top"
 									Background="White"
 									Foreground="Blue"
-									Text="{Binding PriorIsSelectedState}"
+									Text="{Binding State}"
 									/>
+
+							<TextBlock Margin="0,4,10,0"
+									Width="70"
+									Height="15"
+									VerticalAlignment="Top"
+									Background="White"
+									Foreground="Blue"
+									Text="{Binding PriorState}"
+									/>
+
+
 						</StackPanel>
 						<ContentControl Grid.Column="0"
 								Grid.Row="2"
@@ -1106,6 +1148,30 @@
 					Orientation="Vertical"
 					>
 
+				<Button x:Name="BtnListTest"
+						Content="List Test"
+						Margin="0,0,0,5"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnListTest_OnClick"
+						/>
+
+				<Button x:Name="BtnEnum0"
+						Content="Enum Node"
+						Margin="0,0,0,5"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnEnum3_OnClick"
+						/>
+
+				<Button x:Name="BtnEnum"
+						Content="Enum Data Test"
+						Margin="0,0,0,5"
+						Width="{StaticResource Btn.Width.Std}"
+						Height="{StaticResource Btn.Height.Std}"
+						Click="BtnEnum_OnClick"
+						/>
+
 				<Button x:Name="BtMNed"
 						Content="Enab/Disab Test"
 						Margin="0,0,0,5"
@@ -1166,8 +1232,11 @@
 
 		</DockPanel>
 
+		<!--#region > message boxes-->
 
-		<DockPanel Grid.Column="1">
+		<DockPanel Grid.Column="1"
+				Grid.Row="0"
+				>
 
 			<DockPanel DockPanel.Dock="Top">
 
@@ -1205,7 +1274,6 @@
 
 		<Grid Grid.Column="1"
 				Grid.Row="1"
-				Grid.RowSpan="2"
 				>
 
 			<!-- <Grid.ColumnDefinitions> -->
@@ -1261,13 +1329,12 @@
 				</TextBox>
 			</DockPanel>
 		</Grid>
-
+		<!--#endregion-->
 
 		<!--#region > icons-->
 
 		<StackPanel Grid.Column="0"
 				Grid.Row="3"
-				Grid.ColumnSpan="2"
 				VerticalAlignment="Top"
 				Orientation="Vertical"
 				>
@@ -1710,16 +1777,12 @@
 
 		</StackPanel>
 
+		<!--#endregion-->
 
-		<DockPanel Grid.Column="0"
-				Grid.Row="2"
-				DockPanel.Dock="Bottom"
-				>
+		<!--#region > footer-->
 
-
-		</DockPanel>
 		<StackPanel Grid.Column="0"
-				Grid.Row="6"
+				Grid.Row="4"
 				Height="Auto"
 				Orientation="Horizontal"
 				>
@@ -1741,6 +1804,225 @@
 		</StackPanel>
 
 		<!--#endregion-->
+
+		<Grid Grid.Column="1"
+				Grid.Row="2"
+				Grid.RowSpan="2"
+				>
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<ListBox 
+					x:Name="TestList"
+
+					Width="100"
+					Grid.Column="0"
+					DataContext="{Binding ObservTree.Selector.Selected,
+																ElementName=ExWin}"
+					Background="#222222"
+					Foreground="White"
+					SelectedValuePath="NodeKey"
+					d:ItemsSource="{d:SampleData}"
+					ItemsSource="{Binding Selected,
+																Mode=OneWay}"
+					>
+
+
+				<ListBox.ItemTemplate>
+					<DataTemplate DataType="{x:Type treeClasses:ITreeNode}">
+						<TextBlock Foreground="White"
+								Text="{Binding NodeKey,
+															 Mode=OneWay,
+															 TargetNullValue='null',
+															 FallbackValue='none'}"
+								/>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+
+			</ListBox>
+
+			
+
+			<ListBox
+					Grid.Column="1"
+					Width="100"
+					Background="#222222"
+					d:ItemsSource="{d:SampleData}"
+					DataContext="{Binding ObservTree.Selector.Selected,
+					TargetNullValue='null',
+																ElementName=ExWin}"
+					ItemsSource="{Binding PriorSelected, Mode=OneWay}"
+					>
+				<ListBox.ItemTemplate>
+					<DataTemplate
+							DataType="{x:Type treeClasses:ITreeNode}"
+					>
+						<TextBlock
+								Text="{Binding NodeKey, Mode=OneWay,
+								TargetNullValue='null', FallbackValue='none'}"
+								Foreground="White"
+						/>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+		</ListBox>
+
+
+
+
+
+
+
+			<!-- removed
+
+			<Grid Grid.Column="1"
+					Grid.Row="0"
+					>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="120" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+
+				<TextBlock Grid.Column="0"
+						Grid.Row="0"
+						Foreground="White"
+						Text="Tree name"
+						/>
+
+				<TextBlock Grid.Column="1"
+						Grid.Row="0"
+						Foreground="White"
+						Text="{Binding ObservTree.TreeName,
+													 Mode=OneWay,
+													 FallbackValue='name',
+													 TargetNullValue='null'}"
+						/>
+
+
+
+				<TextBlock Grid.Column="0"
+						Grid.Row="1"
+						Foreground="White"
+						Text="Selector name"
+						/>
+
+				<TextBlock Grid.Column="1"
+						Grid.Row="1"
+						Foreground="White"
+						Text="{Binding ObservTree.Selector.Name,
+													 Mode=OneWay,
+													 FallbackValue='name',
+													 TargetNullValue='null'}"
+						/>
+
+
+				<TextBlock Grid.Column="0"
+						Grid.Row="2"
+						Foreground="White"
+						Text="Sel List name"
+						/>
+
+				<TextBlock Grid.Column="1"
+						Grid.Row="2"
+						Foreground="White"
+						Text="{Binding ObservTree.Selector.Selected.Name,
+													 Mode=OneWay,
+													 FallbackValue='name',
+													 TargetNullValue='null'}"
+						/>
+
+				<TextBlock Grid.Column="0"
+						Grid.Row="3"
+						Foreground="White"
+						Text="Sel List current"
+						/>
+
+				<TextBlock Grid.Column="1"
+						Grid.Row="3"
+						Foreground="White"
+						Text="{Binding ObservTree.Selector.Selected.CurrentSelected.NodeKey,
+													 Mode=OneWay,
+													 FallbackValue='key',
+													 TargetNullValue='null'}"
+						/>
+
+				<TextBlock Grid.Column="0"
+						Grid.Row="4"
+						Foreground="White"
+						Text="Sel List count"
+						/>
+
+				<TextBlock Grid.Column="1"
+						Grid.Row="4"
+						Foreground="White"
+						Text="{Binding ObservTree.Selector.Selected.SelectedCount,
+													 Mode=OneWay,
+													 FallbackValue='name',
+													 TargetNullValue='null'}"
+						/>
+
+				<TextBlock Grid.Column="0"
+						Grid.Row="5"
+						Foreground="White"
+						Text="Sel List first item"
+						/>
+
+				<TextBlock Grid.Column="1"
+						Grid.Row="5"
+						Foreground="White"
+						Text="{Binding ObservTree.Selector.Selected.Selected[0].NodeKey,
+													 Mode=OneWay,
+													 FallbackValue='key',
+													 TargetNullValue='null'}"
+						/>
+
+				<TextBlock Grid.Column="0"
+						Margin="0,20,0,0"
+						Grid.Row="6"
+						Foreground="White"
+						Text="Test ListSel Item"
+						/>
+
+				<TextBlock Grid.Column="1"
+						Margin="0,20,0,0"
+						Grid.Row="6"
+						Foreground="White"
+						Text="{Binding ElementName=TestList, Path=SelectedValue,
+													 Mode=OneWay,
+													 FallbackValue='key',
+													 TargetNullValue='null'}"
+						/>
+
+
+
+
+			</Grid>
+
+			 -->
+
+
+		</Grid>
+
+
+
+		<!--#region > tree-->
+
 		<DockPanel Grid.Column="0"
 				Grid.Row="0"
 				Grid.RowSpan="3"
@@ -1754,32 +2036,36 @@
 												 Mode=OneWay}"
 					/>
 
-
-			<!-- removed
-
-			<StackPanel Orientation="Horizontal"
-					DockPanel.Dock="Top"
+			<StackPanel DockPanel.Dock="Top"
+					Orientation="Vertical"
 					>
+				<StackPanel Orientation="Horizontal">
 
-				<cs:CsCheckBoxTriState x:Name="CkbxTriState"
-						Content="TriState CkBx Test"
-						Foreground="White"
-						IsThreeState="True"
-						IsEnabled="True"
-						IsChecked="{Binding IsSelected}"
-						InvertCheckStateOrder="True"
-				/>
+					<cs:CsCheckBoxTriState x:Name="CkbxTriState"
+							Content="TriState CkBx Test"
+							Foreground="White"
+							IsThreeState="True"
+							IsEnabled="True"
+							IsChecked="{Binding IsSelected}"
+							InvertCheckStateOrder="True"
+							/>
 
-				<TextBlock
-						Text="{Binding IsChecked, ElementName=CkbxTriState, TargetNullValue='null'}"
+					<TextBlock Margin="10,0,0,0"
+							Width="80"
+							Foreground="White"
+							Text="{Binding IsChecked,
+														 ElementName=CkbxTriState,
+														 TargetNullValue='null'}"
+							/>
+
+
+				</StackPanel>
+
+				<TextBlock Margin="10,0,0,0"
 						Foreground="White"
-						Margin="10,0,0,0"
+						Text="tree process| unchecked -&gt; mixed -&gt; checked -&gt; unchecked"
 						/>
-
 			</StackPanel>
-
-			-->
-
 
 			<StackPanel Height="Auto"
 					Orientation="Vertical"
@@ -1842,6 +2128,7 @@
 							Click="BtnDeSelTree_OnClick"
 							/>
 
+
 				</StackPanel>
 
 				<Grid Margin="0,0,0,5">
@@ -1901,20 +2188,6 @@
 							Style="{StaticResource CbxBase}"
 							/>
 
-
-					<!--
-						settings
-						> row 7  > is tri state (enum)
-						> row 8  > select mode (enum)
-						> row 8  > select mode description (string)
-						> row 9  > select first class (enum)
-						> row 9  > select second class (enum)
-						> row 10 > select tree allowed (enum)
-						> row 10 > select tree allowed (bool)
-					-->
-
-					<!--  SelectedValue="{Binding SelItem}"  -->
-
 					<TextBlock Grid.Column="2"
 							Grid.Row="0"
 							Grid.ColumnSpan="2"
@@ -1946,7 +2219,7 @@
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="{Binding Data.SelectedNodeKey,
-							TargetNullValue='null',
+														 TargetNullValue='null',
 														 FallbackValue=none,
 														 Mode=OneWay}"
 							/>
@@ -1964,7 +2237,7 @@
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="{Binding Data.DeSelectedNodeKey,
-							TargetNullValue='null',
+														 TargetNullValue='null',
 														 FallbackValue=none,
 														 Mode=OneWay}"
 							/>
@@ -2009,8 +2282,8 @@
 							Grid.Row="2"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.NodeSelector.CurrentSelected.NodeKey,
-							TargetNullValue='null',
+							Text="{Binding Data.Tree.Selector.CurrentSelected.NodeKey,
+														 TargetNullValue='null',
 														 FallbackValue='none',
 														 Mode=OneWay}"
 							/>
@@ -2028,8 +2301,9 @@
 							Grid.Row="3"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.NodeSelector.CurrentPriorSelected.NodeKey,
+							Text="{Binding Data.Tree.Selector.CurrentPriorSelected.NodeKey,
 														 FallbackValue='none',
+														 TargetNullValue='null',
 														 Mode=OneWay}"
 							/>
 
@@ -2047,12 +2321,12 @@
 							Grid.Row="6"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.NodeSelector.SelectedCount,
+							Text="{Binding Data.Tree.Selector.SelectedCount,
 														 TargetNullValue='null',
 														 FallbackValue=0,
 														 Mode=OneWay}"
 							/>
-	
+
 
 					<TextBlock Grid.Column="2"
 							Grid.Row="6"
@@ -2066,7 +2340,7 @@
 							Grid.Row="6"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.NodeSelector.PriorSelectedCount,
+							Text="{Binding Data.Tree.Selector.PriorSelectedCount,
 														 TargetNullValue='null',
 														 FallbackValue=0,
 														 Mode=OneWay}"
@@ -2078,18 +2352,18 @@
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="has selection"
-					/>
+							/>
 
 
 					<TextBlock Grid.Column="1"
 							Grid.Row="7"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.NodeSelector.HasSelection,
+							Text="{Binding Data.Tree.Selector.HasSelection,
 														 TargetNullValue='null',
 														 FallbackValue='no',
 														 Mode=OneWay}"
-					/>
+							/>
 
 
 					<TextBlock Grid.Column="2"
@@ -2097,18 +2371,18 @@
 							Margin="5,2,0,2"
 							Foreground="White"
 							Text="has priorselection"
-					/>
+							/>
 
 
 					<TextBlock Grid.Column="3"
 							Grid.Row="7"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.Tree.NodeSelector.HasPriorSelection,
+							Text="{Binding Data.Tree.Selector.HasPriorSelection,
 														 TargetNullValue='null',
 														 FallbackValue='no',
 														 Mode=OneWay}"
-					/>
+							/>
 
 
 					<TextBlock Grid.Column="0"
@@ -2291,46 +2565,15 @@
 							Grid.Row="12"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.CanSelectTree,
+							Text="{Binding Data.AllowedToSelectTree,
 														 FallbackValue=not sel,
 														 Mode=OneWay,
 														 TargetNullValue=null}"
 							/>
-
-					<!-- -->
-					<!-- <TextBlock Grid.Column="0" -->
-					<!-- 		Grid.Row="12" -->
-					<!-- 		Margin="5,2,0,2" -->
-					<!-- 		Foreground="White" -->
-					<!-- 		Text="{Binding Data.Test0, -->
-					<!-- 									 FallbackValue=not set, -->
-					<!-- 									 Mode=OneWay, -->
-					<!-- 									 TargetNullValue='null'}" -->
-					<!-- 		/> -->
-					<!-- -->
-					<!-- <TextBlock Grid.Column="1" -->
-					<!-- 		Grid.Row="12" -->
-					<!-- 		Margin="5,2,0,2" -->
-					<!-- 		Foreground="White" -->
-					<!-- 		Text="{Binding Data.Tree.Test1, -->
-					<!-- 									 FallbackValue=not set, -->
-					<!-- 									 Mode=OneWay, -->
-					<!-- 									 TargetNullValue='null'}" -->
-					<!-- 		/> -->
-					<!-- <TextBlock Grid.Column="2" -->
-					<!-- 		Grid.Row="12" -->
-					<!-- 		Margin="5,2,0,2" -->
-					<!-- 		Foreground="White" -->
-					<!-- 		Text="{Binding Data.Tree.NodeSelector.TestSelector, -->
-					<!-- 									 FallbackValue=not set, -->
-					<!-- 									 Mode=OneWay, -->
-					<!-- 									 TargetNullValue='null'}" -->
-					<!-- 		/> -->
-
-
 				</Grid>
 
 			</StackPanel>
+
 			<TreeView VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					VerticalContentAlignment="Stretch"
@@ -2353,7 +2596,7 @@
 			</TreeView>
 
 		</DockPanel>
-
+		<!--#endregion-->
 
 	</Grid>
 </Window>

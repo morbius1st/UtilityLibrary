@@ -3,6 +3,9 @@
 // File:             ATreeSelector.cs
 // Created:      2023-10-21 (10:13 AM)
 
+using SharedCode.ShDebugAssist;
+using SharedWPF.ShWin;
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -29,21 +32,22 @@ public struct STreeSelection
 	public Selection.SelectFirstClass SelectionFirstClass { get; set; }
 }
 
-public abstract class ATreeSelector<Te> : INotifyPropertyChanged
-	where Te : class, ITreeElement
+public abstract class ATreeSelector : INotifyPropertyChanged
 {
-	private SelectedList<Te>? selected;
+	private  ShDebugMessages M = Examples.M;
+
+	protected ASelectedList? selected;
 
 	// private STreeSelection setg;
 
-	public ATreeSelector(SelectedList<Te> selected)
+	public ATreeSelector(ASelectedList selected)
 	{
 		Selected = selected;
 	}
 
-	public ITree Tree { get; set; }
+	public ITree? Tree { get; set; }
 
-	protected SelectedList<Te>? Selected
+	public ASelectedList? Selected
 	{
 		get => selected;
 		private set
@@ -52,6 +56,8 @@ public abstract class ATreeSelector<Te> : INotifyPropertyChanged
 			OnPropertyChanged();
 		}
 	}
+
+	public abstract string Name { get; }
 
 	public abstract Selection.SelectMode SelectionMode { get; }
 	public abstract Selection.SelectFirstClass SelectionFirstClass { get; }
@@ -65,19 +71,15 @@ public abstract class ATreeSelector<Te> : INotifyPropertyChanged
 	public int SelectedCount => Selected!.SelectedCount;
 	public int PriorSelectedCount => Selected!.PriorSelectedCount;
 
-	public Te? CurrentSelected => Selected!.CurrentSelected;
-	public Te? CurrentPriorSelected => Selected!.CurrentPriorSelected;
+	public ITreeNode? CurrentSelected => Selected!.CurrentSelected;
+	public ITreeNode? CurrentPriorSelected => Selected!.CurrentPriorSelected;
 
 	public bool HasSelection => Selected != null && SelectedCount > 0;
 	public bool HasPriorSelection => Selected != null && PriorSelectedCount > 0;
 
-	public abstract bool SelectDeselect(Te element);
-	public abstract bool TreeSelect();
-	public abstract bool TreeDeSelect();
-
 	public void Clear()
 	{
-		selected.Clear();
+		selected!.Clear();
 
 		OnPropertyChanged(nameof(Selected));
 
@@ -88,6 +90,8 @@ public abstract class ATreeSelector<Te> : INotifyPropertyChanged
 
 	protected void updateProperties()
 	{
+		OnPropertyChanged(nameof(Selected));
+
 		OnPropertyChanged(nameof(CurrentSelected));
 		OnPropertyChanged(nameof(SelectedCount));
 
@@ -100,51 +104,229 @@ public abstract class ATreeSelector<Te> : INotifyPropertyChanged
 		OnPropertyChanged(nameof(SelectedCount));
 	}
 
+
+	protected abstract bool select(ITreeNode? node);
+	protected abstract bool selectEx(ITreeNode? node);
+	protected abstract bool deselect(ITreeNode? node);
+	protected abstract bool deselectEx(ITreeNode? node);
+	protected abstract bool mixed(ITreeNode? node);
+	protected abstract bool treeSelect();
+
+
+	public bool TreeSelect()
+	{
+		if (Tree.IRootNode == null || !Tree.IRootNode.HasNodes) return false;
+		if (!treeSelect()) return false;
+
+		updateProperties();
+		RaiseTreeSelectedEvent(Tree);
+
+		return true;
+	}
+
+	public bool TreeDeSelect() // doubles as "deselect all"
+	{
+		if (Tree.IRootNode == null || !Tree.IRootNode.HasNodes) return false;
+		if (!HasSelection) return false;
+
+		// cannot modify the selected list while using same to enumerate
+		// need to create a independant list of deselected nodes
+		// and them remove them from the selected list
+
+		List<ITreeNode> nodesToDeselect = new List<ITreeNode>();
+
+		foreach (ITreeNode node in selected.EnumSelected())
+		{
+			
+			nodesToDeselect.Add(node);
+			node.Deselect();
+		}
+
+		foreach (ITreeNode node in nodesToDeselect)
+		{
+			selected.Deselect(node);
+		}
+
+		updateProperties();
+
+		RaiseTreeDeselectedEvent(Tree);
+
+		return true;
+	}
+
+
+	// checkbox-tri-state / inverted
+	// deselected -> mixed -> selected -> deselected
+	public bool SelectDeselect(ITreeNode? node, bool? value)
+	{
+		M.Write($"apply {(value.HasValue ? value : "null")} to {node.NodeKey} | ");
+
+		// Debug.WriteLine($"\nstart| applying {(value.HasValue ? value : "null")} to {node.NodeKey}");
+
+		if (node == null) return false;
+
+		if (value.HasValue && value==true)
+		{
+			// get here when unchecked is selected
+			if (!select(node)) return false;
+			// update properties at the end
+			
+		}
+		else if (value.HasValue && value==false)
+		{
+			// get here when checked is selected
+			if (!deselect(node)) return false;
+			// update properties at the end
+			
+		}
+		else
+		{
+			// mixed is considered as selected
+			// get here when a mixed selected
+			if (!mixed(node)) return false;
+		}
+
+		// Debug.WriteLine("update properties");
+
+		updateProperties();
+
+		return true;
+	}
+
+
+
+
+
+
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	[DebuggerStepThrough]
-	private void OnPropertyChanged([CallerMemberName] string memberName = "")
+	protected void OnPropertyChanged([CallerMemberName] string memberName = "")
 	{
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(memberName));
 	}
 
-	public IEnumerable<Te> EnumSelected() => selected!.EnumSelected();
-	public IEnumerable<Te> EnumPriorSelected() => selected!.EnumPriorSelected();
+	public IEnumerable<ITreeNode> EnumSelected() => selected!.EnumSelected();
+	public IEnumerable<ITreeNode> EnumPriorSelected() => selected!.EnumPriorSelected();
+
+	/* events:
+	** node selected
+	** node deselected
+	* leaf selected
+	* leaf deselected
+	** tree selected
+	** tree deselected
+
+	*/
 
 
-	public event ISelectedList<Te>.SelectedClearedEventHandler SelectedCleared
+	public delegate void NodeSelectedEventHandler(object sender, ITreeNode node);
+
+	public event ATreeSelector.NodeSelectedEventHandler NodeSelected;
+
+	protected virtual void RaiseNodeSelectedEvent(ITreeNode node)
 	{
-		add => Selected!.SelectedCleared += value;
-		remove => Selected!.SelectedCleared -= value;
+		NodeSelected?.Invoke(this, node);
 	}
 
-	public event ISelectedList<Te>.PriorSelectedClearedEventHandler PriorSelectedCleared
+
+	public delegate void NodeDeselectedEventHandler(object sender, ITreeNode node);
+
+	public event ATreeSelector.NodeDeselectedEventHandler NodeDeselected;
+
+	protected virtual void RaiseNodeDeselectedEvent(ITreeNode node)
 	{
-		add => Selected!.PriorSelectedCleared += value;
-		remove => Selected!.PriorSelectedCleared -= value;
+		NodeDeselected?.Invoke(this, node);
 	}
 
-	public event ISelectedList<Te>.ElementAddedToSelectedEventHandler ElementAddedToSelected
+	public delegate void LeafSelectedEventHandler(object sender, ITreeLeaf node);
+
+	public event ATreeSelector.LeafSelectedEventHandler LeafSelected;
+
+	protected virtual void RaiseLeafSelectedEvent(ITreeLeaf node)
 	{
-		add => Selected!.ElementAddedToSelected += value;
-		remove => Selected!.ElementAddedToSelected -= value;
+		LeafSelected?.Invoke(this, node);
 	}
 
-	public event ISelectedList<Te>.ElementAddedToPriorSelectedEventHandler ElementAddedToPriorSelected
+
+	public delegate void LeafDeselectedEventHandler(object sender, ITreeLeaf node);
+
+	public event ATreeSelector.LeafDeselectedEventHandler LeafDeselected;
+
+	protected virtual void RaiseLeafDeselectedEvent(ITreeLeaf node)
 	{
-		add => Selected!.ElementAddedToPriorSelected += value;
-		remove => Selected!.ElementAddedToPriorSelected -= value;
+		LeafDeselected?.Invoke(this, node);
 	}
 
-	public event ISelectedList<Te>.ElementRemovedFromSelectedEventHandler ElementRemovedFromSelected
+	public delegate void TreeSelectedEventHandler(object sender, ITree tree);
+
+	public event ATreeSelector.TreeSelectedEventHandler TreeSelected;
+
+	protected virtual void RaiseTreeSelectedEvent(ITree Tree)
 	{
-		add => Selected!.ElementRemovedFromSelected += value;
-		remove => Selected!.ElementRemovedFromSelected -= value;
+		TreeSelected?.Invoke(this, Tree);
 	}
 
-	public event ISelectedList<Te>.ElementRemovedFromPriorSelectedEventHandler ElementRemovedFromPriorSelected
+
+	public delegate void TreeDeselectedEventHandler(object sender, ITree Tree);
+
+	public event ATreeSelector.TreeDeselectedEventHandler TreeDeselected;
+
+	protected virtual void RaiseTreeDeselectedEvent(ITree Tree)
 	{
-		add => Selected!.ElementRemovedFromPriorSelected += value;
-		remove => Selected!.ElementRemovedFromPriorSelected -= value;
+		TreeDeselected?.Invoke(this, Tree);
 	}
+
+
+	public delegate void SelectionClearedEventHandler(object sender);
+
+	public event ATreeSelector.SelectionClearedEventHandler SelectionCleared;
+
+	protected virtual void RaiseSelectionClearedEvent()
+	{
+		SelectionCleared?.Invoke(this);
+	}
+
+
+
+
+
+
+
+	// public event ISelectedList.SelectedClearedEventHandler SelectedCleared
+	// {
+	// 	add => Selected!.SelectedCleared += value;
+	// 	remove => Selected!.SelectedCleared -= value;
+	// }
+	//
+	// public event ISelectedList.PriorSelectedClearedEventHandler PriorSelectedCleared
+	// {
+	// 	add => Selected!.PriorSelectedCleared += value;
+	// 	remove => Selected!.PriorSelectedCleared -= value;
+	// }
+	//
+	// public event ISelectedList.ElementAddedToSelectedEventHandler ElementAddedToSelected
+	// {
+	// 	add => Selected!.ElementAddedToSelected += value;
+	// 	remove => Selected!.ElementAddedToSelected -= value;
+	// }
+	//
+	// public event ISelectedList.ElementAddedToPriorSelectedEventHandler ElementAddedToPriorSelected
+	// {
+	// 	add => Selected!.ElementAddedToPriorSelected += value;
+	// 	remove => Selected!.ElementAddedToPriorSelected -= value;
+	// }
+	//
+	// public event ISelectedList.ElementRemovedFromSelectedEventHandler ElementRemovedFromSelected
+	// {
+	// 	add => Selected!.ElementRemovedFromSelected += value;
+	// 	remove => Selected!.ElementRemovedFromSelected -= value;
+	// }
+	//
+	// public event ISelectedList.ElementRemovedFromPriorSelectedEventHandler ElementRemovedFromPriorSelected
+	// {
+	// 	add => Selected!.ElementRemovedFromPriorSelected += value;
+	// 	remove => Selected!.ElementRemovedFromPriorSelected -= value;
+	// }
+
 }

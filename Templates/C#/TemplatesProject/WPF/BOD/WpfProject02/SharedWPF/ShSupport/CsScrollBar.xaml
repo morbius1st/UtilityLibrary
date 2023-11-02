@@ -444,11 +444,11 @@
 									>
 								<Setter.Value>
 									<ScaleTransform CenterX="{Binding ElementName=PART_LineUpButton,
-																				Path=ActualWidth,
+																				Path=ActualWidth, Mode=OneWay,
 																				Converter={StaticResource DivideConverter},
 																				ConverterParameter=2.0}"
 											CenterY="{Binding ElementName=PART_LineUpButton,
-																				Path=ActualHeight}"
+																				Path=ActualHeight, Mode=OneWay}"
 											ScaleX="1.5"
 											ScaleY="1.5"
 											/>
@@ -481,7 +481,7 @@
 									>
 								<Setter.Value>
 									<ScaleTransform CenterX="{Binding ElementName=PART_LineDownButton,
-																				Path=ActualWidth,
+																				Path=ActualWidth, Mode=OneWay,
 																				Converter={StaticResource DivideConverter},
 																				ConverterParameter=2.0}"
 											ScaleX="1.5"
@@ -641,9 +641,9 @@
 											>
 										<Setter.Value>
 											<ScaleTransform CenterX="{Binding ElementName=PART_LineLeftButton,
-																						Path=ActualWidth}"
+																						Path=ActualWidth, Mode=OneWay}"
 													CenterY="{Binding ElementName=PART_LineLeftButton,
-																						Path=ActualHeight,
+																						Path=ActualHeight, Mode=OneWay,
 																						Converter={StaticResource DivideConverter},
 																						ConverterParameter=2.0}"
 													ScaleX="1.5"
@@ -679,7 +679,7 @@
 											>
 										<Setter.Value>
 											<ScaleTransform CenterY="{Binding ElementName=PART_LineRightButton,
-																						Path=ActualHeight,
+																						Path=ActualHeight, Mode=OneWay,
 																						Converter={StaticResource DivideConverter},
 																						ConverterParameter=2.0}"
 													ScaleX="1.5"

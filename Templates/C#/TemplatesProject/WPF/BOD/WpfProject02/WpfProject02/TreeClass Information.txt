@@ -235,7 +235,7 @@ NOTES:
 
 
 
-	// selection process
+// selection process
 
 // tristate
 
@@ -245,9 +245,6 @@ NOTES:
 
 tree tristate process (check box actually)
 unchecked -> checked -> mixed -> unchecked
-
-
-
 
 
 > checked, selected & all sub-nodes selected
@@ -624,9 +621,395 @@ alt
 
 
 
+treeclass processes
+unchecked -> mixed -> checked -> unchecked
+
+x = check - has a check mark == true
+m = mixed - has indetermanet mark (square) == null
+u = unchkd - has no mark (blank) == false
+- = unset - has no mark (blank) == false
+d = checkbox is dual state
+t = checkbox is three state
+
+
+start 
+nothing selected
+
+CASE I
+
+   1             |    2             |    3             |    4             |    5             |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+A t[u]-          | A t[m]-          | A t[u]-          | A t[m]-          | A t[m]-          |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+B   t[u]-        | B   t[u]-        | B   t[u]-        | B   t[u]-        | B   t[u]-        |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+C   t[u]-        | C   t[m]-        | C   t[u]-        | C   t[m]-        | C   t[m]-        |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+D      t[u]-     | D      t[u]-     | D      t[u]-     | D      t[u]-     | D      t[u]-     |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+E      t[u]-     | E x    t[x]-     | E d    t[u]-     | E x    t[x]-     | E      t[m]-     |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+F        t[u]-   | F        t[x]-   | F        t[u]-   | F        t[x]-   | F d      t[u]-   |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+G        t[u]-   | G        t[x]-   | G        t[u]-   | G        t[x]-   | G        t[x]-   |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+H          t[u]- | H          t[x]- | H          t[u]- | H          t[x]- | H          t[x]- |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+I          t[u]- | I          t[x]- | I          t[u]- | I          t[x]- | I          t[x]- |
+  ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+
+  unchecked -> mixed -> checked -> unchecked
+
+  notes:
+  all check boxes are tristate
+  however, for the box checked:  u -> x when all children are deselected
+
+  notes:
+	when unchecked is selected
+		when all children are unchecked
+	(column 2) (column 4)
+		children to checked
+		parents to checked or mixed as applies
+
+	when checked is deselcted
+	(column 3)
+		children to unchecked
+		parents to unchecked or mixed as applies
+
+	when selected is deselected
+		when no children
+	(column 5)
+		deselect
+		parents to unchecked or mixed as applies
+		
+
+
+CASE II
+
+    4             |    5             |
+   ---------------|   ---------------|
+ A t[m]-          | A t[m]-          |
+   ---------------|   ---------------|
+ B   t[u]-        | B   t[u]-        |
+   ---------------|   ---------------|
+ C   t[m]-        | C   t[m]-        |
+   ---------------|   ---------------|
+ D      t[u]-     | D x    t[x]-     |
+   ---------------|   ---------------|
+ E x    t[x]-     | E      t[x]-     |
+   ---------------|   ---------------|
+ F        t[x]-   | F        t[x]-   |
+   ---------------|   ---------------|
+ G        t[x]-   | G        t[x]-   |
+   ---------------|   ---------------|
+ H          t[x]- | H          t[x]- |
+   ---------------|   ---------------|
+ I          t[x]- | I          t[x]- |
+   ---------------|   ---------------|
+ 
+ notes:
+	when unchecked is checked
+		when no children
+	(column 5)
+		select
+		parents to checked or mixed as applies
+
+
+CASE III
+ 
+    4             |    5             |    6             |    7             |    8             |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ A t[m]-          | A t[m]-          | A t[m]-          | A t[m]-          | A t[m]-          |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ B   t[x]-        | B   t[x]-        | B   t[x]-        | B   t[x]-        | B   t[x]-        |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ C   t[m]-        | C   t[m]-        | C   t[m]-        | C   t[u]-        | C   t[m]-        |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ D      t[u]-     | D      t[u]-     | D      t[u]-     | D      t[u]-     | D      t[u]-     |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ E x    t[x]-     | E      t[m]-     | E x    t[x]m     | E d    t[u]m     | E x    t[m]-     |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ F        t[x]-   | F        t[x]-   | F        t[x]x   | F        t[u]x   | F        t[x]-   |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ G        t[x]-   | G        t[m]-   | G        t[x]m   | G        t[u]m   | G        t[m]-   |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ H          t[x]- | H d        t[u]- | H          t[x]u | H          t[u]u | H          t[u]- |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+ I          t[x]- | I          t[x]- | I          t[x]x | I          t[u]x | I          t[x]- |
+   ---------------|   ---------------|   ---------------|   ---------------|   ---------------|
+
+   notes: when mixed checked
+		when prior checked != null
+		when parent prior checked == null
+		(column 6)
+			save checked state to prior
+			select all children
+			set parent to mixed orchecked (etc.)
+
+		when selected is deselected
+			when prior checked is not null and
+			when parent prior checked is null
+		(column 7)
+			children to unchecked
+			parents to unchecked or mixed unchecked as applies
+
+		when unchecked is selected
+			when prior checked != null
+			when parent prior checked == null
+		(column 8)
+			current restore prior checked
+			children restore prior checked
+			parents to checked or mixed as applies
+
+CASE IV
+ 
+    4             |    5             |    6             |    7             |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ A t[m]-          | A t[m]-          | A t[m]-          | A t[m]-          |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ B   t[u]-        | B   t[u]-        | B   t[u]-        | B   t[u]-        |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ C   t[m]-        | C   t[m]-        | C   t[m]-        | C   t[m]-        |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ D      t[u]-     | D      t[u]-     | D      t[u]-     | D      t[u]-     |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ E x    t[x]-     | E      t[m]-     | E x    t[x]m     | E      t[m]-     |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ F        t[x]-   | F        t[x]-   | F        t[x]x   | F        t[x]-   |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ G        t[x]-   | G        t[m]-   | G        t[x]m   | G d      t[u]-   |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ H          t[x]- | H d        t[u]- | H          t[x]u | H          t[u]- |
+   ---------------|   ---------------|   ---------------|   ---------------|
+ I          t[x]- | I          t[x]- | I          t[x]x | I          t[u]- |
+   ---------------|   ---------------|   ---------------|   ---------------|
+
+
+notes: when checked is dechecked
+		when parent prior checked != null
+		when prior checked != null
+	(column 7)
+		uncheck children
+		set parent to mixed or unchecked (etc.)
+		remove all parent prior checked
+		remove all children prior checked
+
+unchecked -> mixed -> checked -> unchecked
+false     -> null  -> true    -> false
+
+unchecked selected, becomes selected
+
+	A)  (A)(J)
+		(CASE I: column 2 & 4)
+		* all children are unchecked
+		> current: check
+		> children to checked
+
+	B)  (H)
+		(CASE II: column 5)
+		* no children
+		> current: check
+		> skip children
+
+	C)  (E)
+		(CASE III: column 8)
+		* when prior checked != null
+		* n/a| when parent prior checked == null
+		> current: restore to prior
+		> children: restore to prior
+		> prior checked to null
+	
+	Parents: to checked or mixed as applies
+
+unchecked selected
+
+checked selected, becomes unselected
+
+	A)  (K)
+		(CASE I: column 3)
+		> current: uncheck
+		> children: uncheck
+
+	B)  (I)
+		(CASE I: column 5)
+		* no children
+		> current: uncheck
+		> skip children
+
+	C)  (C)
+		(CASE III: column 7)
+		* when prior checked != null
+		* when parent prior checked == null
+		> current: uncheck
+		> children: uncheck
+
+	D)  (G)
+		(CASE IV: column 7)
+		* when prior checked != null
+		* when parent prior checked != null
+		> current: uncheck
+		> children: uncheck
+		> remove all parent prior checked
+		> remove all children prior checked
+
+	parents to unchecked or mixed unchecked as applies
+
+checked selected
+
+mixed selected, becomes checked
+
+A)  (F)
+	(CASE III: column 6)
+	* when parent prior checked == null
+	> current: check / save current to prior checked
+	> children: check / save current to prior checked
+
+B) (does not exist)
+	* when parent prior checked != null
 
 
 
+final test matrix
+note:
+for mixed:
+1. when a node u -> m == not selected / remove from both
+2. when a node x -> m == deselected
+3. when a node m -> x == selected
+
+Alt:
+For current or child, 
+1. u->m select
+		u->m (C)-E | x->m (F)-E
+2. x->m deselect
+		x->m (H)-E
+3. m->x select
+		m->x (I) E
+4. m->u deselect
+		m->u (H)-G
+
+
+                   s p |                   s p |                   s p |                   s p |                   s p |                   s p |
+                   e r |                   e r |                   e r |                   e r |                   e r |                   e r |           
+  (A)*             l i |  (H)*             l i | (B)(F)*           l i | (C)*              l i | (E)*              l i | (F)*              l i |
+  (CASE I:         c o |  (CASE I:         c o | (CASE III:        c o | (CASE III:        c o | (CASE III:        c o | (CASE III:        c o |
+    column 2 & 4)  t r |    column 5)      t r |    column 6)      t r |    column 7)      t r |    column 8)      t r |    column 6)      t r |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ A t[m]-           A   | A t[m]-           A   | A t[m]-           A   | A t[m]-           A   | A t[m]-           A   | A t[m]-           A   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ C   t[m]-         C   | C   t[m]-         C   | C   t[m]-         C   | C   t[u]-           C | C   t[m]-         C   | C   t[m]-         C   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ D      t[u]-          | D      t[u]-          | D      t[u]-          | D      t[u]-          | D      t[u]-          | D      t[u]-          |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ E x    t[x]-      E   | E      t[m]-        E | E x    t[x]m      E   | E d    t[u]m        E | E x    t[m]-      E   | E x    t[x]m      E   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ F        t[x]-    F   | F        t[x]-    F   | F        t[x]x    F   | F        t[u]x      F | F        t[x]-    F   | F        t[x]x    F   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ G        t[x]-    G   | G        t[m]-      G | G        t[x]m    G   | G        t[u]m      G | G        t[m]-      G | G        t[x]m    G   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ H          t[x]-  H   | H d        t[u]-    H | H          t[x]u  H   | H          t[u]u    H | H          t[u]-    H | H          t[x]u  H   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ I          t[x]-  I   | I          t[x]-  I   | I          t[x]x  I   | I          t[u]x    I | I          t[x]-  I   | I          t[x]x  I   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+
+				   s p |				   s p |				   s p |				   s p |				   s p |
+				   e r |				   e r |				   e r |				   e r | 				   e r |
+  (F)*             l i |  (G)*             l i |  (H)*             l i |  (I)*             l i |  (J)*			   l i |
+  (CASE III:       c o |  (CASE IV:        c o |  (CASE II:        c o |  (CASE I:         c o |  (CASE I:         c o |
+    column 6)      t r |    column 7)      t r |    column 5)      t r |    column 5)      t r |    column 2 & 4)  t r |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ A t[m]-           A   | A t[m]-           A   | A t[m]-           A   | A t[m]-           A   | A t[m]-           A   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ C   t[m]-         C   | C   t[m]-         C   | C   t[m]-         C   | C   t[m]-         C   | C   t[m]-         C   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ D      t[u]-          | D      t[u]-          | D      t[u]-          | D      t[u]-          | D      t[u]-          |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ E x    t[x]m      E   | E      t[m]-        E | E      t[m]-        E | E      t[m]-        E | E      t[x]-      E   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ F        t[x]x    F   | F        t[x]-    F   | F        t[x]-    F   | F        t[x]-    F   | F        t[x]-    F   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ G        t[x]m    G   | G d      t[u]-      G | G        t[m]-    G   | G        t[u]-      G | G x      t[x]-    G   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ H          t[x]u  H   | H          t[u]-    H | H  x       t[x]-  H   | H  d       t[u]-    H | H          t[x]-  H   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ I          t[x]x  I   | I          t[u]-    I | I          t[u]-    I | I          t[u]-    I | I          t[x]-  I   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+
+				   s p |				   s p |				   s p |				   s p |				   s p |
+				   e r |				   e r |				   e r |				   e r |				   e r |
+  (J)*             l i |  (K)*			   l i |  (L)*			   l i |  (M)*			   l i |  (M)*			   l i |
+  (CASE I:         c o |  (CASE I:         c o |                   c o |                   c o |                   c o |
+    column 2 & 4)  t r |    column 3)      t r |                   t r |                   t r |                   t r |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ A t[m]-           A   | A t[m]-           A   | A t[m]-           A   | A t[m]-           A   | A t[m]-           A   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   | B   t[x]-         B   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ C   t[m]-         C   | C   t[m]-         C   | C x t[x]m         C   | C x t[u]m           C | C x t[m]-         C   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ D      t[u]-          | D      t[u]-          | D      t[x]u      D   | D      t[u]u        D | D      t[u]-        D |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ E      t[x]-      E   | E      t[m]-        E | E      t[x]m      E   | E      t[u]m        E | E      t[m]-      E   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ F        t[x]-    F   | F        t[x]-    F   | F        t[x]x    F   | F        t[u]x      F | F        t[x]-    F   |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ G x      t[x]-    G   | G  d     t[u]-      G | G        t[x]u    G   | G        t[u]u      G | G        t[u]-      G |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ H          t[x]-  H   | H          t[u]-    H | H          t[x]u  H   | H          t[u]u    H | H          t[u]-    H |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+ I          t[x]-  I   | I          t[u]-    I | I          t[x]u  I   | I          t[u]u    I | I          t[u]-    I |
+   ---------------     |   ---------------     |   ---------------     |   ---------------     |   ---------------     |
+
+
+******* pseudo process ****************************************
+
+@ ATreeSelector
+select(node)
+
+@ TreeSelector: select(node)
+
+if (parent prior checked != null)
+	current: restore prior checked & set prior checked to null
+	children: restore prior checked & set prior checked to null
+else
+	current: check
+	if (not no children)
+		children: check
+
+Parents: to checked or mixed as applies
+
+
+@ ATreeSelector
+deselect(node)
+
+@ TreeSelector: deselect(node)
+
+current: uncheck
+if (has children) uncheck children
+
+if (prior checked != null)
+	children: uncheck
+	if (parent prior checked != null)
+		current: remove prior checked
+		parents: remove all prior checked
+		if has children: remove prior checked
+
+parents to unchecked or mixed unchecked as applies
+
+
+@ ATreeSelector
+mixed(node)
+
+@ TreeSelector: mixed(node)		
+
+	current: save state to prior checked / select
+	children: save state to prior checked / select
+			
+
+******************************************************************
 
 
 
