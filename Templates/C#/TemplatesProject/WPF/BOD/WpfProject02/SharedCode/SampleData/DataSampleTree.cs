@@ -115,7 +115,7 @@ public class DataSampleTree : INotifyPropertyChanged
 	//
 	// 		return Tree.SelectTreeAllowed == SelectTreeAllowed.YES;
 	//
-	// 		bool result = Tree.SelectFirstClass == NODE_MULTI || Tree.SelectFirstClass == TRI_STATE;
+	// 		bool result = Tree.SelectFirstClass == NODE_MULTI || Tree.SelectFirstClass == TRI_STATEINVERTED;
 	// 		return result;
 	// 	}
 	// }
@@ -174,6 +174,29 @@ public class DataSampleTree : INotifyPropertyChanged
 	}
 
 	public bool UseThreeState => tree?.IsTriState ?? false;
+
+	public string TriStateType
+	{
+		get
+		{
+			if (tree?.Selector.SelectionMode == TRISTATEINVERTED ||
+				tree?.Selector.SelectionMode == TRISTATEINVERTEDPLUS)
+			{
+				return "use inverted tri-state";
+			}
+
+			if (tree?.Selector.SelectionMode == TRISTATE ||
+				tree?.Selector.SelectionMode == TRISTATEPLUS)
+			{
+				return "use regular tri-state";
+			}
+
+			return "using not tri-state";
+		}
+	}
+
+	public bool UseTriStateInverted => tree?.Selector.SelectionMode == TRISTATEINVERTED ||
+		tree?.Selector.SelectionMode == TRISTATEINVERTEDPLUS;
 
 	public string SelectModeDesc
 	{
@@ -1421,6 +1444,8 @@ public class DataSampleTree : INotifyPropertyChanged
 		OnPropertyChanged(nameof(TreeName));
 
 		OnPropertyChanged(nameof(UseThreeState));
+		OnPropertyChanged(nameof(UseTriStateInverted));
+		OnPropertyChanged(nameof(TriStateType));
 		OnPropertyChanged(nameof(SelectModeDesc));
 		OnPropertyChanged(nameof(SelectModeName));
 		OnPropertyChanged(nameof(SelectTreeAllowed));
@@ -1549,6 +1574,11 @@ public class DataSampleTree : INotifyPropertyChanged
 		case TRISTATE:
 			{
 				selector = new TreeSelectorTriState(new SelectedListTriState());
+				break;
+			}
+		case TRISTATEINVERTED:
+			{
+				selector = new TreeSelectorTriStateInverted(new SelectedListTriStateInverted());
 				break;
 			}
 		}

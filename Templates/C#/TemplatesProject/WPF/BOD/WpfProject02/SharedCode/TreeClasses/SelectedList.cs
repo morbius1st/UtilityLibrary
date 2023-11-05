@@ -15,7 +15,7 @@ namespace SharedCode.TreeClasses;
 /// selection cycle is
 /// not selected -> selected -> mixed -> not selected
 /// </summary>
-public class SelectedListTriState : ASelectedList
+public class SelectedListTriState: ASelectedList
 {
 	// double checked - working
 
@@ -49,6 +49,53 @@ public class SelectedListTriState : ASelectedList
 	}
 
 	public override string Name => "tri-state select list";
+
+}
+
+
+/// <summary>
+/// select items using a tri-state system. that is
+/// the node can be selected, deselected, or mixed
+/// mixed means that some, but not all, of its children
+/// are selected.  the tri state system also
+/// cycles selected state of children and parents
+/// selection cycle is
+/// not selected -> selected -> mixed -> not selected
+/// </summary>
+public class SelectedListTriStateInverted: ASelectedList
+{
+	// double checked - working
+
+	public override bool Select(ITreeNode? element)
+	{
+		if (element == null
+			|| element.IamRoot) return false;
+
+		removeElementFromPriorSelected(element);
+
+		if (selected.Count == 0) ClearPriorSelectedList();
+
+		bool result = addElementToSelected(element);
+
+		updateSelectedProperties();
+
+		return result;
+	}
+
+	public override bool Deselect(ITreeNode element)
+	{
+		if (element == null || element.IamRoot) return false;
+
+		removeElementFromSelected(element);
+
+		bool result = addElementToPriorSelected(element);
+
+		updatePriorSelectedProperties();
+
+		return result;
+	}
+
+	public override string Name => "tri-state inverted select list";
 
 }
 

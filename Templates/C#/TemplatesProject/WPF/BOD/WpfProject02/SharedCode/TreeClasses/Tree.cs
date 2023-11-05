@@ -19,7 +19,7 @@ using static SharedCode.TreeClasses.Selection;
 
 
 /*
- * this is a (can) be a tri state tree (set IsTriState to True)
+ * this is a (can) be a tri state tree (set IsTriStateInverted to True)
  *
  * (added = property / method provided but not integrated throughout)
  * (done = Added & integrated / complete)
@@ -46,7 +46,7 @@ using static SharedCode.TreeClasses.Selection;
  * methods / properties needed
  * * tree operations
  *		ADDED	MaxDepth [Max node depth]
- *		ADDED	isTriState
+ *		ADDED	isTriStateInverted
  *		ADDED	isSelected
  *		ADDED	isExpanded
  *			done		Clear (new)
@@ -93,7 +93,7 @@ using static SharedCode.TreeClasses.Selection;
  *			done		isSelected
  *			done		isChoosen
  *			done		isExpanded
- * NONE		isTriState
+ * NONE		isTriStateInverted
  * NONE		selection communication
  * NONE		expansion communication
  *
@@ -207,7 +207,7 @@ namespace SharedCode.TreeClasses
 		private TreeLeaf<TNd, TLd>? foundLeaf;
 
 
-		// private bool isTriState;
+		// private bool isTriStateInverted;
 		private bool requireUniqueKeys;
 
 		private string? leafToFind = null;
@@ -365,6 +365,8 @@ namespace SharedCode.TreeClasses
 
 
 		public bool IsTriState => selector!.IsTriState;
+		public bool IsTriStateInverted => selector!.IsTriStateInverted;
+		
 		// enable-disable
 
 		public NodeEnableDisable NodeEnableDisable
@@ -460,7 +462,6 @@ namespace SharedCode.TreeClasses
 
 	#endregion
 
-
 	#region tree methods
 
 		// clear the whole node (and leaves) tree
@@ -485,7 +486,6 @@ namespace SharedCode.TreeClasses
 		}
 
 	#endregion
-
 
 	#region node methods
 
@@ -1366,7 +1366,7 @@ public void SelectNodeTree()
 	{
 		SelectNodeAllBranches(rootNode);
 	}
-	else if (SelectFirstClass == TRI_STATE)
+	else if (SelectFirstClass == TRI_STATEINVERTED)
 	{
 		SelectNodeAllBranches(rootNode);
 	}
@@ -1386,7 +1386,7 @@ public void DeSelectNodeTree()
 	// {
 	// 	DeSelectNodeAllBranches(rootNode);
 	// }
-	// else if (SelectFirstClass == TRI_STATE)
+	// else if (SelectFirstClass == TRI_STATEINVERTED)
 	// {
 	// 	DeSelectNodeAllBranches(rootNode);
 	// }
@@ -1477,7 +1477,7 @@ public void UpdateDeSelected(TreeNode<TNd, TLd> node)
 	OnPropUpdateSelectedNodes();
 }
 
-public void UpdateSelectionTriState(TreeNode<TNd, TLd>? node)
+public void UpdateSelectionTriStateInvertedTreeNode<TNd, TLd>? node)
 {
 	// Examples.M.WriteLine("\n+501 00 doing tri-state");
 	// Debug.WriteLine($"\n+501 00 doing tri-state| {node}");

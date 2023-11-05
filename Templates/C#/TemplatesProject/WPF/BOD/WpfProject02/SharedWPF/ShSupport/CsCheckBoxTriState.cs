@@ -16,7 +16,7 @@ using System.Windows.Input;
 
 namespace SharedWPF.ShSupport
 {
-	public class CsCheckBoxTriState : CheckBox
+	public class CsCheckBoxTriState: CheckBox
 	{
 		
 		public bool InvertCheckStateOrder

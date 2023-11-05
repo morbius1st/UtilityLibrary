@@ -65,6 +65,11 @@ public abstract class ATreeSelector : INotifyPropertyChanged
 	public abstract Selection.SelectTreeAllowed CanSelectTree { get; }
 
 	public bool IsTriState => SelectionFirstClass == Selection.SelectFirstClass.TRI_STATE;
+
+	public bool IsTriStateInverted => 
+		SelectionMode == Selection.SelectMode.TRISTATEINVERTED ||
+		SelectionMode == Selection.SelectMode.TRISTATEINVERTEDPLUS ;
+
 	public bool MaySelectTree => CanSelectTree == Selection.SelectTreeAllowed.YES;
 	public bool WillSelectLeaves => SelectionSecondClass == Selection.SelectSecondClass.NODES_AND_LEAVES;
 
@@ -104,6 +109,10 @@ public abstract class ATreeSelector : INotifyPropertyChanged
 		OnPropertyChanged(nameof(SelectedCount));
 	}
 
+	protected virtual bool? AdjustValue( ITreeNode? node, bool? newValue)
+	{
+		return newValue;
+	}
 
 	protected abstract bool select(ITreeNode? node);
 	protected abstract bool selectEx(ITreeNode? node);
@@ -157,15 +166,18 @@ public abstract class ATreeSelector : INotifyPropertyChanged
 
 	// checkbox-tri-state / inverted
 	// deselected -> mixed -> selected -> deselected
-	public bool SelectDeselect(ITreeNode? node, bool? value)
+	public bool SelectDeselect( ITreeNode? node, bool? newValue)
 	{
-		M.Write($"apply {(value.HasValue ? value : "null")} to {node.NodeKey} | ");
+		bool? adjValue = AdjustValue(node, newValue);
+
+		M.WriteLine($"apply {(adjValue.HasValue ? adjValue : "null")} to {node.NodeKey} | "
+			+ $"original value| {(newValue.HasValue ? newValue : "null")}");
 
 		// Debug.WriteLine($"\nstart| applying {(value.HasValue ? value : "null")} to {node.NodeKey}");
 
 		if (node == null) return false;
 
-		if (value.HasValue && value==true)
+		if (adjValue.HasValue && adjValue==true)
 		{
 			M.Write("got select | ");
 			// get here when unchecked is selected
@@ -173,7 +185,7 @@ public abstract class ATreeSelector : INotifyPropertyChanged
 			// update properties at the end
 			
 		}
-		else if (value.HasValue && value==false)
+		else if (adjValue.HasValue && adjValue==false)
 		{
 			M.Write("got deselect | ");
 			// get here when checked is selected
@@ -195,11 +207,6 @@ public abstract class ATreeSelector : INotifyPropertyChanged
 
 		return true;
 	}
-
-
-
-
-
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 

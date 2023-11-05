@@ -216,11 +216,17 @@ namespace SharedCode.TreeClasses
 		public bool? IsChecked
 		{
 			get => Tree<TNd, TLd>.boolList[(int) state];
+			// get => isChecked;
 			set
 			{
-				if (!tree.IsTriState)
+				// Debug.WriteLine($"at ischecked| {value}");
+
+				tree.Selector.SelectDeselect(this, value);
+
+				/*
+				if (!tree.IsTriStateInverted)
 				{
-					tree.Selector.SelectDeselect(this, value);
+					tree.Selector.SelectDeselect(this, isChecked, value);
 				}
 				else
 				{
@@ -230,7 +236,7 @@ namespace SharedCode.TreeClasses
 					// treat as a dual state checkbox
 					if (!isChecked.HasValue)
 					{
-						tree.Selector.SelectDeselect(this, null);
+						tree.Selector.SelectDeselect(this, isChecked, null);
 					}
 					else if (allChildrenNodesDeselected()
 							&& !value.HasValue)
@@ -238,16 +244,16 @@ namespace SharedCode.TreeClasses
 						// no children & flipped to mixed - 
 						// this means that it was deselected
 						// change this to checked
-						tree.Selector.SelectDeselect(this, true);
+						tree.Selector.SelectDeselect(this, isChecked, true);
 					}
 					else
 					{
 						// pass along as is
-						tree.Selector.SelectDeselect(this, value);
+						tree.Selector.SelectDeselect(this, isChecked, value);
 					}
 				}
+				*/
 
-				// state = Tree<TNd, TLd>.StateFromBool(value);
 			}
 		}
 
@@ -297,9 +303,15 @@ namespace SharedCode.TreeClasses
 
 		public bool IsTriState
 		{
-			get => isTriState;
+			get
+			{
+				// Debug.WriteLine($"get| {nodeKey} istristate?| {isTriState}");
+				return isTriState;
+			}
 			set
 			{
+				// Debug.WriteLine($"set| {nodeKey} istristate?| {value}");
+
 				isTriState = value;
 				OnPropertyChanged();
 			}
@@ -380,6 +392,13 @@ namespace SharedCode.TreeClasses
 			State = DESELECTED;
 			return true;
 		}
+
+		public void SetMixed()
+		{
+			State = MIXED;
+		}
+
+
 
 		public void SavePriorChecked()
 		{
@@ -479,10 +498,6 @@ namespace SharedCode.TreeClasses
 
 		*/
 
-		public void SetMixed()
-		{
-			State = MIXED;
-		}
 
 		/// <summary>
 		/// determine if all children nodes are selected<br/>
@@ -735,7 +750,7 @@ namespace SharedCode.TreeClasses
 		{
 			Nodes.Add(key, node);
 
-			updateTriState();
+			node.updateTriState();
 
 			OnPropertyChanged(nameof(Nodes));
 		}
@@ -744,7 +759,7 @@ namespace SharedCode.TreeClasses
 		{
 			if (!Nodes.TryAdd(key, node)) return false;
 
-			updateTriState();
+			node.updateTriState();
 
 			OnPropertyChanged(nameof(Nodes));
 
@@ -779,7 +794,7 @@ namespace SharedCode.TreeClasses
 		{
 			if (!Nodes?.Remove(nodeKey) ?? false) return false;
 
-			updateTriState();
+			// updateTriState();
 
 			OnPropertyChanged(nameof(Nodes));
 
@@ -791,7 +806,7 @@ namespace SharedCode.TreeClasses
 			if (!ContainsNode(nodeKey)) return false;
 			if (!Nodes.Remove(nodeKey)) return false;
 
-			updateTriState();
+			// updateTriState();
 
 			return true;
 		}
@@ -904,8 +919,13 @@ namespace SharedCode.TreeClasses
 
 		private void updateTriState()
 		{
-			IsTriState = (Nodes != null &&
-				Nodes.Count > 0 && Tree.IsTriState);
+			// IsTriState = (Nodes != null &&
+			// 	Nodes.Count > 0 && Tree.IsTriState);
+
+			IsTriState = Tree.IsTriState;
+
+			// Debug.WriteLine($"update| {nodeKey} istristate?| {isTriState}");
+
 		}
 
 	#endregion

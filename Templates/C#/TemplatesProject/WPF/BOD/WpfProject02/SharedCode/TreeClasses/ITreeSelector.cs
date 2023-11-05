@@ -92,25 +92,29 @@ namespace SharedCode.TreeClasses
 		// order matters - 
 		public enum SelectMode
 		{
-			UNDEFINED			= 0,
+			UNDEFINED				= 0,
 
-			INDIVIDUAL			= SelectFirstClass.NODE_ONLY + 1, // node only, one at a time
-			INDIVIDUALPLUS		= SelectFirstClass.NODE_ONLY + 2, // node only, one per time, + select all leaves
+			INDIVIDUAL				= SelectFirstClass.NODE_ONLY + 1, // node only, one at a time
+			INDIVIDUALPLUS			= SelectFirstClass.NODE_ONLY + 2, // node only, one per time, + select all leaves
 
-			EXTENDED			= SelectFirstClass.NODE_EXTENDED + 1, // select node + all child nodes
-			EXTENDEDPLUS		= SelectFirstClass.NODE_EXTENDED + 2, // select node + all child nodes + select all leaves
+			EXTENDED				= SelectFirstClass.NODE_EXTENDED + 1, // select node + all child nodes
+			EXTENDEDPLUS			= SelectFirstClass.NODE_EXTENDED + 2, // select node + all child nodes + select all leaves
 
-			MULTISELECTNODE		= SelectFirstClass.NODE_MULTI + 1, // node only, many individual
-			MULTISELECTNODEPLUS	= SelectFirstClass.NODE_MULTI + 2, // node only, many individual + select all leaves
+			MULTISELECTNODE			= SelectFirstClass.NODE_MULTI + 1, // node only, many individual
+			MULTISELECTNODEPLUS		= SelectFirstClass.NODE_MULTI + 2, // node only, many individual + select all leaves
 
-			MULTISELECTNODEEX	= SelectFirstClass.NODE_MULTI_EX + 1,   // node only, many individual - ex, selecting a branch, selects the whole branch
-			MULTISELECTNODEEXPLUS = SelectFirstClass.NODE_MULTI_EX + 2, // node only, many individual - ex, selecting a branch, selects the whole branch + select leaves
+			MULTISELECTNODEEX		= SelectFirstClass.NODE_MULTI_EX + 1,   // node only, many individual - ex, selecting a branch, selects the whole branch
+			MULTISELECTNODEEXPLUS	= SelectFirstClass.NODE_MULTI_EX + 2, // node only, many individual - ex, selecting a branch, selects the whole branch + select leaves
 
 
-			MULTISELECTLEAF		= SelectFirstClass.LEAF_MULTI + 1, // leaves only, many individual, cannot select nodes
+			MULTISELECTLEAF			= SelectFirstClass.LEAF_MULTI + 1, // leaves only, many individual, cannot select nodes
 
-			TRISTATE			= SelectFirstClass.TRI_STATE + 1, // tri state select none, node, node + children
-			TRISTATEPLUS		= SelectFirstClass.TRI_STATE + 2, // tri state select none, node, node + children
+			TRISTATE				= SelectFirstClass.TRI_STATE + 1, // tri state select none, node, node + children
+			TRISTATEPLUS			= SelectFirstClass.TRI_STATE + 2, // tri state select none, node, node + children
+
+			TRISTATEINVERTED		= SelectFirstClass.TRI_STATE + 11, // tri state select none, node, node + children
+			TRISTATEINVERTEDPLUS	= SelectFirstClass.TRI_STATE + 12, // tri state select none, node, node + children
+
 		}
 
 		public struct SelModeData
@@ -160,6 +164,15 @@ namespace SharedCode.TreeClasses
 				{
 					SelectMode.TRISTATEPLUS           ,
 					new SelModeData("TriStatePlus"               , SelectFirstClass.TRI_STATE    , SelectSecondClass.NODES_AND_LEAVES, SelectTreeAllowed.NO)
+				},
+
+				{
+					SelectMode.TRISTATEINVERTED               ,
+					new SelModeData("TriStateInverted"           , SelectFirstClass.TRI_STATE    , SelectSecondClass.NODES_ONLY      , SelectTreeAllowed.YES)
+				},
+				{
+					SelectMode.TRISTATEINVERTEDPLUS           ,
+					new SelModeData("TriStateInvertedPlus"        , SelectFirstClass.TRI_STATE    , SelectSecondClass.NODES_AND_LEAVES, SelectTreeAllowed.NO)
 				},
 				{
 					SelectMode.MULTISELECTNODE        ,

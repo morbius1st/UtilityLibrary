@@ -522,7 +522,7 @@
 											Foreground="White"
 											RenderTransformOrigin="0.0,1.0"
 											>
-										<Run>IsTriState</Run>
+										<Run>IsTriStateInverted</Run>
 										<TextBlock.RenderTransform>
 											<RotateTransform Angle="-45" />
 										</TextBlock.RenderTransform>
@@ -699,7 +699,7 @@
 									Width="15"
 									Height="15"
 									VerticalAlignment="Top"
-									IsThreeState="{Binding IsTriState,
+									IsThreeState="{Binding IsTriStateInverted,
 																				 Mode=OneWay}"
 									IsChecked="{Binding IsChecked,
 																			FallbackValue=false}"
@@ -711,7 +711,7 @@
 									Width="15"
 									Height="15"
 									VerticalAlignment="Top"
-									IsChecked="{Binding IsTriState,
+									IsChecked="{Binding IsTriStateInverted,
 																			FallbackValue=false}"
 									/>
 
@@ -861,7 +861,10 @@
 																			FallbackValue=false}"
 									IsThreeState="{Binding IsTriState,
 																				 Mode=OneWay}"
-									InvertCheckStateOrder="True"
+									InvertCheckStateOrder="{Binding ElementName=ExWin,
+																									Path=Data.UseTriStateInverted,
+																									TargetNullValue=false,
+																									Mode=OneWay}"
 									/>
 
 							<CheckBox Margin="0,4,10,0"
@@ -1815,17 +1818,15 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<ListBox 
-					x:Name="TestList"
-
-					Width="100"
+			<ListBox x:Name="TestList"
 					Grid.Column="0"
+					Width="100"
 					DataContext="{Binding ObservTree.Selector.Selected,
 																ElementName=ExWin}"
 					Background="#222222"
 					Foreground="White"
-					SelectedValuePath="NodeKey"
 					d:ItemsSource="{d:SampleData}"
+					SelectedValuePath="NodeKey"
 					ItemsSource="{Binding Selected,
 																Mode=OneWay}"
 					>
@@ -1844,30 +1845,29 @@
 
 			</ListBox>
 
-			
 
-			<ListBox
-					Grid.Column="1"
+
+			<ListBox Grid.Column="1"
 					Width="100"
+					DataContext="{Binding ObservTree.Selector.Selected,
+																TargetNullValue='null',
+																ElementName=ExWin}"
 					Background="#222222"
 					d:ItemsSource="{d:SampleData}"
-					DataContext="{Binding ObservTree.Selector.Selected,
-					TargetNullValue='null',
-																ElementName=ExWin}"
-					ItemsSource="{Binding PriorSelected, Mode=OneWay}"
+					ItemsSource="{Binding PriorSelected,
+																Mode=OneWay}"
 					>
 				<ListBox.ItemTemplate>
-					<DataTemplate
-							DataType="{x:Type treeClasses:ITreeNode}"
-					>
-						<TextBlock
-								Text="{Binding NodeKey, Mode=OneWay,
-								TargetNullValue='null', FallbackValue='none'}"
-								Foreground="White"
-						/>
+					<DataTemplate DataType="{x:Type treeClasses:ITreeNode}">
+						<TextBlock Foreground="White"
+								Text="{Binding NodeKey,
+															 Mode=OneWay,
+															 TargetNullValue='null',
+															 FallbackValue='none'}"
+								/>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
-		</ListBox>
+			</ListBox>
 
 
 
@@ -2014,7 +2014,7 @@
 
 			</Grid>
 
-			 -->
+			-->
 
 
 		</Grid>
@@ -2042,12 +2042,15 @@
 				<StackPanel Orientation="Horizontal">
 
 					<cs:CsCheckBoxTriState x:Name="CkbxTriState"
-							Content="TriState CkBx Test"
+							Content="TriStateInverted CkBx Test"
 							Foreground="White"
 							IsThreeState="True"
 							IsEnabled="True"
 							IsChecked="{Binding IsSelected}"
-							InvertCheckStateOrder="True"
+							InvertCheckStateOrder="{Binding ElementName=ExWin,
+																									Path=Data.UseTriStateInverted,
+																									TargetNullValue=false,
+																									Mode=OneWay}"
 							/>
 
 					<TextBlock Margin="10,0,0,0"
@@ -2472,14 +2475,11 @@
 														 TargetNullValue=null}"
 							/>
 
-
-
-
 					<TextBlock Grid.Column="2"
 							Grid.Row="10"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="is tri state"
+							Text="tri state type"
 							/>
 
 
@@ -2487,13 +2487,11 @@
 							Grid.Row="10"
 							Margin="5,2,0,2"
 							Foreground="White"
-							Text="{Binding Data.UseThreeState,
+							Text="{Binding Data.TriStateType,
 														 FallbackValue=not set,
 														 Mode=OneWay,
 														 TargetNullValue=null}"
 							/>
-
-
 
 					<TextBlock Grid.Column="0"
 							Grid.Row="11"

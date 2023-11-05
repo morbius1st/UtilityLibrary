@@ -32,7 +32,7 @@ namespace SharedCode.TreeClasses
 	/// unchecked -> mixed -> checked -> unchecked<br/>
 	/// must use the checkbox: CsCheckBoxTriState
 	/// </summary>
-	public class TreeSelectorTriState : ATreeSelector
+	public class TreeSelectorTriStateInverted : ATreeSelector
 	{
 	#region private fields
 
@@ -42,7 +42,7 @@ namespace SharedCode.TreeClasses
 
 	#region ctor
 
-		public TreeSelectorTriState(SelectedListTriState selected) : base(selected)
+		public TreeSelectorTriStateInverted(SelectedListTriStateInverted selected) : base(selected)
 		{
 			selList = selected;
 
@@ -50,7 +50,7 @@ namespace SharedCode.TreeClasses
 			// OnPropertyChanged(nameof(Selected));
 			// OnPropertyChanged(nameof(selList));
 
-			M.WriteLine("\nTriState Selection: Can select multiple nodes / Selecting a branch node");
+			M.WriteLine("\nTriState inverted Selection: Can select multiple nodes / Selecting a branch node");
 			M.WriteLine("selects/deselects the branch / remembers last selection states\n");
 		}
 
@@ -58,15 +58,17 @@ namespace SharedCode.TreeClasses
 
 	#region public properties
 
-		public override string Name => "TriState Selector";
+		public override string Name => "TriStateInverted Selector";
 
 		// fixed settings for this selector
-		public override SelectMode SelectionMode => TRISTATE;
+		public override SelectMode SelectionMode => TRISTATEINVERTED;
 		public override SelectFirstClass SelectionFirstClass => TRI_STATE;
 		public override SelectSecondClass SelectionSecondClass => NODES_ONLY;
 		public override SelectTreeAllowed CanSelectTree => YES;
 
-		private SelectedListTriState selList { get; }
+		private SelectedListTriStateInverted selList { get; }
+
+
 	#endregion
 
 	#region public methods
@@ -74,22 +76,20 @@ namespace SharedCode.TreeClasses
 		// VALUE
 		protected override bool? AdjustValue( ITreeNode? node, bool? newValue)
 		{
-			// if null, return false
-			if (!newValue.HasValue)
-			{
-				return false;
-			}
-
-			// if false
-			if (newValue == false)
+			// 
+			if (!node.IsChecked.HasValue)
 			{
 				return null;
 			}
 
-			// only choice left
-			return true;
-		}
+			if (node.allChildrenNodesDeselected()
+				&& !newValue.HasValue)
+			{
+				return true;
+			}
 
+			return newValue;
+		}
 
 		// private void updateProps()
 		// {
@@ -104,32 +104,69 @@ namespace SharedCode.TreeClasses
 		// from mixed to checked
 		protected override bool select(ITreeNode? node)
 		{
+			// M.Write("I/2&4 or II/5 or III/8");
+
 			if (!Selected!.Select(node)) return false;
 
 			bool clearPriorChecked = false;
 
-			node.Select();
-
-			if (node!.PriorStateHasValue() && node!.IParentNode!.PriorStateHasValue())
+			if (node!.PriorStateHasValue())
 			{
-				// [A4]
-				M.WriteLine("[A4])");
+				if (node!.IParentNode!.PriorStateHasValue())
+				{
+					M.WriteLine("(CASE V: column 2)");
 
-				clearPriorChecked = true;
+					clearPriorChecked = true;
 
-				selectChildren(node, null);
+					selectChildren(node, null);
 
-				node.UnsetPriorState();
+					// update parents / remove prior (at bottom)
+
+					// select the current node
+					node.Select();
+					node.UnsetPriorState();
+					Selected!.Select(node);
+				}
+				else
+				{
+					M.WriteLine("(CASE III: column 8)"); // (E) tested
+
+					// added to select list in main method
+
+					node.RestoreState();
+					node.UnsetPriorState();
+
+					setAllChildrenToPriorState(node);
+				}
+
+
+
+
 			}
 			else
 			{
-				// either [A1] or [A2] or [A3]
-				M.WriteLine("[A1] or [A2] or [A3])");
+// select
+				// added to select list in main method
+				node.Select();
+
+				// if (!
+				Selected!.Select(node);
+				// 	)
+				// {
+				// 	Debug.WriteLine($"selecting {node.NodeKey} returned false");
+				// }
 
 				if (node.HasNodes)
 				{
-					// [A2] or [A3] (sometimes)
+					M.WriteLine("(CASE I: column 2 & 4)");  // (A) tested
+
+					clearPriorChecked = true;
+
 					selectChildren(node, false);
+				}
+				else
+				{
+					M.WriteLine("(CASE II: column 5)");  // (H) tested
 				}
 			}
 
@@ -138,40 +175,61 @@ namespace SharedCode.TreeClasses
 			return true;
 		}
 
+
 		// deselect a node
 		// node went from checked to unchecked
 		protected override bool deselect(ITreeNode? node)
 		{
+			// M.Write("I/3 or I/5 or III/7 or IV/7");
+
 			if (!Selected!.Deselect(node)) return false;
 
-			// bool hasChildren = false;
+			bool hasChildren = false;
 			bool clearPriorChecked = false;
+// deselect
+			// removed to select list in main method
+			node!.Deselect();
 
-			if (node.PriorStateHasValue() && !node.IParentNode!.PriorStateHasValue())
+			// if (!
+			// Selected!.Deselect(node);
+			// 	)
+			// {
+			// 	Debug.WriteLine($"deselecting {node.NodeKey} returned false");
+			// }
+
+			if (node.HasNodes)
 			{
-				// [B3]
-				M.WriteLine("[B3])");
+				deselectChildren(node);
+				hasChildren = true;
+			}
 
-				// node will always x -> m
-				node.RestoreState();
-				node.UnsetPriorState();
+			if (node.PriorStateHasValue())
+			{
+				if (node!.IParentNode!.PriorStateHasValue())
+				{
+					M.WriteLine("(CASE IV: column 7)");  // (G) tested
+					setAllChildrenToUnset(node);
 
-				// special case, undo the deselect of the node
-				Selected!.Select(node);
+					node.UnsetPriorState();
 
-				setAllChildrenToPriorState(node);
+					clearPriorChecked = true;
+				}
+				else
+				{
+					M.WriteLine("(CASE III: column 7)");  //(C) tested
+				}
 			}
 			else
 			{
-				// [B1] or [B2] & [B4] never occurs
-				M.WriteLine("[B1] or [B2])");
-
-				node!.Deselect();
-
-				if (node.HasNodes)
+				if (hasChildren)
 				{
-					deselectAllChildren(node, false);
+					M.WriteLine("(CASE I: column 3)");  // (K) tested
 				}
+				else
+				{
+					M.WriteLine("(CASE I: column 5)");  // (I) tested
+				}
+			
 			}
 
 			applyDeselectToParents(node, clearPriorChecked);
@@ -182,14 +240,20 @@ namespace SharedCode.TreeClasses
 		// only applies when tri state
 		protected override bool mixed(ITreeNode? node)
 		{
-			M.WriteLine("[C]"); 
+			// M.Write("III/6");
 
-			Selected!.Deselect(node);
-			
-			node.SavePriorState();
-			node.Deselect();
+			// if (!Selected!.Select(node)) return false;
+			Selected!.Select(node);
 
-			deselectAllChildren(node, true);
+			M.WriteLine("(CASE III: column 6)");  // (F) tested
+
+			node!.SavePriorState();
+// select
+			// not added to select list in main method
+			// and do not add here
+			node.Select();
+
+			selectChildren(node, true);
 
 			return true;
 		}
@@ -216,6 +280,8 @@ namespace SharedCode.TreeClasses
 	#endregion
 
 	#region private methods
+
+
 
 		// CHILDREN
 
@@ -308,19 +374,14 @@ namespace SharedCode.TreeClasses
 		/// deselect all children.  do not change priorState.
 		/// does not change the top level node supplied
 		/// </summary>
-		private void deselectAllChildren(ITreeNode? node, bool saveState)
+		private void deselectChildren(ITreeNode? node)
 		{
 			if (!node!.HasNodes) return;
 
 			foreach (ITreeNode childNode in node.EnumNodes())
 			{
-				deselectAllChildren(childNode, saveState);
+				deselectChildren(childNode);
 // deselect
-				if (saveState)
-				{
-					childNode.SavePriorState();
-				}
-
 				Selected!.Deselect(childNode);
 				childNode.Deselect();
 			}
@@ -425,8 +486,8 @@ namespace SharedCode.TreeClasses
 
 				
 // mixed
-				// Selected!.Deselect(node.IParentNode);
-				Selected!.Select(node.IParentNode);
+				Selected!.Deselect(node.IParentNode);
+				// Selected!.Select(node.IParentNode);
 
 				// M.WriteLine("\tparent| mixed");
 				node.IParentNode.SetMixed();

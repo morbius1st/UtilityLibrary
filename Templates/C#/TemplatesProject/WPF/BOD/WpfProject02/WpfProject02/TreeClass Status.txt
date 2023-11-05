@@ -1,0 +1,15 @@
+﻿
+2023/11/05
+
+configured and working:
+* select individual
+* select multiple
+* select extened
+* select tri-state
+* select tri-state inverted
+
+not configured
+* all plus versions
+* select leaf version(s)
+
+

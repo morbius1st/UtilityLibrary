@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeNodeData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorExtended.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorTriState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorTriStateInverted.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorIndividual.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSelectorMultiple.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeClasses\TreeSupport.cs" />
