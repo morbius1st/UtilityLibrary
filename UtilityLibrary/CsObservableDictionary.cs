@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
@@ -32,13 +33,25 @@ namespace UtilityLibrary
 	// 	}
 	// }
 
-	[Serializable]
-	[CollectionDataContract(Namespace = "", ItemName = "KeyValuePair")]
-	public class ObservableDictionary<TKey, TValue> : INotifyCollectionChanged,  ISerializable,
-		IDictionary<TKey, TValue>
+	/* versions
+	 * 1.0 initial version
+	 * 2.0 adjusted numerical indexer to use negative numbers to start from the end of the list
+	*/
 
+	/// <summary>
+	/// Observable collection that is also a dictionary (key, value pairs)<br/>
+	/// methods: Add(), TryAdd(), Clear(), ContainsKey(), ContainsValue(), CopyTo()<br/>
+	/// Remove() x3, TryGetValue(), IndexOf(), RemoveAt(), ReplaceKey()<br/>
+	/// [key], [int], [-int]
+	/// </summary>
+	[Serializable]
+	[CollectionDataContract(Namespace = "", IsReference = true, Name = "ObservableDictionary", ItemName = "KeyValuePair")]
+	public class ObservableDictionary<TKey, TValue> : INotifyCollectionChanged,  ISerializable, 
+		INotifyPropertyChanged, IDictionary<TKey, TValue>
 	{
+		[DataMember]
 		private ObservableCollection<KeyValuePair<TKey, TValue>> list;
+
 		private ICollection<TKey> keys;
 		private ICollection<TValue> values;
 
@@ -53,12 +66,10 @@ namespace UtilityLibrary
 
 		public ObservableDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection)
 		{
-			Dictionary<string, string> d = new Dictionary<string, string>();
-
 			list = new ObservableCollection<KeyValuePair<TKey, TValue>>(collection);
 		}
-
-	#region public properties
+		
+		#region public properties
 
 		public int Count => list.Count;
 
@@ -105,6 +116,7 @@ namespace UtilityLibrary
 		}
 
 
+
 	#endregion
 
 	#region indexer
@@ -140,14 +152,34 @@ namespace UtilityLibrary
 		}
 
 		/// <summary>
-		/// Get a Key-Value pair using the Key as an index<br/>
+		/// Get a Key-Value pair using the Key as a numerical index<br/>
 		/// throw exception of key is null
 		/// </summary>
 		public KeyValuePair<TKey, TValue> this[int idx]
 		{
-			get => list[idx];
+			get
+			{
+				int i = idx;
+
+				if (idx < 0)
+				{
+					i = list.Count + idx;
+				}
+
+				return list[i];
+			}
 		
-			set => list[idx] = value;
+			set
+			{
+				int i = idx;
+
+				if (idx < 0)
+				{
+					i = list.Count + idx;
+				}
+
+				list[i] = value;
+			}
 		}
 
 	#endregion
@@ -403,6 +435,13 @@ namespace UtilityLibrary
 			add { list.CollectionChanged += value; }
 		}
 
+		
+		public event PropertyChangedEventHandler PropertyChanged
+		{
+			add => ((INotifyPropertyChanged)list).PropertyChanged += value;
+			remove => ((INotifyPropertyChanged)list).PropertyChanged -= value;
+		}
+		
 	#endregion
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)

@@ -271,7 +271,7 @@ namespace UtilityLibrary
 			int c = 0;
 #pragma warning restore CS0219 // The variable 'c' is assigned but its value is never used
 
-			for (var i = 0; i < msgs.Length; i++)
+			for (int i = 0; i < msgs.Length; i++)
 			{
 				msg2 += msgs[i]?.PadRight(widths[i]) ?? " ** null **";
 			}
@@ -315,12 +315,12 @@ namespace UtilityLibrary
 		private static void logMsgFmt<T>(string msg1,
 			T var1,
 			Color color,
-			Font font,
+			/*Font font,*/
 			int column = 0,
 			int shift = 0
 			)
 		{
-			logMsg(fmtMsg(msg1, fmt(var1), column, shift), color, font);
+			logMsg(fmtMsg(msg1, fmt(var1), column, shift), color /*, font*/);
 		}
 
 		public static string fmtMsg<T>(string msg1,
@@ -364,16 +364,16 @@ namespace UtilityLibrary
 		}
 
 		private static void logMsg<T>(T var,
-			Color color,
-			Font font
+			Color color
+			/*, Font font*/
 			)
 		{
-			sendMsg(fmt(var), color, font);
+			sendMsg(fmt(var), color /*, font*/);
 		}
 
 		public static void sendMsg(string msg,
-			Color color = new Color(),
-			Font font = null
+			Color color = new Color()
+			// , Font font = null
 			)
 		{
 		#if FORMS
@@ -386,7 +386,7 @@ namespace UtilityLibrary
 			{
 			case OutputLocation.TEXT_BOX:
 			#if FORMS
-					RichTxtBox.AppendText(msg, color, font);
+					RichTxtBox.AppendText(msg, color /*, font*/);
 			#endif
 				break;
 
@@ -411,19 +411,19 @@ namespace UtilityLibrary
 	public static class rtbExtension
 	{
 		public static void AppendText(this RichTextBox rtb, string msg,
-			Color color,
-			Font font = null)
+			Color color
+			/*,Font font = null*/)
 		{
 			Color currColor = rtb.ForeColor;
-			Font  currFont  = rtb.Font;
+			/*Font  currFont  = rtb.Font;*/
 
 			if (!color.IsEmpty) rtb.ForeColor = color;
-			if (font != null) rtb.Font        = font;
+			/*if (font != null) rtb.Font        = font;*/
 
 			rtb.AppendText(msg);
 
 			if (!color.IsEmpty) rtb.ForeColor = currColor;
-			if (font != null) rtb.Font        = currFont;
+			/*if (font != null) rtb.Font        = currFont;*/
 		}
 	}
 #endif

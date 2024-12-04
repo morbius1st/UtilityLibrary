@@ -3,10 +3,10 @@
 		xmlns:cs="clr-namespace:SharedWPF.ShSupport"
 		>
 
-	<!-- <ResourceDictionary.MergedDictionaries> -->
-	<!-- <ResourceDictionary Source="/Windows/ResourceFiles/XamlResources/MasterColorList.xaml" /> -->
-	<!-- <ResourceDictionary Source="/Windows/Skin/CyberStudioSkin.xaml"/> -->
-	<!-- </ResourceDictionary.MergedDictionaries> -->
+	<ResourceDictionary.MergedDictionaries>
+	<ResourceDictionary Source="MasterColorList.xaml" />
+	<ResourceDictionary Source="CyberStudioSkin.xaml"/>
+	</ResourceDictionary.MergedDictionaries>
 
 
 	<ControlTemplate x:Key="Btn.Ct.Std"
@@ -47,36 +47,16 @@
 					<Condition Property="IsDefault" Value="true" />
 					<Condition Property="IsEnabled" Value="true" />
 				</MultiTrigger.Conditions>
-				<Setter TargetName="bdr1"
-						Property="BorderBrush"
-						Value="{StaticResource Btn.Bdr.Inner.Disabled}"
-						/>
-				<Setter TargetName="border"
-						Property="Background"
-						Value="{StaticResource Btn.Bg.Disabled}"
-						/>
-				<Setter TargetName="bdr1"
-						Property="BorderThickness"
-						Value="0,0,0,3"
-						/>
+				<Setter TargetName="bdr1" Property="BorderBrush" Value="{StaticResource Btn.Bdr.Inner.Disabled}" />
+				<Setter TargetName="border" Property="Background" Value="{StaticResource Btn.Bg.Disabled}" />
+				<Setter TargetName="bdr1" Property="BorderThickness" Value="0,0,0,3" />
 			</MultiTrigger>
 
 			<Trigger Property="IsEnabled" Value="False">
-				<Setter Property="Foreground"
-						Value="{DynamicResource Btn.Fg.Disabled}"
-						/>
-				<Setter TargetName="bdr1"
-						Property="BorderBrush"
-						Value="{DynamicResource Btn.Bdr.Inner.Disabled}"
-						/>
-				<Setter TargetName="border"
-						Property="Background"
-						Value="{DynamicResource Btn.Bg.Disabled}"
-						/>
-				<Setter TargetName="border"
-						Property="BorderBrush"
-						Value="{DynamicResource Btn.Bdr.Disabled}"
-						/>
+				<Setter Property="Foreground" Value="{DynamicResource Btn.Fg.Disabled}" />
+				<Setter TargetName="bdr1" Property="BorderBrush" Value="{DynamicResource Btn.Bdr.Inner.Disabled}" />
+				<Setter TargetName="border" Property="Background" Value="{DynamicResource Btn.Bg.Disabled}" />
+				<Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Btn.Bdr.Disabled}" />
 			</Trigger>
 
 			<MultiTrigger>
@@ -84,18 +64,9 @@
 					<Condition Property="IsDefault" Value="true" />
 					<Condition Property="IsEnabled" Value="false" />
 				</MultiTrigger.Conditions>
-				<Setter TargetName="bdr1"
-						Property="BorderBrush"
-						Value="{StaticResource Btn.Bdr.Inner.IsEnabled}"
-						/>
-				<Setter TargetName="border"
-						Property="Background"
-						Value="{StaticResource Btn.Bg.Disabled}"
-						/>
-				<Setter TargetName="bdr1"
-						Property="BorderThickness"
-						Value="0,0,0,3"
-						/>
+				<Setter TargetName="bdr1" Property="BorderBrush" Value="{StaticResource Btn.Bdr.Inner.IsEnabled}" />
+				<Setter TargetName="border" Property="Background" Value="{StaticResource Btn.Bg.Disabled}" />
+				<Setter TargetName="bdr1" Property="BorderThickness" Value="0,0,0,3" />
 			</MultiTrigger>
 
 
@@ -109,43 +80,21 @@
 
 			<!--  is default: false  -->
 			<Trigger Property="IsDefault" Value="false">
-				<Setter TargetName="bdr1"
-						Property="BorderBrush"
-						Value="Transparent"
-						/>
+				<Setter TargetName="bdr1" Property="BorderBrush" Value="Transparent" />
 				<!-- <Setter Property="BorderThickness" TargetName="bdr1" Value="0" /> -->
 			</Trigger>
 
 			<Trigger Property="IsMouseOver" Value="true">
-				<Setter Property="Foreground"
-						Value="{StaticResource Btn.Fg.MouseOver}"
-						/>
-				<Setter TargetName="border"
-						Property="Background"
-						Value="{StaticResource Btn.Bg.MouseOver}"
-						/>
-				<Setter TargetName="border"
-						Property="BorderBrush"
-						Value="{StaticResource Btn.Bdr.MouseOver}"
-						/>
+				<Setter Property="Foreground" Value="{StaticResource Btn.Fg.MouseOver}" />
+				<Setter TargetName="border" Property="Background" Value="{StaticResource Btn.Bg.MouseOver}" />
+				<Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Btn.Bdr.MouseOver}" />
 			</Trigger>
 
 			<Trigger Property="IsPressed" Value="True">
-				<Setter Property="Foreground"
-						Value="{StaticResource Btn.Fg.Pressed}"
-						/>
-				<Setter TargetName="bdr1"
-						Property="BorderBrush"
-						Value="{StaticResource Btn.Bdr.Inner.Pressed}"
-						/>
-				<Setter TargetName="border"
-						Property="Background"
-						Value="{StaticResource Btn.Bg.Pressed}"
-						/>
-				<Setter TargetName="border"
-						Property="BorderBrush"
-						Value="{StaticResource Btn.Bdr.Pressed}"
-						/>
+				<Setter Property="Foreground" Value="{StaticResource Btn.Fg.Pressed}" />
+				<Setter TargetName="bdr1" Property="BorderBrush" Value="{StaticResource Btn.Bdr.Inner.Pressed}" />
+				<Setter TargetName="border" Property="Background" Value="{StaticResource Btn.Bg.Pressed}" />
+				<Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Btn.Bdr.Pressed}" />
 			</Trigger>
 
 
@@ -195,12 +144,8 @@
 	<Style x:Key="Btn.Base"
 			TargetType="Button"
 			>
-		<Setter Property="FontSize"
-				Value="{StaticResource FontSize.Normal}"
-				/>
-		<Setter Property="Foreground"
-				Value="white"
-				/>
+		<Setter Property="FontSize" Value="{StaticResource FontSize.Normal}" />
+		<Setter Property="Foreground" Value="white" />
 	</Style>
 
 
@@ -208,66 +153,34 @@
 			TargetType="Button"
 			BasedOn="{StaticResource Btn.Base}"
 			>
-		<Setter Property="Margin"
-				Value="0"
-				/>
-		<Setter Property="HorizontalAlignment"
-				Value="Center"
-				/>
-		<Setter Property="VerticalAlignment"
-				Value="Center"
-				/>
-		<Setter Property="Padding"
-				Value="3,0,3,2"
-				/>
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="HorizontalAlignment" Value="Center" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="Padding" Value="3,0,3,2" />
 		<!--  border, background  -->
-		<Setter Property="Background"
-				Value="{DynamicResource Btn.Bg.IsSel}"
-				/>
+		<Setter Property="Background" Value="{DynamicResource Btn.Bg.IsSel}" />
 		<!--  border, borderbrush  -->
-		<Setter Property="BorderBrush"
-				Value="{DynamicResource Btn.Bdr.IsSel}"
-				/>
+		<Setter Property="BorderBrush" Value="{DynamicResource Btn.Bdr.IsSel}" />
 		<!--  foreground  -->
-		<Setter Property="Foreground"
-				Value="{DynamicResource Btn.Fg.IsSel}"
-				/>
+		<Setter Property="Foreground" Value="{DynamicResource Btn.Fg.IsSel}" />
 		<!-- <Setter Property="Height" Value="{StaticResource Btn.Height.Std}" /> -->
 		<!-- <Setter Property="Width" Value="{StaticResource Btn.Width.Std}" /> -->
-		<Setter Property="Template"
-				Value="{StaticResource Btn.Ct.Std}"
-				/>
-		<Setter Property="HorizontalContentAlignment"
-				Value="Center"
-				/>
-		<Setter Property="VerticalContentAlignment"
-				Value="Center"
-				/>
+		<Setter Property="Template" Value="{StaticResource Btn.Ct.Std}" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
 
 	<Style x:Key="Btn.Stealth"
 			TargetType="Button"
 			BasedOn="{StaticResource Btn.Base}"
 			>
-		<Setter Property="Background"
-				Value="Transparent"
-				/>
-		<Setter Property="BorderThickness"
-				Value="0"
-				/>
-		<Setter Property="Padding"
-				Value="0,-1,0,-4"
-				/>
-		<Setter Property="Visibility"
-				Value="Visible"
-				/>
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Padding" Value="0,-1,0,-4" />
+		<Setter Property="Visibility" Value="Visible" />
 
-		<Setter Property="FontFamily"
-				Value="Segoe UI Symbol"
-				/>
-		<Setter Property="Template"
-				Value="{DynamicResource Btn.Ct.Stealth}"
-				/>
+		<Setter Property="FontFamily" Value="Segoe UI Symbol" />
+		<Setter Property="Template" Value="{DynamicResource Btn.Ct.Stealth}" />
 	</Style>
 
 </ResourceDictionary>

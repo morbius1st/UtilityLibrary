@@ -411,7 +411,6 @@ public class DataSampleTree : INotifyPropertyChanged
 		testCountNodes();
 	}
 
-
 	public void TreeClear()
 	{
 		tree.Clear();

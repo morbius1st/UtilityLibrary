@@ -19,6 +19,25 @@ namespace SharedWPF.ShSupport
 {
 	public class CustomProperties : DependencyObject
 	{
+		// public static readonly DependencyProperty
+		// 	BgOuterGenericProperty = DependencyProperty.RegisterAttached(
+		// 		"BgOuterGeneric", typeof(SolidColorBrush), typeof(VisStates),
+		// 		new FrameworkPropertyMetadata(default(SolidColorBrush),
+		// 			FrameworkPropertyMetadataOptions.Inherits));
+		//
+		// public static void SetBgOuterGeneric(UIElement e, SolidColorBrush value)
+		// {
+		// 	e.SetValue(BgOuterGenericProperty, value);
+		// }
+		//
+		// public static SolidColorBrush GetBgOuterGeneric(UIElement e)
+		// {
+		// 	return (SolidColorBrush) e.GetValue(BgOuterGenericProperty);
+		// }
+
+
+
+
 	#region GenericBoolOne
 
 		public static readonly DependencyProperty GenericBoolOneProperty = DependencyProperty.RegisterAttached(
@@ -106,6 +125,44 @@ namespace SharedWPF.ShSupport
 		// 	}
 		//
 		// #endregion
+
+	#region GenericBrushOne
+	
+		public static readonly DependencyProperty 
+			GenericBrushOneProperty = DependencyProperty.RegisterAttached(
+			"GenericBrushOne", typeof(SolidColorBrush), typeof(CustomProperties), 
+			new FrameworkPropertyMetadata(default(SolidColorBrush), FrameworkPropertyMetadataOptions.Inherits));
+	
+		public static void SetGenericBrushOne(UIElement e, SolidColorBrush value)
+		{
+			e.SetValue(GenericBrushOneProperty, value);
+		}
+	
+		public static SolidColorBrush GetGenericBrushOne(UIElement e)
+		{
+			return (SolidColorBrush) e.GetValue(GenericBrushOneProperty);
+		}
+
+	#endregion
+
+	#region GenericBrushTwo
+	
+		public static readonly DependencyProperty 
+			GenericBrushTwoProperty = DependencyProperty.RegisterAttached(
+			"GenericBrushTwo", typeof(SolidColorBrush), typeof(CustomProperties), 
+			new FrameworkPropertyMetadata(default(SolidColorBrush), FrameworkPropertyMetadataOptions.Inherits));
+	
+		public static void SetGenericBrushTwo(UIElement e, SolidColorBrush value)
+		{
+			e.SetValue(GenericBrushTwoProperty, value);
+		}
+	
+		public static SolidColorBrush GetGenericBrushTwo(UIElement e)
+		{
+			return (SolidColorBrush) e.GetValue(GenericBrushTwoProperty);
+		}
+
+	#endregion
 
 	#region GenericIntOne
 
@@ -238,7 +295,6 @@ namespace SharedWPF.ShSupport
 
 	#endregion
 
-		
 	#region GenericContentControl
 
 		public static readonly DependencyProperty GenericContentControlProperty = DependencyProperty.RegisterAttached(
@@ -258,7 +314,6 @@ namespace SharedWPF.ShSupport
 
 	#endregion
 
-		
 	#region GenericCanvas
 
 		public static readonly DependencyProperty GenericCanvasProperty = DependencyProperty.RegisterAttached(
@@ -278,7 +333,6 @@ namespace SharedWPF.ShSupport
 
 	#endregion
 
-		
 	#region GenericUiElement
 	
 		public static readonly DependencyProperty GenericUIElementProperty = DependencyProperty.RegisterAttached(
@@ -297,8 +351,6 @@ namespace SharedWPF.ShSupport
 		}
 	
 	#endregion
-
-
 
 
 

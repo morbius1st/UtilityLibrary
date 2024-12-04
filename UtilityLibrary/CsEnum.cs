@@ -42,6 +42,9 @@ namespace UtilityLibrary
 			Ordinal = Count++;
 		}
 
+		public CsEnumBase(){}
+
+
 	#region > Admin Private fields
 
 		// the list of members
@@ -72,6 +75,8 @@ namespace UtilityLibrary
 		// the value of this member - this value is
 		// returned from the implicit conversion
 		public V Value { get; }
+
+		public Enum E => Enum;
 
 	#endregion
 

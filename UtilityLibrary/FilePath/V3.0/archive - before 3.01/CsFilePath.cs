@@ -43,7 +43,6 @@ version
 		* adjust AssemblyFolders to have a switch to provide the preface folder separator
 		* adjust AssemblyFolders to use negative values to provide the folders in reverse order
 		* misc fixes
-3.01	* add various method & property summaries
 
 usage:
 New FilePath<file name type>
@@ -84,23 +83,23 @@ namespace UtilityLibrary
 		// internal const string UNC_PREFACE = @"\\";
 		// internal const char EXT_SEPARATOR_C = '.';
 
-		private const string VERSION = "3.01";
+		private const string VERSION = "3.0";
 
 	#region private fields
 
-		private FilePathInfo<T> filePathInfo = null;
+		private FilePathInfo<T> filePathInfo;
 
 	#endregion
 
 	#region static properties
 
 		/// <summary>
-		/// FilePath that is not valid (IsValid == false)
+		/// a FilePath that is not valid (IsValid == false)
 		/// </summary>
 		public static FilePath<T> Invalid => new FilePath<T>();
 
 		/// <summary>
-		/// The current directory
+		/// the current directory
 		/// </summary>
 		public static FilePath<T> CurrentDirectory => new FilePath<T>(Environment.CurrentDirectory);
 
@@ -108,26 +107,17 @@ namespace UtilityLibrary
 
 	#region ctor
 
-		/// <summary>
-		/// Creates an empty FilePath&lt;T&gt;
-		/// </summary>
-		public FilePath()
-		{
-			ConfigureFilePath(null);
-		}
-
-		/// <summary>
-		/// Creates a FilePath&lt;T&gt; using the string as the path or path and file name
-		/// </summary>
 		public FilePath(string initialPath)
 		{
 			ConfigureFilePath(initialPath);
 			OnPropertyChange("GetFullFilePath");
 		}
 
-		/// <summary>
-		/// Creates a FilePath&lt;T&gt; using the string array as the path or path and file name
-		/// </summary>
+		public FilePath()
+		{
+			ConfigureFilePath(null);
+		}
+
 		public FilePath(string[] path)
 		{
 			StringBuilder sb = new StringBuilder(path[0]);
@@ -152,63 +142,22 @@ namespace UtilityLibrary
 
 	#region  public status properties
 
-		/// <summary>
-		/// FilePath version
-		/// </summary>
 		public string Version => VERSION;
 
-		/// <summary>
-		/// True if the path / path and file is valid format
-		/// </summary>
 		public bool IsValid { get; private set; }
-		
-		/// <summary>
-		/// True if the path is fully qualified
-		/// </summary>
 		public bool HasQualifiedPath => filePathInfo.HasQualifiedPath;
-		
-		/// <summary>
-		/// True if the path has a UNC
-		/// </summary>
 		public bool HasUnc => filePathInfo.HasUnc;
-		
-		/// <summary>
-		/// True if the path includes a drive
-		/// </summary>
 		public bool HasDrive => filePathInfo.HasDrive;
-		
-		/// <summary>
-		/// True if the path includes a file name
-		/// </summary>
 		public bool HasFileName => !filePathInfo.FileNameNoExt.IsVoid();
-		
-		/// <summary>
-		/// True if the path is a path without a file (does not need to exist)
-		/// </summary>
 		public bool IsFolderPath => filePathInfo.IsFolderPath;
-		
-		/// <summary>
-		/// True if the path is a path and file (does not need to exist)
-		/// </summary>
 		public bool IsFilePath => filePathInfo.IsFilePath;
-
-		/// <summary>
-		/// True if the file exists
-		/// </summary>
 		public bool IsFound => filePathInfo.IsFound;
-
-		/// <summary>
-		/// True if the file exists
-		/// </summary>
 		public bool Exists => filePathInfo.IsFound;
 
 	#endregion
 
 	#region public properties
-		
-		/// <summary>
-		/// Get the FilePathInfo&lt;T&gt; object
-		/// </summary>
+
 		public FilePathInfo<T> FilePathInfo => filePathInfo;
 
 		/// <summary>
@@ -294,7 +243,7 @@ namespace UtilityLibrary
 		public string DriveRoot => DrivePath + FilePathUtil.PATH_SEPARATOR;
 
 		/// <summary>
-		/// The path with the filename and extension and using unc if exists
+		/// The path without the filename and extension and using unc if exists
 		/// </summary>
 		public string UncFullFilePath
 		{
@@ -335,25 +284,16 @@ namespace UtilityLibrary
 		public string UncShare => filePathInfo.UncShare;
 
 		/// <summary>
-		/// Get the filename object
+		/// The filename object
 		/// </summary>
 		public T FileNameObject => filePathInfo.FileNameObject;
 
-		/// <summary>
-		/// The full path and the file name (without separators)
-		/// </summary>
 		[IgnoreDataMember]
 		public string[] GetPathNames => PathNames(false);
 
-		/// <summary>
-		/// The full path and the file name (with separators)
-		/// </summary>
 		[IgnoreDataMember]
 		public string[] GetPathNamesAlt => PathNames(true);
 
-		/// <summary>
-		/// Gets the folders as a string
-		/// </summary>
 		public string Folders
 		{
 			get
@@ -364,9 +304,6 @@ namespace UtilityLibrary
 			}
 		}
 
-		/// <summary>
-		/// The number of folders in the path
-		/// </summary>
 		public int FolderCount => filePathInfo.Folders.Count;
 
 		/// <summary>
@@ -391,7 +328,7 @@ namespace UtilityLibrary
 		public int Length => FullFilePath.Length;
 
 		/// <summary>
-		/// Cause information returned to provide the UncShare
+		/// cause information returned to provide the UncShare
 		/// rather than the GetDrivePath
 		/// </summary>
 		public bool UseUnc { get; set; } = false;
@@ -400,9 +337,6 @@ namespace UtilityLibrary
 
 	#region public methods
 
-		/// <summary>
-		/// Adjust the path to remove the last folder (go up one level)
-		/// </summary>
 		public void Up()
 		{
 			// string adjFilePath = AssemblePath(-2) + FilePathUtil.PATH_SEPARATOR +
@@ -413,9 +347,6 @@ namespace UtilityLibrary
 			MakeFilePathInfo(adjFilePath);
 		}
 
-		/// <summary>
-		/// Adjust the path to add the provided folder
-		/// </summary>
 		public void Down(string folder)
 		{
 			// string adjFilePath = FolderPath  + FilePathUtil.PATH_SEPARATOR + folder + 
@@ -427,11 +358,23 @@ namespace UtilityLibrary
 			MakeFilePathInfo(adjFilePath);
 		}
 
+		// public void ChangeFileName(string name)
+		// {
+		// 	filePathInfo.Name = name;
+		// }
+		//
+		// public void ChangeExtension(string ext)
+		// {
+		// 	filePathInfo.Extension = ext;
+		// }
+
 		/// <summary>
 		/// Change the name and extension of the file<br/>
 		/// if empty string is provided, keep the existing component, if both are empty string, do nothing.<br/>
 		/// if null is provided, remove that component (make it null).
 		/// </summary>
+		/// <param name="fileNameNoExt"></param>
+		/// <param name="ext"></param>
 		public void ChangeFileName(string fileNameNoExt, string ext = "")
 		{
 			fileNameNoExt = fileNameNoExt?.TrimStart(null) ?? null; // PreserveSigAttribute any trailing spaces
@@ -455,9 +398,6 @@ namespace UtilityLibrary
 				FolderPath));
 		}
 
-		/// <summary>
-		/// Convert the path to a string array
-		/// </summary>
 		public string[] PathNames(bool withBackSlash = false, bool useUnc = false)
 		{
 			if (!IsValid) return null;
@@ -476,9 +416,6 @@ namespace UtilityLibrary
 			return path.ToArray();
 		}
 
-		/// <summary>
-		/// Get the left portion of the path (or whole path & name) based on the index (+ or -)
-		/// </summary>
 		public string AssemblePath(int index, bool useUnc = false)
 		{
 			if (!IsValid) return null;
@@ -503,9 +440,6 @@ namespace UtilityLibrary
 			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Get the left or right portion of the folders (or whole folder & name) based on the index (+ or -)
-		/// </summary>
 		public string AssembleFolders(int index = 0, bool separatorPreface = false)
 		{
 			if (!IsValid) return null;
@@ -533,10 +467,6 @@ namespace UtilityLibrary
 			return AssemblyFoldersForward(idx, separatorPreface);
 		}
 
-		/// <summary>
-		/// Returns a FilePathInfo based on the path provided
-		/// </summary>
-		/// <param name="path"></param>
 		public void MakeFilePathInfo(string path)
 		{
 			filePathInfo = new FilePathInfo<T>();
@@ -544,9 +474,6 @@ namespace UtilityLibrary
 			IsValid = filePathInfo.parse(path);
 		}
 
-		/// <summary>
-		/// Returns a new FilePath<T> based on the FullFilePath
-		/// </summary>
 		public FilePath<T> Clone()
 		{
 			return new FilePath<T>(FullFilePath);
@@ -678,25 +605,16 @@ namespace UtilityLibrary
 
 	#region system methods
 
-		/// <summary>
-		/// True if the provided file path is equal (compares one FullFilePath with another) (case insensitive)
-		/// </summary>
 		public bool Equals(FilePath<T> other)
 		{
 			return this.FullFilePath.ToUpper().Equals(other.FullFilePath.ToUpper());
 		}
 
-		/// <summary>
-		/// compare one file path with another (compares one FullFilePath with another) (case sensitive)
-		/// </summary>
 		public int CompareTo(FilePath<T> other)
 		{
 			return FullFilePath.CompareTo(other.FullFilePath);
 		}
 
-		/// <summary>
-		/// The FullFilePath
-		/// </summary>
 		public override string ToString()
 		{
 			return FullFilePath;
@@ -781,9 +699,6 @@ namespace UtilityLibrary
 			private set => folders = value;
 		}
 
-		/// <summary>
-		/// Get the FileNameObject
-		/// </summary>
 		public T FileNameObject => fileNameObject;
 
 
@@ -1481,7 +1396,7 @@ namespace UtilityLibrary
 				path.Length < 2
 				) return null;
 
-			if (!path.StartsWith((string)FilePathUtil.UNC_PREFACE))
+			if (!path.StartsWith(FilePathUtil.UNC_PREFACE))
 			{
 				StringBuilder sb = new StringBuilder(1024);
 				int size = sb.Capacity;
@@ -1506,7 +1421,7 @@ namespace UtilityLibrary
 			if (!drive.IsVoid()) return drive;
 
 
-			if (!path.StartsWith((string)FilePathUtil.UNC_PREFACE))
+			if (!path.StartsWith(FilePathUtil.UNC_PREFACE))
 			{
 				// does not start with "\\" if character 2 is ':' 
 				// assume provided with a drive and return that portion
@@ -1519,7 +1434,7 @@ namespace UtilityLibrary
 		public static string findDriveFromUncPath(string path) // where T : AFileName, new()
 		{
 			if (string.IsNullOrWhiteSpace(path) ||
-				!path.StartsWith((string)FilePathUtil.UNC_PREFACE) ||
+				!path.StartsWith(FilePathUtil.UNC_PREFACE) ||
 				path.Length < 3) return null;
 
 			if (UncNameMap == null || UncNameMap.Count == 0) getUncNameMap();
@@ -1530,10 +1445,7 @@ namespace UtilityLibrary
 
 				if (path.Length < len) continue;
 
-				if (kvp.Value.ToLower().Equals(path.Substring(0, len).ToLower()))
-				{
-					return kvp.Key;
-				}
+				if (kvp.Value.ToLower().Equals(path.Substring(0, len).ToLower())) return kvp.Key;
 			}
 
 			return null;
@@ -1542,7 +1454,7 @@ namespace UtilityLibrary
 		public static string findUncFromUncPath(string path) // where T : AFileName, new()
 		{
 			if (string.IsNullOrWhiteSpace(path)
-				|| !path.StartsWith((string)FilePathUtil.UNC_PREFACE)
+				|| !path.StartsWith(FilePathUtil.UNC_PREFACE)
 				) return null;
 
 			if (UncNameMap == null || UncNameMap.Count == 0) getUncNameMap();

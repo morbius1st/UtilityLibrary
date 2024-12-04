@@ -8,7 +8,6 @@ using System.Xml;
 using static SettingManager.SettingMgrStatus;
 
 using UtilityLibrary;
-using AndyShared;
 using MessageException = UtilityLibrary.MessageException;
 
 //using UtilityLibrary;

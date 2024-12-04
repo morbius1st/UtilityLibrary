@@ -2,8 +2,6 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Windows;
-
 
 
 // note GetBitmapImage moved to the file CsUtilitiesMedia
@@ -41,7 +39,7 @@ namespace UtilityLibrary
 	/// INVALID_FILE_NAME_CHARACTERS - array of char that are not allowed in a file name<br/>
 	/// INVALID_FILE_NAME_STRING  - string of characters that are not allowed in a file name
 	/// </summary>
-	internal static class CsUtilities
+	public static class CsUtilities
 	{
 		public static readonly string nl = System.Environment.NewLine;
 
@@ -54,12 +52,13 @@ namespace UtilityLibrary
 
 		public static string MachineName => Environment.MachineName;
 
-		internal static string CompanyName
+		public static string CompanyName
 		{
 			get
 			{
 				object[] att = Assembly.GetExecutingAssembly()
 				.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+				
 				if (att.Length > 0)
 				{
 					return CsExtensions.IfNullOrWhiteSpace(((AssemblyCompanyAttribute)att[0]).Company, "CyberStudio");
@@ -69,12 +68,12 @@ namespace UtilityLibrary
 			}
 		}
 
-		internal static string AssemblyName =>
+		public static string AssemblyName =>
 			CsExtensions.IfNullOrWhiteSpace(typeof(CsUtilities).Assembly.GetName().Name, "DefaultAssembly");
 
-		internal static string AssemblyVersion => typeof(CsUtilities).Assembly.GetName().Version.ToString();
+		public static string AssemblyVersion => typeof(CsUtilities).Assembly.GetName().Version.ToString();
 
-		internal static string AssemblyDirectory
+		public static string AssemblyDirectory
 		{
 			get
 			{
@@ -88,15 +87,30 @@ namespace UtilityLibrary
 		public static bool CreateSubFolders(string rootPath,
 			string[] subFolders)
 		{
-			if (subFolders == null || !Directory.Exists(rootPath)) { return false; }
-
-			for (int i = 0; i < subFolders.Length; i++)
+			if (!Directory.Exists(rootPath))
 			{
-				string path = SubFolder(i, rootPath, subFolders);
-
-				if (!Directory.Exists(path))
+				try
 				{
-					Directory.CreateDirectory(path);
+					Directory.CreateDirectory(rootPath);
+				}
+				catch
+				{
+					return false;
+				}
+
+				if (!Directory.Exists(rootPath)) { return false; }
+			}
+			
+			if (subFolders != null)
+			{
+				for (int i = 0; i < subFolders.Length; i++)
+				{
+					string path = SubFolder(i, rootPath, subFolders);
+
+					if (!Directory.Exists(path))
+					{
+						Directory.CreateDirectory(path);
+					}
 				}
 			}
 

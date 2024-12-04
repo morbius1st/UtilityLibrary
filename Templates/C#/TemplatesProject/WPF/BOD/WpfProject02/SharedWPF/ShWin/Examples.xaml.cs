@@ -476,6 +476,7 @@ namespace SharedWPF.ShWin
 			M.WriteLineStatus("done");
 		}
 
+		// load button also
 		private void BtnAddTreeAndLeaves_OnClick(object sender, RoutedEventArgs e)
 		{
 			M.WriteLineCodeMap("Enter Method");

@@ -76,7 +76,7 @@ namespace SharedWPF.ShSupport
 
 		public static readonly DependencyProperty CornerRectBkgBrushProperty = DependencyProperty.RegisterAttached(
 			"CornerRectBkgBrush", typeof(SolidColorBrush), typeof(CsScrollViewerAp),
-			new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.Inherits));
+			new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.Inherits|FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public static void SetCornerRectBkgBrush(UIElement e, SolidColorBrush value)
 		{

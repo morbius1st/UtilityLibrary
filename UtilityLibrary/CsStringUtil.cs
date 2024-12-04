@@ -12,7 +12,6 @@ namespace UtilityLibrary
 	/// </summary>
 	internal static class CsStringUtil
 	{
-		
 		public enum JustifyHoriz
 		{
 			UNSPECIFIED,
@@ -29,6 +28,111 @@ namespace UtilityLibrary
 			BOTTOM
 		}
 
+		// does s1 approximately match s2?
+		// approximate match - all characters are the same and
+		// in the same order with maxDiffs differences
+		// if spacesCount, then differences based on spaces count
+		// towards maxDifs
+		// this requires that the first character in each string match
+		// s1 is the whole value and s2 is the partial therefore
+		// s2 must be the same size or smaller than s1
+		public static bool ApproximateMatch(string s1, string s2, int maxDifs, bool ignoreSpaces)
+		{
+			if (!s1[0].Equals(s2[0])) return false;
+
+			int difs = 0;
+			int iS1 = 1;
+			int iS2 = 1;
+
+			int count = s1.Length >= s2.Length ? s1.Length : s2.Length;
+
+			if (ignoreSpaces)
+			{
+				difs = (s1.Replace(" ", String.Empty)).Length - (s2.Replace(" ", String.Empty)).Length;
+				if (difs < 0 || difs > maxDifs) return false;
+			}
+			else
+			{
+				difs = s1.Length - s2.Length;
+				if (difs < 0 || difs > maxDifs) return false;
+			}
+
+			difs = 0;
+
+			for (int i = 1; i < count; i++)
+			{
+				if (!s1[iS1].Equals(s2[iS2]))
+				{
+					// not totally match condition
+					// first - space mis-match ok?
+					if (ignoreSpaces)
+					{
+						if (s1[iS1].Equals(' '))
+						{
+							iS1++;
+							continue;
+						}
+
+						if (s1[iS1].Equals(' '))
+						{
+							iS2++;
+							continue;
+						}
+					}
+
+					// not match
+					// ignore the current s1[] and test the next s1
+					// log the difference
+					iS1++;
+					difs++;
+
+					if (difs > maxDifs) return false;
+					if (iS1 == s1.Length) return false;
+
+					continue;
+				}
+
+				iS1++;
+				iS2++;
+
+				if (iS1 == s1.Length && iS2 == s2.Length) return true;
+				if (iS1 == s1.Length || iS2 == s2.Length) return false;
+			}
+
+			return true;
+		}
+
+
+		public static string RemoveBetween(string phase, string start, string end)
+		{
+			int pos1 = phase.IndexOf(start);
+			int pos2 = phase.IndexOf(end);
+			if (pos1 == -1 ||  pos2 == -1 || pos1 >= pos2) return phase;
+
+			return phase.Remove(pos1, pos2 - pos1 + 1);
+		}
+
+		public static string RemoveWords(string phrase, string[] words)
+		{
+			string result = phrase;
+
+			foreach (string word in words)
+			{
+				result = RemoveWord(result, word);
+			}
+
+			return result;
+		}
+
+		public static string RemoveWord(string phrase, string word)
+		{
+			int pos1 = phrase.IndexOf(word);
+
+			if (pos1 == -1) return phrase;
+
+			return phrase.Remove(pos1,  word.Length);
+		}
+
 		public static string MakeMultiLineString(List<string> lines, int maxLength, JustifyHoriz j = JustifyHoriz.UNSPECIFIED)
 		{
 			StringBuilder sb = new StringBuilder(2);
@@ -42,7 +146,7 @@ namespace UtilityLibrary
 				}
 			}
 
-			sb.Append(JustifyString(lines[lines.Count-1], j, maxLength));
+			sb.Append(JustifyString(lines[lines.Count - 1], j, maxLength));
 
 			return sb.ToString();
 		}
@@ -134,7 +238,7 @@ namespace UtilityLibrary
 		// justify the string within the provided colWidth
 		public static string JustifyString(string s, JustifyHoriz j, int maxLength)
 		{
-			if (maxLength == 0 || j== JustifyHoriz.UNSPECIFIED) return s;
+			if (maxLength == 0 || j == JustifyHoriz.UNSPECIFIED) return s;
 
 			string msg = s.IsVoid() ? "" : s;
 
@@ -171,7 +275,7 @@ namespace UtilityLibrary
 			if (maxLength >= len || maxLength < 2) return s;
 
 			//                     L    C    R
-			string[] e = new [] { "…", "…", "…" };
+			string[] e = new [] { " …", " … ", "… " };
 
 			switch (j)
 			{
@@ -205,6 +309,18 @@ namespace UtilityLibrary
 			return msg;
 		}
 
-
+		/// <summary>
+		/// provide a word depending on count (max array length).
+		/// return the word form depending on the count number.
+		/// use to pluralize a word for example
+		/// this is 1 based (1 = the first word form)
+		/// </summary>
+		/// <param name="s">string array with the various word options</param>
+		/// <param name="index">the index for the word form to return (max array length - 1)</param>
+		/// <returns></returns>
+		public static string ChoseWord(string[] s, int index)
+		{
+			return s[(index > s.Length ? s.Length - 1 : index - 1)];
+		}
 	}
 }

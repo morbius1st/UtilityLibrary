@@ -7,10 +7,16 @@
 	<!-- <ResourceDictionary Source="/Windows/ResourceFiles/XamlResources/MasterColorList.xaml" /> -->
 	<!-- <ResourceDictionary Source="/Windows/Skin/CyberStudioSkin.xaml" /> -->
 	<!-- </ResourceDictionary.MergedDictionaries> -->
-
-
 	<!-- <cs:AddThicknessConverter x:Key="AddThicknessConverter" /> -->
 	<!-- <cs:AddParameterConverter x:Key="AddParameterConverter" /> -->
+
+	<!-- cs:CsCheckBoxAp.CheckBoxBoxSize -->
+	<!-- cs:CsCheckBoxAp.CheckBoxBoxMargin -->
+	<!-- cs:CsCheckBoxAp.CheckBoxCheckMargin -->
+	<!-- cs:CsCheckBoxAp.CheckBoxContentMargin -->
+	<!-- cs:CsCheckBoxAp.OptionMarkFillBrush -->
+	<!-- cs:CsCheckBoxAp.IndeterminantMarkFillBrush -->
+
 
 	<Style x:Key="OptionMarkFocusVisual">
 		<Setter Property="Control.Template">
@@ -42,7 +48,7 @@
 		</Setter>
 	</Style>
 
-	<Style x:Key="Lv1.CheckboxStyle"
+	<Style x:Key="CheckboxStyle1"
 			TargetType="{x:Type CheckBox}"
 			>
 		<!-- <Setter Property="IsEnabled" Value="True" /> -->
@@ -256,7 +262,7 @@
 
 
 
-	<Style x:Key="Lv1.CheckboxStyle2"
+	<Style x:Key="CheckboxStyle2"
 			TargetType="{x:Type CheckBox}"
 			>
 		<!-- <Setter Property="IsEnabled" Value="True" /> -->

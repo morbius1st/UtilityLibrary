@@ -1,11 +1,16 @@
 ﻿#region using
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
+using SettingsManager;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 #endregion
 
@@ -231,6 +236,107 @@ namespace SharedWPF.ShSupport
 
 #endregion
 
+#region extract value from collection converter
+	[ValueConversion(typeof(Dictionary<string, bool>), typeof(bool))]
+	public class ExtractCollectionValue : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (parameter.GetType() != typeof(string)) return false;
+			// if (targetType != typeof(Dictionary<string, bool>)) return false;
+
+			Dictionary<string, bool> d = (Dictionary<string, bool>) value;
+
+			bool result;
+			if (!d.TryGetValue((string) parameter, out result)) return false;
+
+			return result;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return null;
+		}
+	}
+#endregion
+	
+#region bool to "On" / "Off" string value converter
+
+	[ValueConversion(typeof(bool), typeof(string))]
+	public class BoolToSymbolConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			// if (targetType != typeof(object))
+			// 	throw new InvalidOperationException("The target must be an object");
+
+			
+			StringCollection symbol = (StringCollection) parameter;
+
+			bool answer = (bool) value;
+			string result =symbol[0];
+
+			if (answer == true)
+			{
+				result = symbol[1];
+			}
+
+			return result;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter,
+			System.Globalization.CultureInfo culture)
+		{
+			throw new NotSupportedException();
+		}
+	}
+
+#endregion
+
+	
+#region bool to "On" / "Off" string value converter
+
+	[ValueConversion(typeof(string), typeof(bool))]
+	public class InvertedStringComparisonConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return !(((string) value ?? "").Equals((string) parameter ?? " "));
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter,
+			System.Globalization.CultureInfo culture)
+		{
+			throw new NotSupportedException();
+		}
+	}
+
+#endregion
+
+#region multi string compare value converter
+
+	[ValueConversion(typeof(string), typeof(bool))]
+	public class MultiStringComparisonConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+
+			
+			return (((string) values[0] ?? "").Equals((string) values[1] ?? " ")) ? (bool) parameter : !((bool) parameter);
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		{
+			return new object[] { 0.0 };
+		}
+	}
+
+#endregion
+
+	
+
+
+
 // #region bool to visibility value converter
 //
 // 	// yes = visible
@@ -318,7 +424,7 @@ namespace SharedWPF.ShSupport
 // #region null to bool value converter
 //
 // 	[ValueConversion(typeof(object), typeof(bool))]
-// 	public class NullObjToBool : IValueConverter
+// 	public class NullObjToTrue : IValueConverter
 // 	{
 // 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 // 		{
@@ -376,7 +482,7 @@ namespace SharedWPF.ShSupport
 // #region multi bool "or" value converter
 //
 // 	[ValueConversion(typeof(bool), typeof(bool))]
-// 	public class BoolOr : IMultiValueConverter
+// 	public class MultiBoolOr : IMultiValueConverter
 // 	{
 // 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 // 		{
@@ -531,4 +637,5 @@ namespace SharedWPF.ShSupport
 // 	}
 //
 // #endregion
+
 }

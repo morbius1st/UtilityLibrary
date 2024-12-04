@@ -1,7 +1,18 @@
-﻿// #undef TRACE
-#define TRACE
+﻿#define DML0 // not yet used
+#define DML1 // do not use here ** defined in properties *** start and end
+#define DML2 // turns on or off bool flags / button enable flags only / listbox idex set
+#define DML3 // various status messages
+#define DML4 // update status status messages
+#define DML5 // orator routines
 
 // the above controls the output of the Debug Message information
+
+// *********************
+//  Settings Manager 7.5
+// *********************
+//USER_SETTINGS, APP_SETTINGS, SUITE_SETTINGS, MACH_SETTINGS, SITE_SETTINGS
+
+do not use - no changes made
 
 
 #region using
@@ -15,7 +26,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml;
+
 using DebugCode;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using UtilityLibrary;
 using static SettingsManager.SettingMgrStatus;
 
@@ -86,8 +99,10 @@ using static SettingsManager.SettingMgrStatus;
 //				* add FilePath<FileNameSimple> to Path class
 //  ver 7.4.3	* add "Exists" to path base file
 //				* adjusted setting file locations to be in a sub-folder based on the assembly name
+//  ver 7.5		* adjust file location paths
+//				* change header properties to internal rather than private
+//	ver 8.0		* changed the default location of saved configuration files
 
-//USER_SETTINGS, APP_SETTINGS, SUITE_SETTINGS, MACH_SETTINGS, SITE_SETTINGS
 
 
 #region setting file hireacrhy
@@ -98,8 +113,8 @@ file locations:
 {ApplicationData} = C:\Users\jeffs\AppData\Roaming
 {CommonApplicationData} = C:\ProgramData
 {CompanyName} = \CyberStudio
-{AssemblyName} = \SettingManager72cvt74
-{SuiteName} = \SettingManager72cvt74  (or, if null, {assemblyname})
+{AssemblyName} = \SettingManager75
+{SuiteName} = \SettingManager75  (or, if null, {assemblyname})
 
 $RootPathSuite$ =  {CommonApplicationData}
 $RootPathUser$ =  {ApplicationData}
@@ -110,10 +125,10 @@ site settings
 		C:\ProgramData
 		               \CyberStudio
 					                \SettingManager
-									                  \SettingsManager.site.setting.xml
+									                  \ site.setting.xml
 
 		default:
-		$RootPathSuite$ \ {CompanyName} \ {SuiteName} \ {SuiteName} + .site.setting.xml
+		$RootPathSuite$ \ {CompanyName} \ {SuiteName} \ site.setting.xml
 
 		directed:
 		{AssignedRootPath} \ {SuiteName} + .site.setting.xml
@@ -123,18 +138,18 @@ machine settings
 		C:\ProgramData
 		               \CyberStudio
 					                \SettingManager
-									                  \SettingsManager.machine.setting.xml
+									                  \ machine.setting.xml
 
-		$RootPathSuite$ \ {CompanyName} \ {SuiteName} \ {SuiteName} + .machine.setting.xml
+		$RootPathSuite$ \ {CompanyName} \ {SuiteName} \ machine.setting.xml
 
 suite settings
 
 		C:\ProgramData
 		               \CyberStudio
 					                \SettingManager
-									                 \SettingsManager.suite.setting.xml
+									                 \ suite.setting.xml
 
-		$RootPathSuite$ \ {CompanyName} \ {SuiteName} \ {SuiteName} + .suite.setting.xml
+		$RootPathSuite$ \ {CompanyName} \ {SuiteName} \ suite.setting.xml
 
 
 app settings
@@ -142,18 +157,18 @@ app settings
 		C:\ProgramData
 		               \CyberStudio
 					                \SettingManager
-									                  \SettingsManager.app.setting.xml
+									                  \SettingsManager75 \ app.setting.xml
 
-		$RootPathSuite$ \ {CompanyName} \ {SuiteName} \ {SuiteName} + .app.setting.xml
+		$RootPathSuite$ \ {CompanyName} \ {SuiteName} \ {appName} \ app.setting.xml
 
 user settings
 
 		C:\Users\jeffs\AppData\Roaming
 									   \CyberStudio
 													\SettingManager
-																    \SettingsManager.app.setting.xml
+																    \SettingsManager75 \ user.setting.xml
 
-		$RootPathUser$ \ {CompanyName} \ {SuiteName} \ {SuiteName} + .user.setting.xml
+		$RootPathUser$ \ {CompanyName} \ {SuiteName} \ {appName} \ user.setting.xml
 
 data store
 
@@ -206,7 +221,7 @@ bottom
 namespace SettingsManager
 {
 	// ReSharper disable once UnusedType.Global
-	internal class Aav74 { }
+	internal class Aav80 { }
 
 	public enum SettingMgrStatus
 	{
@@ -245,13 +260,13 @@ namespace SettingsManager
 		public static string ClassVersionName    = nameof(DataClassVersion);
 		public static string SettingsVersionName = nameof(SettingsVersion);
 
-		[DataMember(Order = 0)] public string SaveDateTime       { get; private set; } =
+		[DataMember(Order = 0)] public string SaveDateTime       { get; internal set; } =
 			DateTime.Now.ToString("yyyy-MM-dd - HH:mm zzz");
 
-		[DataMember(Order = 1)] public string SavedBy            { get; private set; } = Environment.UserName;
-		[DataMember(Order = 2)] public string AssemblyVersion    { get; private set; } = CsUtilities.AssemblyVersion;
-		[DataMember(Order = 3)] public string AssemblyName       { get; private set; } = CsUtilities.AssemblyName;
-		[DataMember(Order = 4)] public string SettingsVersion    { get; private set; } = "7.4.2";
+		[DataMember(Order = 1)] public string SavedBy            { get; internal set; } = Environment.UserName;
+		[DataMember(Order = 2)] public string AssemblyVersion    { get; internal set; } = CsUtilities.AssemblyVersion;
+		[DataMember(Order = 3)] public string AssemblyName       { get; internal set; } = CsUtilities.AssemblyName;
+		[DataMember(Order = 4)] public string SettingsVersion    { get; internal set; } = "7.4.2";
 		[DataMember(Order = 6)] public string DataClassVersion   = "Unassigned";
 		[DataMember(Order = 5)] public string Notes              = "Unassigned";
 		[DataMember(Order = 6)] public string Description        = "Unassigned";
@@ -362,14 +377,17 @@ namespace SettingsManager
 					}
 
 					Status = READ;
-
-					updateHeader();
 				}
 				// catch malformed XML data file and replace with default
+				// change - issue warning and return
 				catch (SerializationException)
 				{
-					Create();
-					Write();
+					msgDialog("ClassificationFile Error", 
+						$"Cannot Read the Classification File", 
+						$"The requested classification file\n\"{Path.SettingFilePath}\"\nhas errors and cannot be read.  Please fix these errors in order to proceed");
+
+					// Create();
+					// Write();
 				}
 				// catch any other errors
 				catch (Exception e)
@@ -457,7 +475,8 @@ namespace SettingsManager
 
 		public void Write()
 		{
-			Trace.Assert(DM.Start0(),"");
+			// Trace.Assert(DM.Start0(),"");
+			Trace.Assert(DM.InOut0(),"");
 
 			if (Path.IsReadOnly || Path.SettingFilePath.IsVoid())
 			{
@@ -477,7 +496,7 @@ namespace SettingsManager
 			// since file and memory match
 			Status = SAVED;
 
-			Trace.Assert(DM.End0(),"");
+			// Trace.Assert(DM.End0(),"");
 		}
 
 	#endregion
@@ -596,17 +615,19 @@ namespace SettingsManager
 			return list;
 		}
 
-
-		private void updateHeader()
+		private void msgDialog(string title, string main, string message)
 		{
-
-			if (Info == null || Info.Data == null) return;
-
-			Info.Data.DataFileDescription = Info.Description;
-			Info.Data.DataFileNotes = Info.Notes;
-			Info.Data.DataFileVersion = Info.DataClassVersion;
-			
+			TaskDialog td = new TaskDialog();
+			td.Caption = title;
+			td.InstructionText = main;
+			td.Text = message;
+			td.Icon = TaskDialogStandardIcon.Error;
+			td.Cancelable = false;
+			// td.OwnerWindowHandle = ScreenParameters.GetWindowHandle(Common.GetCurrentWindow());
+			td.StartupLocation = TaskDialogStartupLocation.CenterOwner;
+			td.Show();
 		}
+
 
 		// based on a list of matching setting of prior versions
 		// upgrade the existing to the current version
@@ -689,11 +710,8 @@ namespace SettingsManager
 			id = 0;
 
 			// ReSharper disable once VirtualMemberCallInConstructor
-
-/*
 			Configure();
 			ConfigureFilePath();
-*/
 
 			Trace.Assert(DM.End0(), "");
 		}
@@ -722,6 +740,10 @@ namespace SettingsManager
 
 	#region public properties
 
+		public string CompanyName => CsUtilities.CompanyName;
+
+		public string AppName => CsUtilities.AssemblyName;
+
 		/// <summary>
 		/// Indicates if the referenced setting FILE exists
 		/// </summary>
@@ -744,7 +766,6 @@ namespace SettingsManager
 			}
 		}
 
-
 		/// <summary>
 		/// The FILENAME with the EXTENSION
 		/// </summary>
@@ -759,7 +780,6 @@ namespace SettingsManager
 			}
 		}
 
-		
 		/// <summary>
 		/// The FILENAME NO extension
 		/// </summary>
@@ -798,6 +818,10 @@ namespace SettingsManager
 				settingFilePath = null;
 			}
 		}
+
+		public string CompanyFolderPath { get; set; }
+
+		public string SuiteFolderPath { get; set; }
 
 
 		/// <summary>
@@ -891,6 +915,11 @@ namespace SettingsManager
 
 				if (SettingFilePath.IsVoid()) return false;
 
+				// bool a = File.Exists(@"C:\Users\jeffs\Documents\Programming\VisualStudioProjects\PDF SOLUTIONS\_Samples\The Village\text.txt");
+				// bool b = File.Exists(@"C:\Users\jeffs\Documents\Programming\VisualStudioProjects\PDF SOLUTIONS\_Samples\The Village\file.pdf");
+				// bool c = File.Exists(@"C:\Users\jeffs\Documents\Programming\VisualStudioProjects\PDF SOLUTIONS\_Samples\The Village\ShtSettings.xml");
+
+
 				return File.Exists(SettingFilePath);
 			}
 		}
@@ -901,7 +930,7 @@ namespace SettingsManager
 
 	#region public methods
 
-		protected void ConfigureFilePath()
+		public virtual void ConfigureFilePath()
 		{
 			Trace.Assert(DM.Start0(),"");
 			if (settingFilePath.IsVoid())
@@ -974,9 +1003,9 @@ namespace SettingsManager
 
 	public interface IDataFile
 	{
-		string DataFileDescription { get; set; }
-		string DataFileNotes { get; set; }
-		string DataFileVersion { get; set; }
+		string DataFileDescription { get; }
+		string DataFileNotes { get; }
+		string DataFileVersion { get; }
 	}
 
 	[DataContract(Namespace = "")]
@@ -1084,7 +1113,8 @@ namespace SettingsManager
 
 			string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}\\{CsUtilities.AssemblyName}" : CsUtilities.AssemblyName;
 
-			FileNameNoExt = "\\user";
+			// FileNameNoExt = "\\user";
+			FileNameNoExt = "user";
 
 			FileNameSuffix = SETTINGFILEBASE_SUFFIX;
 			FileNameExtNoSep = SETTINGFILEBASE_EXT;
@@ -1163,7 +1193,8 @@ namespace SettingsManager
 		{
 			string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}\\{CsUtilities.AssemblyName}" : CsUtilities.AssemblyName;
 
-			FileNameNoExt = "\\app";
+			// FileNameNoExt = "\\app";
+			FileNameNoExt = "app";
 
 			FileName = FileNameNoExt + SETTINGFILEBASE;
 
@@ -1233,9 +1264,11 @@ namespace SettingsManager
 	{
 		protected override void Configure()
 		{
-			string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}\\{CsUtilities.AssemblyName}" : CsUtilities.AssemblyName;
+			// string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}\\{CsUtilities.AssemblyName}" : CsUtilities.AssemblyName;
+			string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}" : CsUtilities.AssemblyName;
 
-			FileNameNoExt = "\\suite";
+			// FileNameNoExt = "\\suite";
+			FileNameNoExt = "suite";
 			
 			FileName = FileNameNoExt + SETTINGFILEBASE;
 
@@ -1306,9 +1339,11 @@ namespace SettingsManager
 
 		protected override void Configure()
 		{
-			string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}\\{CsUtilities.AssemblyName}" : CsUtilities.AssemblyName;
+			// string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}\\{CsUtilities.AssemblyName}" : CsUtilities.AssemblyName;
+			string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}" : CsUtilities.AssemblyName;
 
-			FileNameNoExt = "\\machine";
+			// FileNameNoExt = "\\machine";
+			FileNameNoExt = "machine";
 
 			FileName = FileNameNoExt + SETTINGFILEBASE;
 
@@ -1373,17 +1408,17 @@ namespace SettingsManager
 	// {as defined in a suite setting file} - could be on a remote machine
 	public class SiteSettingPath : PathAndFileBase
 	{
-#pragma warning disable CS0169 // The field 'SiteSettingPath.localSubFolders' is never used
 		private string[] localSubFolders;
-#pragma warning restore CS0169 // The field 'SiteSettingPath.localSubFolders' is never used
 
 		public SiteSettingPath() { }
 
 		protected override void Configure()
 		{
-			string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}\\{CsUtilities.AssemblyName}" : CsUtilities.AssemblyName;
+			// string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}\\{CsUtilities.AssemblyName}" : CsUtilities.AssemblyName;
+			string rootName = !Heading.SuiteName.IsVoid() ? $"{Heading.SuiteName}" : CsUtilities.AssemblyName;
 
-			FileNameNoExt = "\\site";
+			// FileNameNoExt = "\\site";
+			FileNameNoExt = "site";
 
 			FileName = FileNameNoExt + SETTINGFILEBASE;
 
@@ -1533,9 +1568,10 @@ namespace SettingsManager
 
 		protected override void Configure() { }
 
-		public new void ConfigureFilePath()
+		public override void ConfigureFilePath()
 		{
 			Trace.Assert(DM.Start0(),"");
+
 			base.ConfigureFilePath();
 
 			// FileName = FilePath?.FileName ?? null;
@@ -1570,7 +1606,7 @@ namespace SettingsManager
 	// configure DataManager (on later usage)
 	dm1.Configure(
 		new FilePath<FileNameSimple>(
-			@"C:\Users\jeffs\AppData\Roaming\CyberStudio\SettingsManager\SettingsManagerv74\DataSet1_1.xml"));
+			@"C:\Users\jeffs\AppData\Roaming\CyberStudio\SettingsManager\SettingsManagerv75\DataSet1_1.xml"));
 	// then read the date
 	dm1.Admin.Read();
 
@@ -1615,7 +1651,7 @@ namespace SettingsManager
 		// 	ResetData();
 		// }
 
-		public DataManager(FilePath<FileNameSimple> filePath)
+		public DataManager(FilePath<FileNameSimple> filePath, string folderPath = null, string fileName=null)
 		{
 			Trace.Assert(DM.Start0(false, "**** ctor datamanager"),"");
 			// todo
@@ -1626,9 +1662,14 @@ namespace SettingsManager
 			// 	Path.SubFolders = null;
 			// }
 
+
+			string folder = filePath == null ? folderPath : filePath.FolderPath;
+			string file = filePath == null ? fileName : filePath.FileName;
+
+
 			// todo
-			Admin = new SettingsMgr<StorageMgrPath, StorageMgrInfo<TData>, TData>(new StorageMgrPath(), null);
-			Path = new StorageMgrPath(filePath.FolderPath, filePath.FileName);
+			Admin = new SettingsMgr<StorageMgrPath, StorageMgrInfo<TData>, TData>(new StorageMgrPath(folder, file), null);
+			// Path = new StorageMgrPath(folder, file);
 
 			// todo fix the reset system - set to null here but needs to fixed overall
 

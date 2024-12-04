@@ -74,6 +74,9 @@ using static SettingsManager.SettingMgrStatus;
 //					setting file's suffix & extension
 
 
+// USER_SETTINGS, APP_SETTINGS, SUITE_SETTINGS, MACH_SETTINGS, SITE_SETTINGS
+
+
 #region setting file hireacrhy
 
 /*
@@ -153,10 +156,17 @@ namespace SettingsManager
 		LENGTH = 6
 	}
 
+	public interface IDataFile
+	{
+		string DataFileDescription { get; }
+		string DataFileNotes { get; }
+		string DataFileVersion { get; }
+	}
+
 	#region + Heading
 
 	[DataContract(Namespace = "")]
-	internal partial class Heading
+	public partial class Heading
 	{
 		public static string ClassVersionName = nameof(DataClassVersion);
 		public static string SettingsVersionName = nameof(SettingsVersion);
@@ -170,9 +180,9 @@ namespace SettingsManager
 		[DataMember(Order = 2)] public string AssemblyVersion { get; private set; } = CsUtilities.AssemblyVersion;
 
 		[DataMember(Order = 3)] public string SettingsVersion { get; private set; } = "7.2.1";
-		[DataMember(Order = 4)] public string DataClassVersion = "Unassigned";
-		[DataMember(Order = 6)] public string Notes = "Unassigned";
-		[DataMember(Order = 5)] public string Description = "Unassigned";
+		[DataMember(Order = 4)] public string DataClassVersion { get; set; }= "Unassigned";
+		[DataMember(Order = 6)] public string Notes { get; set; }= "Unassigned";
+		[DataMember(Order = 5)] public string Description { get; set; }= "Unassigned";
 	}
 
 	#endregion
@@ -551,6 +561,7 @@ namespace SettingsManager
 		private string fileNameRoot;
 		private string fileNameSuffix;
 		private string fileNameExtNoSep;
+
 		private string rootFolderPath;
 		private string[] subFolders = new[] { CsUtilities.AssemblyName };
 		private string settingFolderPath;
@@ -613,6 +624,8 @@ namespace SettingsManager
 				settingFilePath = null;
 			}
 		}
+
+
 
 		/// <summary>
 		/// the FOLDER PATH to the root folder for the referenced setting file
@@ -758,26 +771,27 @@ namespace SettingsManager
 		private bool? classVersionsMatch;
 
 		[DataMember(Order = 0)]
-
 		internal abstract SettingFileType FileType { get; set; }
 
-
 		[DataMember(Order = 5)]
-		internal Heading Header;
+		public Heading Header { get; set; }
 
 
+		[IgnoreDataMember]
 		public string Description
 		{
 			get => Header.Description;
 			set => Header.Description = value;
 		}
 
+		[IgnoreDataMember]
 		public string DataClassVersion
 		{
 			get => Header.DataClassVersion;
 			set => Header.DataClassVersion = value;
 		}
 
+		[IgnoreDataMember]
 		public string Notes
 		{
 			get => Header.Notes;
@@ -792,6 +806,8 @@ namespace SettingsManager
 		{
 			// ReSharper disable VirtualMemberCallInConstructor
 			Header = new Heading();
+
+			
 		}
 
 
@@ -864,6 +880,7 @@ namespace SettingsManager
 
 	#region user settings config / conditional
 
+
 #if USER_SETTINGS
 
 	// level 1 setting file
@@ -883,6 +900,7 @@ namespace SettingsManager
 			FileNameExtNoSep = SETTINGFILEBASE_EXT;
 
 			RootFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
 			SubFolders = new[]
 			{
 				CsUtilities.CompanyName,
@@ -1224,6 +1242,8 @@ namespace SettingsManager
 		protected override void Configure() { }
 	}
 
+
+	// v7.2
 	[DataContract(Namespace = "")]
 	public class BaseDataFile<TData> : INotifyPropertyChanged
 		where TData : class, new()
@@ -1297,6 +1317,7 @@ namespace SettingsManager
 		}
 	}
 
+	// v7.2
 	public class DataManager<TData> : BaseDataFile<TData> where TData : class, new() {}
 
 #endregion
